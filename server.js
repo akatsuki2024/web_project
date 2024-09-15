@@ -309,13 +309,16 @@ const port = 5000;
 app.use(express.json());
 app.use(cors());
 
-// Connect to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/student-registration', {
+// Connect to 'student-registration' MongoDB
+const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/student-registration', {
   useNewUrlParser: true,
   useUnifiedTopology: true
-})
-  .then(() => console.log('Connected to MongoDB (student-registration)'))
-  .catch(err => console.error('Could not connect to MongoDB (student-registration)...', err));
+});
+
+studentDB.on('error', err => console.error('Error connecting to student-registration database:', err));
+studentDB.once('open', () => {
+  console.log('Connected to MongoDB (student-registration)');
+});
 
 // Create a schema for student registration
 const studentSchema = new mongoose.Schema({
@@ -330,7 +333,25 @@ const studentSchema = new mongoose.Schema({
 });
 
 // Create a model for student registration
-const Student = mongoose.model('Student', studentSchema);
+const Student = studentDB.model('Student', studentSchema);
+
+// Connect to 'attendance' MongoDB
+const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+attendanceDB.on('error', err => console.error('Error connecting to attendance database:', err));
+attendanceDB.once('open', () => {
+  console.log('Connected to MongoDB (attendance)');
+});
+
+// Create a schema for attendance
+const attendanceSchema = new mongoose.Schema({
+  collegeID: String,
+  attendanceStatus: String,
+  date: { type: Date, required: true }
+});
 
 // API route to handle student registration form submission
 app.post('/register/student', async (req, res) => {
@@ -361,7 +382,7 @@ const teacherSchema = new mongoose.Schema({
 });
 
 // Create a model for teacher registration
-const Teacher = mongoose.model('Teacher', teacherSchema, 'teachers');
+const Teacher = attendanceDB.model('Teacher', teacherSchema, 'teachers');
 
 // API route to handle teacher registration form submission
 app.post('/register/teacher', async (req, res) => {
@@ -394,8 +415,7 @@ app.get('/students/:branch/:year', async (req, res) => {
 
 // Submit attendance
 app.post('/attendance/submit', async (req, res) => {
-  const { branch, year, division, attendanceData } = req.body;
-  const date = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+  const { branch, year, division, date, attendanceData } = req.body; // Now use the date from the request
 
   try {
     // Connect to the attendance database
@@ -414,10 +434,10 @@ app.post('/attendance/submit', async (req, res) => {
         date: { type: Date, default: Date.now }
       }), collectionName);
 
-      // Create or update attendance for the current date
+      // Create or update attendance for the provided date
       for (let record of attendanceData) {
         await Attendance.updateOne(
-          { collegeID: record.collegeID, date: new Date(date) },
+          { collegeID: record.collegeID, date: new Date(date) }, // Use the provided date here
           { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
           { upsert: true }
         );
@@ -430,6 +450,7 @@ app.post('/attendance/submit', async (req, res) => {
     res.status(500).json({ error: 'Error submitting attendance' });
   }
 });
+
 
 // Start the server
 app.listen(port, () => {
