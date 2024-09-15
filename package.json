@@ -4,9 +4,8 @@
   "description": "sem 5 project",
   "main": "index.js",
   "scripts": {
-  "start": "nodemon server.js"
-},
-
+    "start": "nodemon server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
