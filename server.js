@@ -310,14 +310,14 @@ app.use(express.json());
 app.use(cors());
 
 // Connect to 'student-registration' MongoDB
-const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/student-registration', {
+const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
 
-studentDB.on('error', err => console.error('Error connecting to student-registration database:', err));
+studentDB.on('error', err => console.error('Error connecting to database:', err));
 studentDB.once('open', () => {
-  console.log('Connected to MongoDB (student-registration)');
+  console.log('Connected to MongoDB (database)');
 });
 
 // Create a schema for student registration
