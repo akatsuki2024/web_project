@@ -183,9 +183,6 @@
 
 
 
-
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -198,7 +195,7 @@ const port = 5000;
 app.use(express.json());
 app.use(cors());
 
-// Connect to 'database' MongoDB for student registration
+// Connect to 'student-registration' MongoDB for both student and teacher registration
 const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/student-registration', {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -206,7 +203,7 @@ const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/student-r
 
 studentDB.on('error', err => console.error('Error connecting to student database:', err));
 studentDB.once('open', () => {
-  console.log('Connected to MongoDB (database for students)');
+  console.log('Connected to MongoDB (student-registration database)');
 });
 
 // Create a schema for student registration
@@ -226,17 +223,6 @@ const studentSchema = new mongoose.Schema({
 // Create a model for student registration
 const Student = studentDB.model('Student', studentSchema, 'students');
 
-// Connect to 'attendance' MongoDB
-const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-
-attendanceDB.on('error', err => console.error('Error connecting to attendance database:', err));
-attendanceDB.once('open', () => {
-  console.log('Connected to MongoDB (attendance)');
-});
-
 // Create a schema for teacher registration
 const teacherSchema = new mongoose.Schema({
   username: String,
@@ -248,18 +234,29 @@ const teacherSchema = new mongoose.Schema({
   address: String
 });
 
-// Create a model for teacher registration
-const Teacher = attendanceDB.model('Teacher', teacherSchema, 'teachers');
+// Create a model for teacher registration in 'student-registration' database
+const Teacher = studentDB.model('Teacher', teacherSchema, 'teachers');
+
+// Connect to 'attendance' MongoDB for attendance management
+const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+attendanceDB.on('error', err => console.error('Error connecting to attendance database:', err));
+attendanceDB.once('open', () => {
+  console.log('Connected to MongoDB (attendance)');
+});
 
 // Validation functions
 const validatePhoneNumber = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
-const validateCollegeID = (collegeID) => collegeID.endsWith('@kccemsr.edu.in');
+const validateEmployeeID = (employeeID) => employeeID.endsWith('@kccemsr.edu.in');
 
 // API route to handle student registration form submission
 app.post('/register/student', async (req, res) => {
   try {
     const studentData = req.body;
-    console.log('Received Student Data:', studentData); // Debugging line
+    console.log('Received Student Data:', studentData);
 
     // Validate phone number
     if (!validatePhoneNumber(studentData.contactNumber)) {
@@ -268,7 +265,7 @@ app.post('/register/student', async (req, res) => {
     }
 
     // Validate college ID
-    if (!validateCollegeID(studentData.collegeID)) {
+    if (!validateEmployeeID(studentData.collegeID)) {
       console.log('Invalid college ID:', studentData.collegeID);
       return res.status(400).json({ error: 'College ID must end with @kccemsr.edu.in' });
     }
@@ -288,9 +285,21 @@ app.post('/register/student', async (req, res) => {
 app.post('/register/teacher', async (req, res) => {
   try {
     const teacherData = req.body;
-    console.log('Received Teacher Data:', teacherData); // Debugging line
+    console.log('Received Teacher Data:', teacherData);
 
-    // Create a new teacher document in the database
+    // Validate employee ID
+    if (!validateEmployeeID(teacherData.employeeID)) {
+      console.log('Invalid employee ID:', teacherData.employeeID);
+      return res.status(400).json({ error: 'Employee ID must end with @kccemsr.edu.in' });
+    }
+
+    // Validate phone number
+    if (!validatePhoneNumber(teacherData.contactNumber)) {
+      console.log('Invalid contact number:', teacherData.contactNumber);
+      return res.status(400).json({ error: 'Contact number must be exactly 10 digits.' });
+    }
+
+    // Create a new teacher document in the 'teachers' collection of 'student-registration' database
     const newTeacher = new Teacher(teacherData);
     await newTeacher.save();
 
@@ -352,4 +361,3 @@ app.post('/attendance/submit', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
