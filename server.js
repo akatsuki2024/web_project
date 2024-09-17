@@ -159,6 +159,33 @@
 //   console.log(`Server is running on http://localhost:${port}`);
 // });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -172,7 +199,7 @@ app.use(express.json());
 app.use(cors());
 
 // Connect to 'database' MongoDB for student registration
-const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database', {
+const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/student-registration', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -197,7 +224,7 @@ const studentSchema = new mongoose.Schema({
 });
 
 // Create a model for student registration
-const Student = studentDB.model('Student', studentSchema, 'students');  // Ensure it connects to 'students' collection
+const Student = studentDB.model('Student', studentSchema, 'students');
 
 // Connect to 'attendance' MongoDB
 const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
@@ -224,11 +251,27 @@ const teacherSchema = new mongoose.Schema({
 // Create a model for teacher registration
 const Teacher = attendanceDB.model('Teacher', teacherSchema, 'teachers');
 
+// Validation functions
+const validatePhoneNumber = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
+const validateCollegeID = (collegeID) => collegeID.endsWith('@kccemsr.edu.in');
+
 // API route to handle student registration form submission
 app.post('/register/student', async (req, res) => {
   try {
     const studentData = req.body;
     console.log('Received Student Data:', studentData); // Debugging line
+
+    // Validate phone number
+    if (!validatePhoneNumber(studentData.contactNumber)) {
+      console.log('Invalid phone number:', studentData.contactNumber);
+      return res.status(400).json({ error: 'Contact number must be exactly 10 digits.' });
+    }
+
+    // Validate college ID
+    if (!validateCollegeID(studentData.collegeID)) {
+      console.log('Invalid college ID:', studentData.collegeID);
+      return res.status(400).json({ error: 'College ID must end with @kccemsr.edu.in' });
+    }
 
     // Create a new student document in the database
     const newStudent = new Student(studentData);
@@ -309,3 +352,4 @@ app.post('/attendance/submit', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
