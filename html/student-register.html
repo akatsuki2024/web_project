@@ -1,276 +1,40 @@
-<!-- 
-
- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Registration</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">  Your custom styles if any 
-  <style>
-    .password-container {
-      position: relative;
-    }
-    .password-container .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-    }
-    .bi-eye {
-      font-size: 1.2em;
-    }
-  </style>
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Collegiate Administrator</a>
-    </div>
-  </nav>
-
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Student Registration</h5>
-          </div>
-          <div class="card-body">
-            <form id="studentForm">
-              <div class="mb-3">
-                <label for="studentRegUsername" class="form-label">Username</label>
-                <input type="text" class="form-control" id="studentRegUsername" placeholder="Enter your username" required>
-              </div>
-              <div class="mb-3 password-container">
-                <label for="studentRegPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="studentRegPassword" placeholder="Enter your password" required>
-                <span class="toggle-password" onclick="togglePassword('studentRegPassword')">
-                  <i class="bi bi-eye"></i>
-                </span>
-              </div>
-              <div class="mb-3 password-container">
-                <label for="studentRegConfirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="studentRegConfirmPassword" placeholder="Confirm your password" required>
-                <span class="toggle-password" onclick="togglePassword('studentRegConfirmPassword')">
-                  <i class="bi bi-eye"></i>
-                </span>
-              </div>
-              <div class="mb-3">
-                <label for="studentName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="studentName" placeholder="Enter your full name" required>
-              </div>
-              <div class="mb-3">
-                <label for="collegeID" class="form-label">College ID</label>
-                <input type="text" class="form-control" id="collegeID" placeholder="Enter your college ID" required>
-              </div>
-              <div class="mb-3">
-                <label for="branch" class="form-label">Branch</label>
-                <select class="form-select" id="branch" required>
-                  <option value="" disabled selected>Select your branch</option>
-                  <option value="IT">Information Technology</option>
-                  <option value="Comps">Computer Science</option>
-                  <option value="Extc">Electronics and Telecommunication</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="year" class="form-label">Year</label>
-                <select class="form-select" id="year" required>
-                  <option value="" disabled selected>Select your year</option>
-                  <option value="First">First Year</option>
-                  <option value="Second">Second Year</option>
-                  <option value="Third">Third Year</option>
-                  <option value="Fourth">Fourth Year</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="contactNumber" class="form-label">Contact Number</label>
-                <input type="tel" class="form-control" id="contactNumber" placeholder="Enter your contact number" required>
-              </div>
-              <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <textarea class="form-control" id="address" rows="3" placeholder="Enter your address" required></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Register</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const form = document.getElementById('studentForm');
-    const submitBtn = document.getElementById('submitBtn');
-
-    function togglePassword(id) {
-      const passwordField = document.getElementById(id);
-      const type = passwordField.type === 'password' ? 'text' : 'password';
-      passwordField.type = type;
-    }
-
-    form.addEventListener('input', function() {
-      const password = document.getElementById('studentRegPassword').value;
-      const confirmPassword = document.getElementById('studentRegConfirmPassword').value;
-
-      if (password === confirmPassword && form.checkValidity()) {
-        submitBtn.removeAttribute('disabled');
-      } else {
-        submitBtn.setAttribute('disabled', 'true');
-      }
-    });
-
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      const formData = {
-        username: document.getElementById('studentRegUsername').value,
-        password: document.getElementById('studentRegPassword').value,
-        name: document.getElementById('studentName').value,
-        collegeID: document.getElementById('collegeID').value,
-        branch: document.getElementById('branch').value,
-        year: document.getElementById('year').value,
-        contactNumber: document.getElementById('contactNumber').value,
-        address: document.getElementById('address').value,
-      };
-
-      fetch('http://localhost:5000/register/student', { // Correct URL
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          alert('Registration successful!');
-          window.location.href = 'front-page.html';
-        }
-      })
-      .catch(error => console.error('Error:', error));
-    });
-  </script>
-</body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mark Attendance</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css"> <!-- Your custom styles if any -->
-  <style>
-    .password-container {
-      position: relative;
-    }
-    .password-container .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-    }
-    .bi-eye {
-      font-size: 1.2em;
-    }
-  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Collegiate Administrator</a>
+      <a class="navbar-brand" href="#">Attendance System</a>
     </div>
   </nav>
 
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-6">
+      <div class="col-md-10">
         <div class="card shadow-sm">
           <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Student Registration</h5>
+            <h5 class="card-title mb-0">Mark Attendance</h5>
           </div>
           <div class="card-body">
-            <form id="studentForm">
-              <div class="mb-3">
-                <label for="studentRegUsername" class="form-label">Username</label>
-                <input type="text" class="form-control" id="studentRegUsername" placeholder="Enter your username" required>
-              </div>
-              <div class="mb-3 password-container">
-                <label for="studentRegPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="studentRegPassword" placeholder="Enter your password" required>
-                <span class="toggle-password" onclick="togglePassword('studentRegPassword')">
-                  <i class="bi bi-eye"></i>
-                </span>
-              </div>
-              <div class="mb-3 password-container">
-                <label for="studentRegConfirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="studentRegConfirmPassword" placeholder="Confirm your password" required>
-                <span class="toggle-password" onclick="togglePassword('studentRegConfirmPassword')">
-                  <i class="bi bi-eye"></i>
-                </span>
-              </div>
-              <div class="mb-3">
-                <label for="studentName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="studentName" placeholder="Enter your full name" required>
-              </div>
-              <div class="mb-3">
-                <label for="collegeID" class="form-label">College ID</label>
-                <input type="text" class="form-control" id="collegeID" placeholder="Enter your college ID" required>
-              </div>
-
-              <!-- Roll Number Field -->
-              <div class="mb-3">
-                <label for="rollNo" class="form-label">Roll No</label>
-                <input type="text" class="form-control" id="rollNo" placeholder="Enter your Roll Number" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="branch" class="form-label">Branch</label>
-                <select class="form-select" id="branch" required onchange="toggleDivision()">
-                  <option value="" disabled selected>Select your branch</option>
-                  <option value="IT">Information Technology</option>
-                  <option value="Comps">Computer Science</option>
-                  <option value="Extc">Electronics and Telecommunication</option>
-                </select>
-              </div>
-
-              <!-- Division Field (conditional) -->
-              <div class="mb-3">
-                <label for="division" class="form-label">Division</label>
-                <select class="form-select" id="division" disabled required>
-                  <option value="" disabled selected>Select your division</option>
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="year" class="form-label">Year</label>
-                <select class="form-select" id="year" required>
-                  <option value="" disabled selected>Select your year</option>
-                  <option value="First">First Year</option>
-                  <option value="Second">Second Year</option>
-                  <option value="Third">Third Year</option>
-                  <option value="Fourth">Fourth Year</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="contactNumber" class="form-label">Contact Number</label>
-                <input type="tel" class="form-control" id="contactNumber" placeholder="Enter your contact number" required>
-              </div>
-              <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <textarea class="form-control" id="address" rows="3" placeholder="Enter your address" required></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Register</button>
+            <form id="attendanceForm">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                  </tr>
+                </thead>
+                <tbody id="studentsContainer">
+                </tbody>
+              </table>
+              <button type="submit" class="btn btn-primary">Submit Attendance</button>
             </form>
           </div>
         </div>
@@ -278,69 +42,80 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const form = document.getElementById('studentForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const divisionField = document.getElementById('division');
+    document.addEventListener("DOMContentLoaded", function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const branch = urlParams.get('branch');
+      const year = urlParams.get('year');
+      const division = urlParams.get('division');
+      const date = urlParams.get('date');
 
-    function togglePassword(id) {
-      const passwordField = document.getElementById(id);
-      const type = passwordField.type === 'password' ? 'text' : 'password';
-      passwordField.type = type;
-    }
+      // Fetch students based on branch, year, and division
+      const apiUrl = `http://localhost:5000/students/${branch}/${year}/${division || 'null'}`; // Handle no division for IT
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(students => {
+          const container = document.getElementById('studentsContainer');
+          container.innerHTML = ''; // Clear existing students
 
-    function toggleDivision() {
-      const branch = document.getElementById('branch').value;
-      if (branch === 'IT') {
-        divisionField.setAttribute('disabled', 'true');
-      } else {
-        divisionField.removeAttribute('disabled');
-      }
-    }
+          if (students.length === 0) {
+            container.innerHTML = '<tr><td colspan="4">No students found for the selected branch, year, and division.</td></tr>';
+            return;
+          }
 
-    form.addEventListener('input', function() {
-      const password = document.getElementById('studentRegPassword').value;
-      const confirmPassword = document.getElementById('studentRegConfirmPassword').value;
+          // Sort students by roll number in ascending order
+          students.sort((a, b) => a.rollNo - b.rollNo);
 
-      if (password === confirmPassword && form.checkValidity()) {
-        submitBtn.removeAttribute('disabled');
-      } else {
-        submitBtn.setAttribute('disabled', 'true');
-      }
+          students.forEach(student => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${student.rollNo}</td>
+              <td>${student.name} (${student.collegeID})</td>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="present">
+                </div>
+              </td>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="absent" checked>
+                </div>
+              </td>
+              <input type="hidden" name="studentIDs" value="${student.collegeID}">
+            `;
+            container.appendChild(row);
+          });
+        })
+        .catch(error => console.error('Error fetching students:', error));
     });
 
-    form.addEventListener('submit', function(event) {
+    // Submit attendance
+    document.getElementById('attendanceForm').addEventListener('submit', function(event) {
       event.preventDefault();
+      const branch = new URLSearchParams(window.location.search).get('branch');
+      const year = new URLSearchParams(window.location.search).get('year');
+      const division = new URLSearchParams(window.location.search).get('division');
+      const date = new URLSearchParams(window.location.search).get('date');
 
-      const formData = {
-        username: document.getElementById('studentRegUsername').value,
-        password: document.getElementById('studentRegPassword').value,
-        name: document.getElementById('studentName').value,
-        collegeID: document.getElementById('collegeID').value,
-        rollNo: document.getElementById('rollNo').value,
-        branch: document.getElementById('branch').value,
-        division: document.getElementById('division').value,
-        year: document.getElementById('year').value,
-        contactNumber: document.getElementById('contactNumber').value,
-        address: document.getElementById('address').value,
-      };
+      const attendanceData = Array.from(document.querySelectorAll('[name="studentIDs"]')).map(input => {
+        const studentID = input.value;
+        const status = document.querySelector(`input[name="attendance-${studentID}"]:checked`).value;
+        return { collegeID: studentID, attendanceStatus: status };
+      });
 
-      fetch('http://localhost:5000/register/student', {
+      fetch('http://localhost:5000/attendance/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ branch, year, division, date, attendanceData })
       })
       .then(response => response.json())
       .then(data => {
         if (data.message) {
-          alert('Registration successful!');
-          window.location.href = 'front-page.html';
+          alert('Attendance submitted successfully!');
+          window.close(); // Close the tab after submission
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error submitting attendance:', error));
     });
   </script>
 </body>

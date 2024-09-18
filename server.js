@@ -1,7 +1,9 @@
 
+
 // const express = require('express');
 // const mongoose = require('mongoose');
 // const cors = require('cors');
+
 
 // // Initialize the app
 // const app = express();
@@ -11,15 +13,15 @@
 // app.use(express.json());
 // app.use(cors());
 
-// // Connect to 'student-registration' MongoDB
+// // Connect to 'database' MongoDB for student registration
 // const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database', {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true
 // });
 
-// studentDB.on('error', err => console.error('Error connecting to database:', err));
+// studentDB.on('error', err => console.error('Error connecting to student database:', err));
 // studentDB.once('open', () => {
-//   console.log('Connected to MongoDB (database)');
+//   console.log('Connected to MongoDB (database for students)');
 // });
 
 // // Create a schema for student registration
@@ -31,11 +33,58 @@
 //   branch: String,
 //   year: String,
 //   contactNumber: String,
-//   address: String
+//   address: String,
+//   rollNo: String,
+//   division: String
 // });
 
-// // Create a model for student registration
-// const Student = studentDB.model('Student', studentSchema);
+// // API route to handle student registration form submission
+// app.post('/register/student', async (req, res) => {
+//   try {
+//     const studentData = req.body;
+//     console.log('Received Student Data:', studentData);
+
+//     // Determine the collection name based on branch, year, and division
+//     let collectionName = "students";  // Default collection
+//     if (studentData.branch === "Extc") {
+//       if (studentData.year === "Second") {
+//         collectionName = `EXTC-SE-${studentData.division}`;
+//       } else if (studentData.year === "Third") {
+//         collectionName = `EXTC-TE-${studentData.division}`;
+//       } else if (studentData.year === "Fourth") {
+//         collectionName = `EXTC-BE-${studentData.division}`;
+//       }
+//     } else if (studentData.branch === "Comps") {
+//       if (studentData.year === "Second") {
+//         collectionName = `CS-SE-${studentData.division}`;
+//       } else if (studentData.year === "Third") {
+//         collectionName = `CS-TE-${studentData.division}`;
+//       } else if (studentData.year === "Fourth") {
+//         collectionName = `CS-BE-${studentData.division}`;
+//       }
+//     } else if (studentData.branch === "IT") {
+//       if (studentData.year === "Second") {
+//         collectionName = "IT-SE";
+//       } else if (studentData.year === "Third") {
+//         collectionName = "IT-TE";
+//       } else if (studentData.year === "Fourth") {
+//         collectionName = "IT-BE";
+//       }
+//     }
+
+//     // Dynamically create a model for the correct collection
+//     const DynamicStudent = studentDB.model('Student', studentSchema, collectionName);
+
+//     // Create a new student document in the correct collection
+//     const newStudent = new DynamicStudent(studentData);
+//     await newStudent.save();
+
+//     res.status(200).json({ message: 'Student registration successful!' });
+//   } catch (error) {
+//     console.error('Error registering student:', error);
+//     res.status(500).json({ error: 'Error registering student' });
+//   }
+// });
 
 // // Connect to 'attendance' MongoDB
 // const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
@@ -46,30 +95,6 @@
 // attendanceDB.on('error', err => console.error('Error connecting to attendance database:', err));
 // attendanceDB.once('open', () => {
 //   console.log('Connected to MongoDB (attendance)');
-// });
-
-// // Create a schema for attendance
-// const attendanceSchema = new mongoose.Schema({
-//   collegeID: String,
-//   attendanceStatus: String,
-//   date: { type: Date, required: true }
-// });
-
-// // API route to handle student registration form submission
-// app.post('/register/student', async (req, res) => {
-//   try {
-//     const studentData = req.body;
-//     console.log('Received Student Data:', studentData); // Debugging line
-
-//     // Create a new student document in the database
-//     const newStudent = new Student(studentData);
-//     await newStudent.save();
-
-//     res.status(200).json({ message: 'Student registration successful!' });
-//   } catch (error) {
-//     console.error('Error registering student:', error);
-//     res.status(500).json({ error: 'Error registering student' });
-//   }
 // });
 
 // // Create a schema for teacher registration
@@ -90,7 +115,7 @@
 // app.post('/register/teacher', async (req, res) => {
 //   try {
 //     const teacherData = req.body;
-//     console.log('Received Teacher Data:', teacherData); // Debugging line
+//     console.log('Received Teacher Data:', teacherData);
 
 //     // Create a new teacher document in the database
 //     const newTeacher = new Teacher(teacherData);
@@ -103,11 +128,44 @@
 //   }
 // });
 
-// // Fetch students by branch and year
-// app.get('/students/:branch/:year', async (req, res) => {
-//   const { branch, year } = req.params;
+// // Fetch students by branch, year, and division
+// app.get('/students/:branch/:year/:division', async (req, res) => {
+//   const { branch, year, division } = req.params;
+
+//   // Determine the collection name dynamically based on branch, year, and division
+//   let collectionName = "students"; // Default to 'students' collection
+//   if (branch === "Extc") {
+//     if (year === "Second") {
+//       collectionName = `EXTC-SE-${division}`;
+//     } else if (year === "Third") {
+//       collectionName = `EXTC-TE-${division}`;
+//     } else if (year === "Fourth") {
+//       collectionName = `EXTC-BE-${division}`;
+//     }
+//   } else if (branch === "Comps") {
+//     if (year === "Second") {
+//       collectionName = `CS-SE-${division}`;
+//     } else if (year === "Third") {
+//       collectionName = `CS-TE-${division}`;
+//     } else if (year === "Fourth") {
+//       collectionName = `CS-BE-${division}`;
+//     }
+//   } else if (branch === "IT") {
+//     if (year === "Second") {
+//       collectionName = "IT-SE";
+//     } else if (year === "Third") {
+//       collectionName = "IT-TE";
+//     } else if (year === "Fourth") {
+//       collectionName = "IT-BE";
+//     }
+//   }
+
+//   // Dynamically create a model for the correct collection
+//   const DynamicStudent = studentDB.model('Student', studentSchema, collectionName);
+
 //   try {
-//     const students = await Student.find({ branch, year });
+//     // Fetch students from the dynamically selected collection
+//     const students = await DynamicStudent.find({});
 //     res.json(students);
 //   } catch (error) {
 //     console.error('Error fetching students:', error);
@@ -117,10 +175,9 @@
 
 // // Submit attendance
 // app.post('/attendance/submit', async (req, res) => {
-//   const { branch, year, division, date, attendanceData } = req.body; // Now use the date from the request
+//   const { branch, year, division, date, attendanceData } = req.body;
 
 //   try {
-//     // Connect to the attendance database
 //     const attendanceDb = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
 //       useNewUrlParser: true,
 //       useUnifiedTopology: true
@@ -128,7 +185,6 @@
 
 //     attendanceDb.on('error', err => console.error('Error connecting to attendance database:', err));
 //     attendanceDb.once('open', async () => {
-//       // Create a collection name based on branch, year, and division
 //       const collectionName = `${branch}-${year}-${division}`;
 //       const Attendance = attendanceDb.model('Attendance', new mongoose.Schema({
 //         collegeID: String,
@@ -136,10 +192,9 @@
 //         date: { type: Date, default: Date.now }
 //       }), collectionName);
 
-//       // Create or update attendance for the provided date
 //       for (let record of attendanceData) {
 //         await Attendance.updateOne(
-//           { collegeID: record.collegeID, date: new Date(date) }, // Use the provided date here
+//           { collegeID: record.collegeID, date: new Date(date) },
 //           { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
 //           { upsert: true }
 //         );
@@ -152,7 +207,6 @@
 //     res.status(500).json({ error: 'Error submitting attendance' });
 //   }
 // });
-
 
 // // Start the server
 // app.listen(port, () => {
@@ -196,8 +250,53 @@ const studentSchema = new mongoose.Schema({
   division: String
 });
 
-// Create a model for student registration
-const Student = studentDB.model('Student', studentSchema, 'students');  // Ensure it connects to 'students' collection
+// API route to handle student registration form submission
+app.post('/register/student', async (req, res) => {
+  try {
+    const studentData = req.body;
+    console.log('Received Student Data:', studentData);
+
+    // Determine the collection name based on branch, year, and division
+    let collectionName = "students";  // Default collection
+    if (studentData.branch === "Extc") {
+      if (studentData.year === "Second") {
+        collectionName = `EXTC-SE-${studentData.division}`;
+      } else if (studentData.year === "Third") {
+        collectionName = `EXTC-TE-${studentData.division}`;
+      } else if (studentData.year === "Fourth") {
+        collectionName = `EXTC-BE-${studentData.division}`;
+      }
+    } else if (studentData.branch === "Comps") {
+      if (studentData.year === "Second") {
+        collectionName = `CS-SE-${studentData.division}`;
+      } else if (studentData.year === "Third") {
+        collectionName = `CS-TE-${studentData.division}`;
+      } else if (studentData.year === "Fourth") {
+        collectionName = `CS-BE-${studentData.division}`;
+      }
+    } else if (studentData.branch === "IT") {
+      if (studentData.year === "Second") {
+        collectionName = `IT-SE`;
+      } else if (studentData.year === "Third") {
+        collectionName = `IT-TE`;  // Handle IT-TE correctly
+      } else if (studentData.year === "Fourth") {
+        collectionName = `IT-BE`;
+      }
+    }
+
+    // Dynamically create a model for the correct collection
+    const DynamicStudent = studentDB.model('Student', studentSchema, collectionName);
+
+    // Create a new student document in the correct collection
+    const newStudent = new DynamicStudent(studentData);
+    await newStudent.save();
+
+    res.status(200).json({ message: 'Student registration successful!' });
+  } catch (error) {
+    console.error('Error registering student:', error);
+    res.status(500).json({ error: 'Error registering student' });
+  }
+});
 
 // Connect to 'attendance' MongoDB
 const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
@@ -224,28 +323,11 @@ const teacherSchema = new mongoose.Schema({
 // Create a model for teacher registration
 const Teacher = attendanceDB.model('Teacher', teacherSchema, 'teachers');
 
-// API route to handle student registration form submission
-app.post('/register/student', async (req, res) => {
-  try {
-    const studentData = req.body;
-    console.log('Received Student Data:', studentData); // Debugging line
-
-    // Create a new student document in the database
-    const newStudent = new Student(studentData);
-    await newStudent.save();
-
-    res.status(200).json({ message: 'Student registration successful!' });
-  } catch (error) {
-    console.error('Error registering student:', error);
-    res.status(500).json({ error: 'Error registering student' });
-  }
-});
-
 // API route to handle teacher registration form submission
 app.post('/register/teacher', async (req, res) => {
   try {
     const teacherData = req.body;
-    console.log('Received Teacher Data:', teacherData); // Debugging line
+    console.log('Received Teacher Data:', teacherData);
 
     // Create a new teacher document in the database
     const newTeacher = new Teacher(teacherData);
@@ -258,11 +340,42 @@ app.post('/register/teacher', async (req, res) => {
   }
 });
 
-// Fetch students by branch and year
-app.get('/students/:branch/:year', async (req, res) => {
-  const { branch, year } = req.params;
+// Fetch students by branch, year, and division (for IT, ignore division)
+app.get('/students/:branch/:year/:division?', async (req, res) => {
+  const { branch, year, division } = req.params;
+
+  // Determine the collection name dynamically based on branch, year, and division
+  let collectionName;
+
+  if (branch === "Extc") {
+    if (year === "Second") {
+      collectionName = `EXTC-SE-${division}`;
+    } else if (year === "Third") {
+      collectionName = `EXTC-TE-${division}`;
+    } else if (year === "Fourth") {
+      collectionName = `EXTC-BE-${division}`;
+    }
+  } else if (branch === "Comps") {
+    if (year === "Second") {
+      collectionName = `CS-SE-${division}`;
+    } else if (year === "Third") {
+      collectionName = `CS-TE-${division}`;
+    } else if (year === "Fourth") {
+      collectionName = `CS-BE-${division}`;
+    }
+  } else if (branch === "IT") {
+    if (year === "Second") {
+      collectionName = `IT-SE`;
+    } else if (year === "Third") {
+      collectionName = `IT-TE`;  // No division for IT
+    } else if (year === "Fourth") {
+      collectionName = `IT-BE`;
+    }
+  }
+
   try {
-    const students = await Student.find({ branch, year });
+    const DynamicStudent = studentDB.model('Student', studentSchema, collectionName);
+    const students = await DynamicStudent.find({});
     res.json(students);
   } catch (error) {
     console.error('Error fetching students:', error);
@@ -282,7 +395,7 @@ app.post('/attendance/submit', async (req, res) => {
 
     attendanceDb.on('error', err => console.error('Error connecting to attendance database:', err));
     attendanceDb.once('open', async () => {
-      const collectionName = `${branch}-${year}-${division}`;
+      const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
       const Attendance = attendanceDb.model('Attendance', new mongoose.Schema({
         collegeID: String,
         attendanceStatus: String,
