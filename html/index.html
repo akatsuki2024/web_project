@@ -90,7 +90,7 @@
                 <label for="studentPassword" class="form-label">Password</label>
                 <input type="password" class="form-control" id="studentPassword" placeholder="Enter your password">
               </div>
-              <button type="submit" class="btn btn-primary">Login</button>
+              <button type="submit" class="btn btn-primary" id="submit1">Login</button>
             </form>
           </div>
 
@@ -143,5 +143,27 @@
       document.getElementById('teacherLoginForm').classList.add('active');
     });
   </script>
+  <!-- JavaScript for handling login and redirection -->
+<script>
+  // Target the specific submit button with id="submit1"
+  document.getElementById("submit1").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Retrieve input values
+    const username = document.getElementById("studentIdentifier").value;
+    const password = document.getElementById("studentPassword").value;
+
+    // Basic validation (you can replace this with server-side validation)
+    if (username && password) {
+      // Here you can add your authentication logic (AJAX request to the server)
+      // For now, we'll simulate a successful login
+      
+      // If login is successful, redirect to studentinfo.html
+      window.location.href = "studentinfo.html";
+    } else {
+      alert("Please enter both username and password.");
+    }
+  });
+</script>
 </body>
 </html>
