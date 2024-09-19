@@ -1,3 +1,5 @@
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -155,32 +157,43 @@ app.get('/students/:branch/:year/:division?', async (req, res) => {
   }
 });
 
-// Submit attendance
+// Schema for Attendance
+const attendanceSchema = new mongoose.Schema({
+  collegeID: String,
+  branch: String,
+  year: String,
+  division: String,
+  rollNo: String,
+  name: String,
+  date: Date,
+  attendanceStatus: String // 'Present' or 'Absent'
+});
+
+// Model for the Attendance collection
+const Attendance = attendanceDB.model('Attendance', attendanceSchema, 'attendance');
+
+// Submit attendance (modified to store in a single collection)
 app.post('/attendance/submit', async (req, res) => {
   const { branch, year, division, date, attendanceData } = req.body;
 
   try {
-    const attendanceDb = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance');
-
-    attendanceDb.on('error', err => console.error('Error connecting to attendance database:', err));
-    attendanceDb.once('open', async () => {
-      const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-      const Attendance = attendanceDb.model('Attendance', new mongoose.Schema({
-        collegeID: String,
-        attendanceStatus: String,
-        date: { type: Date, default: Date.now }
-      }), collectionName);
-
-      for (let record of attendanceData) {
-        await Attendance.updateOne(
-          { collegeID: record.collegeID, date: new Date(date) },
-          { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
-          { upsert: true }
-        );
-      }
-
-      res.status(200).json({ message: 'Attendance submitted successfully!' });
-    });
+    for (let record of attendanceData) {
+      await Attendance.updateOne(
+        { collegeID: record.collegeID, date: new Date(date) }, // Search by collegeID and date
+        {
+          $set: {
+            branch: branch,
+            year: year,
+            division: division || '', // Handle IT which has no division
+            rollNo: record.rollNo,
+            name: record.name,
+            attendanceStatus: record.attendanceStatus
+          },
+        },
+        { upsert: true }
+      );
+    }
+    res.status(200).json({ message: 'Attendance submitted successfully!' });
   } catch (error) {
     console.error('Error submitting attendance:', error);
     res.status(500).json({ error: 'Error submitting attendance' });
@@ -222,6 +235,40 @@ app.post('/marks/submit', async (req, res) => {
   } catch (error) {
     console.error('Error submitting marks:', error);
     res.status(500).json({ error: 'Error submitting marks' });
+  }
+});
+
+// Fetch attendance by branch, year, division, and month
+app.get('/attendance/:branch/:year/:division/:month', async (req, res) => {
+  const { branch, year, division, month } = req.params;
+  
+  // Extract start and end date for the selected month
+  const startDate = new Date(`${month}-01`);
+  const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0); // End of the month
+
+  try {
+    // Find attendance records for the selected period
+    const attendanceRecords = await Attendance.find({
+      branch: branch,
+      year: year,
+      division: division || '',
+      date: { $gte: startDate, $lte: endDate }
+    });
+
+    // Prepare data for each student
+    const attendanceData = {};
+    attendanceRecords.forEach(record => {
+      if (!attendanceData[record.collegeID]) {
+        attendanceData[record.collegeID] = { rollNo: record.rollNo, name: record.name, attendance: {} };
+      }
+      const day = new Date(record.date).getDate();
+      attendanceData[record.collegeID].attendance[day] = record.attendanceStatus;
+    });
+
+    res.json(Object.values(attendanceData));
+  } catch (error) {
+    console.error('Error fetching attendance:', error);
+    res.status(500).json({ error: 'Error fetching attendance' });
   }
 });
 
