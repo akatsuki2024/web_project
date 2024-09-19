@@ -1,109 +1,4 @@
 <!-- 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mark Attendance</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Attendance System</a>
-    </div>
-  </nav>
-
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card shadow-sm">
-          <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Mark Attendance</h5>
-          </div>
-          <div class="card-body">
-            <form id="attendanceForm">
-              <div id="studentsContainer"></div>
-              <button type="submit" class="btn btn-primary">Submit Attendance</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const branch = urlParams.get('branch');
-      const year = urlParams.get('year');
-      const division = urlParams.get('division');
-      const date = urlParams.get('date');
-
-      // Fetch students based on branch, year, and division
-      fetch(`http://localhost:5000/students/${branch}/${year}/${division}`)
-        .then(response => response.json())
-        .then(students => {
-          const container = document.getElementById('studentsContainer');
-          container.innerHTML = ''; // Clear existing students
-
-          if (students.length === 0) {
-            container.innerHTML = '<p>No students found for the selected branch, year, and division.</p>';
-            return;
-          }
-
-          students.forEach(student => {
-            const div = document.createElement('div');
-            div.className = 'mb-3';
-            div.innerHTML = `
-              <label>${student.name} (${student.collegeID})</label>
-              <input type="hidden" name="studentIDs" value="${student.collegeID}">
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="present" checked>
-                <label class="form-check-label">Present</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="absent">
-                <label class="form-check-label">Absent</label>
-              </div>
-            `;
-            container.appendChild(div);
-          });
-        })
-        .catch(error => console.error('Error fetching students:', error));
-    });
-
-    // Submit attendance
-    document.getElementById('attendanceForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const branch = new URLSearchParams(window.location.search).get('branch');
-      const year = new URLSearchParams(window.location.search).get('year');
-      const division = new URLSearchParams(window.location.search).get('division');
-      const date = new URLSearchParams(window.location.search).get('date');
-
-      const attendanceData = Array.from(document.querySelectorAll('[name="studentIDs"]')).map(input => {
-        const studentID = input.value;
-        const status = document.querySelector(`input[name="attendance-${studentID}"]:checked`).value;
-        return { collegeID: studentID, attendanceStatus: status };
-      });
-
-      fetch('http://localhost:5000/attendance/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ branch, year, division, date, attendanceData })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          alert('Attendance submitted successfully!');
-          window.close(); // Close the tab after submission
-        }
-      })
-      .catch(error => console.error('Error submitting attendance:', error));
-    });
-  </script>
-</body>
-</html> -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -163,6 +58,192 @@
         `http://localhost:5000/students/${branch}/${year}/null`;
 
       // Fetch students based on branch, year, and division (or 'null' for IT)
+      fetch(fetchUrl)
+        .then(response => response.json())
+        .then(students => {
+          const container = document.getElementById('studentsContainer');
+          container.innerHTML = ''; // Clear existing students
+
+          if (students.length === 0) {
+            container.innerHTML = '<tr><td colspan="4">No students found for the selected branch, year, and division.</td></tr>';
+            return;
+          }
+
+          // Sort students by roll number in ascending order
+          students.sort((a, b) => a.rollNo - b.rollNo);
+
+          students.forEach(student => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${student.rollNo}</td>
+              <td>${student.name} (${student.collegeID})</td>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="present">
+                </div>
+              </td>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="absent" checked>
+                </div>
+              </td>
+              <input type="hidden" name="studentIDs" value="${student.collegeID}">
+            `;
+            container.appendChild(row);
+          });
+        })
+        .catch(error => console.error('Error fetching students:', error));
+    });
+
+    // Submit attendance
+    document.getElementById('attendanceForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const branch = new URLSearchParams(window.location.search).get('branch');
+      const year = new URLSearchParams(window.location.search).get('year');
+      const division = new URLSearchParams(window.location.search).get('division');
+      const date = new URLSearchParams(window.location.search).get('date');
+
+      const attendanceData = Array.from(document.querySelectorAll('[name="studentIDs"]')).map(input => {
+        const studentID = input.value;
+        const status = document.querySelector(`input[name="attendance-${studentID}"]:checked`).value;
+        return { collegeID: studentID, attendanceStatus: status };
+      });
+
+      fetch('http://localhost:5000/attendance/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ branch, year, division, date, attendanceData })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          alert('Attendance submitted successfully!');
+          window.close(); // Close the tab after submission
+        }
+      })
+      .catch(error => console.error('Error submitting attendance:', error));
+    });
+  </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mark Attendance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Attendance System</a>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Mark Attendance</h5>
+          </div>
+          <div class="card-body">
+
+            <!-- Search Bar to input Roll No -->
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="rollNoSearch" placeholder="Search by Roll No" aria-label="Search by Roll No">
+              <button class="btn btn-outline-secondary" type="button" onclick="searchByRollNo()">Search</button>
+              <button class="btn btn-outline-secondary ms-2" type="button" onclick="refreshPage()">Refresh</button>
+            </div>
+
+            <form id="attendanceForm">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                  </tr>
+                </thead>
+                <tbody id="studentsContainer">
+                </tbody>
+              </table>
+              <button type="submit" class="btn btn-primary">Submit Attendance</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Function to refresh the page
+    function refreshPage() {
+      window.location.reload();
+    }
+
+    // Function to search by Roll No
+    function searchByRollNo() {
+      const rollNo = document.getElementById('rollNoSearch').value;
+      const branch = new URLSearchParams(window.location.search).get('branch');
+      const year = new URLSearchParams(window.location.search).get('year');
+      const division = new URLSearchParams(window.location.search).get('division');
+      const date = new URLSearchParams(window.location.search).get('date');
+
+      const fetchUrl = division ? 
+        `http://localhost:5000/students/${branch}/${year}/${division}` : 
+        `http://localhost:5000/students/${branch}/${year}/null`;
+
+      fetch(fetchUrl)
+        .then(response => response.json())
+        .then(students => {
+          const student = students.find(s => s.rollNo === rollNo);
+
+          if (!student) {
+            alert('Invalid Roll No');
+            return;
+          }
+
+          const container = document.getElementById('studentsContainer');
+          container.innerHTML = ''; // Clear existing students
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${student.rollNo}</td>
+            <td>${student.name} (${student.collegeID})</td>
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="present">
+              </div>
+            </td>
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="absent" checked>
+              </div>
+            </td>
+            <input type="hidden" name="studentIDs" value="${student.collegeID}">
+          `;
+          container.appendChild(row);
+        })
+        .catch(error => console.error('Error fetching students:', error));
+    }
+
+    // Initial fetching of all students
+    document.addEventListener("DOMContentLoaded", function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const branch = urlParams.get('branch');
+      const year = urlParams.get('year');
+      const division = urlParams.get('division');
+      const date = urlParams.get('date');
+
+      const fetchUrl = division ? 
+        `http://localhost:5000/students/${branch}/${year}/${division}` : 
+        `http://localhost:5000/students/${branch}/${year}/null`;
+
       fetch(fetchUrl)
         .then(response => response.json())
         .then(students => {
