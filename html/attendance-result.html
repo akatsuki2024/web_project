@@ -26,11 +26,10 @@
                 <tr>
                   <th>Roll No</th>
                   <th>Name</th>
-                  <th colspan="31">Attendance (Day of the Month)</th>
+                  <th>Attendance Status</th>
                 </tr>
               </thead>
-              <tbody id="attendanceContainer">
-              </tbody>
+              <tbody id="attendanceContainer"></tbody>
             </table>
           </div>
         </div>
@@ -46,30 +45,25 @@
       const year = urlParams.get('year');
       const month = urlParams.get('month');
 
+      // Fetch attendance data from the server
       fetch(`http://localhost:5000/attendance/${branch}/${year}/${division}/${month}`)
         .then(response => response.json())
         .then(attendanceData => {
           const container = document.getElementById('attendanceContainer');
-          container.innerHTML = ''; 
+          container.innerHTML = ''; // Clear any existing content
 
           if (attendanceData.length === 0) {
-            container.innerHTML = '<tr><td colspan="33">No attendance data found for the selected period.</td></tr>';
+            container.innerHTML = '<tr><td colspan="3">No attendance data found.</td></tr>';
             return;
           }
 
+          // Display the attendance data in the table
           attendanceData.forEach(student => {
             const row = document.createElement('tr');
-            let attendanceCells = '';
-
-            for (let i = 1; i <= 31; i++) {
-              const status = student.attendance[i] || '-'; 
-              attendanceCells += `<td>${status}</td>`;
-            }
-
             row.innerHTML = `
-              <td>${student.rollNo || 'N/A'}</td>
-              <td>${student.name || 'N/A'}</td>
-              ${attendanceCells}
+              <td>${student.rollNo}</td>
+              <td>${student.name}</td>
+              <td>${student.attendanceStatus || 'N/A'}</td>
             `;
             container.appendChild(row);
           });
