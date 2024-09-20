@@ -12,17 +12,15 @@
 // app.use(cors());
 
 // // Connect to 'database' MongoDB for student registration
-// const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// });
+// const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database');
 
-// studentDB.on('error', err => console.error('Error connecting to student database:', err));
-// studentDB.once('open', () => {
-//   console.log('Connected to MongoDB (database for students)');
-// });
+// // Connect to 'attendance' MongoDB
+// const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance');
 
-// // Create a schema for student registration
+// // Connect to 'marks' MongoDB for marks submission and fetching
+// const marksDb = mongoose.createConnection('mongodb://127.0.0.1:27017/marks');
+
+// // Schema for student registration
 // const studentSchema = new mongoose.Schema({
 //   username: String,
 //   password: String,
@@ -36,7 +34,16 @@
 //   division: String
 // });
 
-// // API route to handle student registration form submission
+// // Schema for marks submission
+// const marksSchema = new mongoose.Schema({
+//   rollNo: String,
+//   studentName: String,
+//   collegeID: String,
+//   ia1: { type: Number, default: null },
+//   ia2: { type: Number, default: null }
+// });
+
+// // -------- Student Registration API --------
 // app.post('/register/student', async (req, res) => {
 //   try {
 //     const studentData = req.body;
@@ -44,7 +51,7 @@
 
 //     // Determine the collection name based on branch, year, and division
 //     let collectionName = "students";  // Default collection
-//     if (studentData.branch === "Extc") {
+//     if (studentData.branch === "EXTC") {
 //       if (studentData.year === "Second") {
 //         collectionName = `EXTC-SE-${studentData.division}`;
 //       } else if (studentData.year === "Third") {
@@ -84,38 +91,22 @@
 //   }
 // });
 
-// // Connect to 'attendance' MongoDB
-// const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true
-// });
-
-// attendanceDB.on('error', err => console.error('Error connecting to attendance database:', err));
-// attendanceDB.once('open', () => {
-//   console.log('Connected to MongoDB (attendance)');
-// });
-
-// // Create a schema for teacher registration
-// const teacherSchema = new mongoose.Schema({
-//   username: String,
-//   password: String,
-//   name: String,
-//   employeeID: String,
-//   department: String,
-//   contactNumber: String,
-//   address: String
-// });
-
-// // Create a model for teacher registration
-// const Teacher = attendanceDB.model('Teacher', teacherSchema, 'teachers');
-
-// // API route to handle teacher registration form submission
+// // -------- Teacher Registration API --------
 // app.post('/register/teacher', async (req, res) => {
 //   try {
 //     const teacherData = req.body;
 //     console.log('Received Teacher Data:', teacherData);
 
-//     // Create a new teacher document in the database
+//     const Teacher = attendanceDB.model('Teacher', new mongoose.Schema({
+//       username: String,
+//       password: String,
+//       name: String,
+//       employeeID: String,
+//       department: String,
+//       contactNumber: String,
+//       address: String
+//     }), 'teachers');
+
 //     const newTeacher = new Teacher(teacherData);
 //     await newTeacher.save();
 
@@ -126,37 +117,115 @@
 //   }
 // });
 
-// // Fetch students by branch, year, and division (for IT, ignore division)
+// // -------- Submit Attendance API --------
+// app.post('/attendance/submit', async (req, res) => {
+//   const { branch, year, division, date, attendanceData } = req.body;
+
+//   try {
+//     const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
+//     const Attendance = attendanceDB.model('Attendance', new mongoose.Schema({
+//       collegeID: String,
+//       attendanceStatus: String,
+//       date: { type: Date, default: Date.now }
+//     }), collectionName);
+
+//     for (let record of attendanceData) {
+//       await Attendance.updateOne(
+//         { collegeID: record.collegeID, date: new Date(date) },
+//         { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
+//         { upsert: true }
+//       );
+//     }
+
+//     res.status(200).json({ message: 'Attendance submitted successfully!' });
+//   } catch (error) {
+//     console.error('Error submitting attendance:', error);
+//     res.status(500).json({ error: 'Error submitting attendance' });
+//   }
+// });
+
+// // -------- Submit Marks API --------
+// app.post('/marks/submit', async (req, res) => {
+//   const { branch, year, division, marksData } = req.body;
+
+//   let collectionName = `${branch}-${year}`;
+//   if (branch !== 'IT') {
+//     collectionName += `-${division}`;
+//   }
+
+//   try {
+//     const Marks = marksDb.model('Marks', marksSchema, collectionName);
+
+//     for (let record of marksData) {
+//       const updateData = {
+//         studentName: record.studentName,
+//         collegeID: record.collegeID,
+//         ia1: record.ia1 !== undefined ? record.ia1 : null,
+//         ia2: record.ia2 !== undefined ? record.ia2 : null
+//       };
+
+//       await Marks.updateOne(
+//         { rollNo: record.rollNo },
+//         { $set: updateData },
+//         { upsert: true }
+//       );
+//     }
+
+//     res.status(200).json({ message: 'Marks submitted successfully!' });
+//   } catch (error) {
+//     console.error('Error submitting marks:', error);
+//     res.status(500).json({ error: 'Error submitting marks' });
+//   }
+// });
+
+// // -------- Fetch Marks for a Class API (Updated) --------
+// app.get('/marks/:branch/:year/:division?', async (req, res) => {
+//   const { branch, year, division } = req.params;
+
+//   // Construct the collection name based on branch, year, and division
+//   let collectionName;
+  
+//   // For IT branch, don't include division in the collection name
+//   if (branch === 'IT') {
+//     collectionName = `IT-${year}`;
+//   } else {
+//     // For other branches, include division in the collection name
+//     collectionName = `${branch}-${year}-${division}`;
+//   }
+
+//   try {
+//     const Marks = marksDb.model('Marks', marksSchema, collectionName);
+//     const marks = await Marks.find({});
+
+//     if (marks.length === 0) {
+//       return res.status(404).json({ message: 'No marks found for the selected criteria.' });
+//     }
+
+//     res.json(marks);
+//   } catch (error) {
+//     console.error('Error fetching marks:', error.message);
+//     res.status(500).json({ error: 'Error fetching marks. Please check your query and database.' });
+//   }
+// });
+
+
+// // -------- Fetch Students by Branch, Year, and Division --------
 // app.get('/students/:branch/:year/:division?', async (req, res) => {
 //   const { branch, year, division } = req.params;
 
-//   // Determine the collection name dynamically based on branch, year, and division
 //   let collectionName;
-
-//   if (branch === "Extc") {
-//     if (year === "Second") {
-//       collectionName = `EXTC-SE-${division}`;
-//     } else if (year === "Third") {
-//       collectionName = `EXTC-TE-${division}`;
-//     } else if (year === "Fourth") {
-//       collectionName = `EXTC-BE-${division}`;
-//     }
+//   if (branch === "EXTC") {
+//     if (year === "Second") collectionName = `EXTC-SE-${division}`;
+//     else if (year === "Third") collectionName = `EXTC-TE-${division}`;
+//     else if (year === "Fourth") collectionName = `EXTC-BE-${division}`;
 //   } else if (branch === "Comps") {
-//     if (year === "Second") {
-//       collectionName = `CS-SE-${division}`;
-//     } else if (year === "Third") {
-//       collectionName = `CS-TE-${division}`;
-//     } else if (year === "Fourth") {
-//       collectionName = `CS-BE-${division}`;
-//     }
+//     if (year === "Second") collectionName = `CS-SE-${division}`;
+//     else if (year === "Third") collectionName = `CS-TE-${division}`;
+//     else if (year === "Fourth") collectionName = `CS-BE-${division}`;
 //   } else if (branch === "IT") {
-//     if (year === "Second") {
-//       collectionName = `IT-SE`;
-//     } else if (year === "Third") {
-//       collectionName = `IT-TE`;  // No division for IT
-//     } else if (year === "Fourth") {
-//       collectionName = `IT-BE`;
-//     }
+//     if (year === "Second") collectionName = `IT-SE`;
+//     else if (year === "Third") collectionName = `IT-TE`;
+//     else if (year === "Fourth") collectionName = `IT-BE`;
 //   }
 
 //   try {
@@ -169,86 +238,23 @@
 //   }
 // });
 
-// // Submit attendance
-// app.post('/attendance/submit', async (req, res) => {
-//   const { branch, year, division, date, attendanceData } = req.body;
 
-//   try {
-//     const attendanceDb = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true
-//     });
-
-//     attendanceDb.on('error', err => console.error('Error connecting to attendance database:', err));
-//     attendanceDb.once('open', async () => {
-//       const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-//       const Attendance = attendanceDb.model('Attendance', new mongoose.Schema({
-//         collegeID: String,
-//         attendanceStatus: String,
-//         date: { type: Date, default: Date.now }
-//       }), collectionName);
-
-//       for (let record of attendanceData) {
-//         await Attendance.updateOne(
-//           { collegeID: record.collegeID, date: new Date(date) },
-//           { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
-//           { upsert: true }
-//         );
-//       }
-
-//       res.status(200).json({ message: 'Attendance submitted successfully!' });
-//     });
-//   } catch (error) {
-//     console.error('Error submitting attendance:', error);
-//     res.status(500).json({ error: 'Error submitting attendance' });
-//   }
-// });
-
-// // Submit marks (new route for marks submission)
-// app.post('/marks/submit', async (req, res) => {
-//   const { branch, year, division, marksData } = req.body;
-
-//   try {
-//     const marksDb = mongoose.createConnection('mongodb://127.0.0.1:27017/marks', {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true
-//     });
-
-//     marksDb.on('error', err => console.error('Error connecting to marks database:', err));
-//     marksDb.once('open', async () => {
-//       const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-//       const Marks = marksDb.model('Marks', new mongoose.Schema({
-//         rollNo: String,
-//         studentName: String,
-//         ia1: Number,
-//         ia2: Number
-//       }), collectionName);
-
-//       // Insert or update marks for each student
-//       for (let record of marksData) {
-//         const updateData = {};
-//         if (record.ia1 !== null) updateData.ia1 = record.ia1;  // Update IA1 if provided
-//         if (record.ia2 !== null) updateData.ia2 = record.ia2;  // Update IA2 if provided
-
-//         await Marks.updateOne(
-//           { rollNo: record.rollNo },
-//           { $set: updateData },  // Only update the provided fields
-//           { upsert: true }
-//         );
-//       }
-
-//       res.status(200).json({ message: 'Marks submitted successfully!' });
-//     });
-//   } catch (error) {
-//     console.error('Error submitting marks:', error);
-//     res.status(500).json({ error: 'Error submitting marks' });
-//   }
-// });
 
 // // Start the server
 // app.listen(port, () => {
 //   console.log(`Server is running on http://localhost:${port}`);
 // });
+
+
+
+
+
+
+
+
+
+
+
 
 
 const express = require('express');
@@ -269,10 +275,10 @@ const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database'
 // Connect to 'attendance' MongoDB
 const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance');
 
-// Connect to 'marks' MongoDB for marks submission
+// Connect to 'marks' MongoDB for marks submission and fetching
 const marksDb = mongoose.createConnection('mongodb://127.0.0.1:27017/marks');
 
-// Create a schema for student registration
+// Schema for student registration
 const studentSchema = new mongoose.Schema({
   username: String,
   password: String,
@@ -286,7 +292,14 @@ const studentSchema = new mongoose.Schema({
   division: String
 });
 
-// API route to handle student registration form submission
+// Schema for attendance
+const attendanceSchema = new mongoose.Schema({
+  collegeID: String,
+  attendanceStatus: String,
+  date: { type: Date, default: Date.now }
+});
+
+// -------- Student Registration API --------
 app.post('/register/student', async (req, res) => {
   try {
     const studentData = req.body;
@@ -294,7 +307,7 @@ app.post('/register/student', async (req, res) => {
 
     // Determine the collection name based on branch, year, and division
     let collectionName = "students";  // Default collection
-    if (studentData.branch === "Extc") {
+    if (studentData.branch === "EXTC") {
       if (studentData.year === "Second") {
         collectionName = `EXTC-SE-${studentData.division}`;
       } else if (studentData.year === "Third") {
@@ -334,68 +347,46 @@ app.post('/register/student', async (req, res) => {
   }
 });
 
-// Create a schema for teacher registration
-const teacherSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-  name: String,
-  employeeID: String,
-  department: String,
-  contactNumber: String,
-  address: String
-});
+// -------- Submit Attendance API --------
+app.post('/attendance/submit', async (req, res) => {
+  const { branch, year, division, date, attendanceData } = req.body;
 
-// Create a model for teacher registration
-const Teacher = attendanceDB.model('Teacher', teacherSchema, 'teachers');
-
-// API route to handle teacher registration form submission
-app.post('/register/teacher', async (req, res) => {
   try {
-    const teacherData = req.body;
-    console.log('Received Teacher Data:', teacherData);
+    const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
+    const Attendance = attendanceDB.model('Attendance', attendanceSchema, collectionName);
 
-    // Create a new teacher document in the database
-    const newTeacher = new Teacher(teacherData);
-    await newTeacher.save();
+    for (let record of attendanceData) {
+      await Attendance.updateOne(
+        { collegeID: record.collegeID, date: new Date(date) },
+        { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
+        { upsert: true }
+      );
+    }
 
-    res.status(200).json({ message: 'Teacher registration successful!' });
+    res.status(200).json({ message: 'Attendance submitted successfully!' });
   } catch (error) {
-    console.error('Error registering teacher:', error);
-    res.status(500).json({ error: 'Error registering teacher' });
+    console.error('Error submitting attendance:', error);
+    res.status(500).json({ error: 'Error submitting attendance' });
   }
 });
 
-// Fetch students by branch, year, and division (for IT, ignore division)
+// -------- Fetch Students by Branch, Year, and Division --------
 app.get('/students/:branch/:year/:division?', async (req, res) => {
   const { branch, year, division } = req.params;
 
-  // Determine the collection name dynamically based on branch, year, and division
   let collectionName;
-
-  if (branch === "Extc") {
-    if (year === "Second") {
-      collectionName = `EXTC-SE-${division}`;
-    } else if (year === "Third") {
-      collectionName = `EXTC-TE-${division}`;
-    } else if (year === "Fourth") {
-      collectionName = `EXTC-BE-${division}`;
-    }
+  if (branch === "EXTC") {
+    if (year === "Second") collectionName = `EXTC-SE-${division}`;
+    else if (year === "Third") collectionName = `EXTC-TE-${division}`;
+    else if (year === "Fourth") collectionName = `EXTC-BE-${division}`;
   } else if (branch === "Comps") {
-    if (year === "Second") {
-      collectionName = `CS-SE-${division}`;
-    } else if (year === "Third") {
-      collectionName = `CS-TE-${division}`;
-    } else if (year === "Fourth") {
-      collectionName = `CS-BE-${division}`;
-    }
+    if (year === "Second") collectionName = `CS-SE-${division}`;
+    else if (year === "Third") collectionName = `CS-TE-${division}`;
+    else if (year === "Fourth") collectionName = `CS-BE-${division}`;
   } else if (branch === "IT") {
-    if (year === "Second") {
-      collectionName = `IT-SE`;
-    } else if (year === "Third") {
-      collectionName = `IT-TE`;  // No division for IT
-    } else if (year === "Fourth") {
-      collectionName = `IT-BE`;
-    }
+    if (year === "Second") collectionName = `IT-SE`;
+    else if (year === "Third") collectionName = `IT-TE`;
+    else if (year === "Fourth") collectionName = `IT-BE`;
   }
 
   try {
@@ -408,73 +399,41 @@ app.get('/students/:branch/:year/:division?', async (req, res) => {
   }
 });
 
-// Submit attendance
-app.post('/attendance/submit', async (req, res) => {
-  const { branch, year, division, date, attendanceData } = req.body;
+// -------- Fetch Attendance for a Specific Student or Class --------
+app.get('/attendance/:branch/:year/:division?', async (req, res) => {
+  const { branch, year, division } = req.params;
+  const { studentID, month } = req.query;
 
-  try {
-    const attendanceDb = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance');
+  const startDate = new Date(`${month}-01`);
+  const endDate = new Date(startDate);
+  endDate.setMonth(endDate.getMonth() + 1); // End of the month
 
-    attendanceDb.on('error', err => console.error('Error connecting to attendance database:', err));
-    attendanceDb.once('open', async () => {
-      const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-      const Attendance = attendanceDb.model('Attendance', new mongoose.Schema({
-        collegeID: String,
-        attendanceStatus: String,
-        date: { type: Date, default: Date.now }
-      }), collectionName);
-
-      for (let record of attendanceData) {
-        await Attendance.updateOne(
-          { collegeID: record.collegeID, date: new Date(date) },
-          { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
-          { upsert: true }
-        );
-      }
-
-      res.status(200).json({ message: 'Attendance submitted successfully!' });
-    });
-  } catch (error) {
-    console.error('Error submitting attendance:', error);
-    res.status(500).json({ error: 'Error submitting attendance' });
+  let collectionName = `${branch}-${year}`;
+  if (branch !== 'IT') {
+    collectionName += `-${division}`;
   }
-});
-
-// Submit marks (new route for marks submission)
-app.post('/marks/submit', async (req, res) => {
-  const { branch, year, division, marksData } = req.body;
 
   try {
-    const marksDb = mongoose.createConnection('mongodb://127.0.0.1:27017/marks');
+    const Attendance = attendanceDB.model('Attendance', attendanceSchema, collectionName);
 
-    marksDb.on('error', err => console.error('Error connecting to marks database:', err));
-    marksDb.once('open', async () => {
-      const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-      const Marks = marksDb.model('Marks', new mongoose.Schema({
-        rollNo: String,
-        studentName: String,
-        ia1: Number,
-        ia2: Number
-      }), collectionName);
+    const query = {
+      date: { $gte: startDate, $lt: endDate }
+    };
 
-      // Insert or update marks for each student
-      for (let record of marksData) {
-        const updateData = {};
-        if (record.ia1 !== null) updateData.ia1 = record.ia1;  // Update IA1 if provided
-        if (record.ia2 !== null) updateData.ia2 = record.ia2;  // Update IA2 if provided
+    if (studentID) {
+      query.collegeID = studentID;
+    }
 
-        await Marks.updateOne(
-          { rollNo: record.rollNo },
-          { $set: updateData },  // Only update the provided fields
-          { upsert: true }
-        );
-      }
+    const attendanceRecords = await Attendance.find(query);
 
-      res.status(200).json({ message: 'Marks submitted successfully!' });
-    });
+    if (attendanceRecords.length === 0) {
+      return res.status(404).json({ message: 'No attendance records found.' });
+    }
+
+    res.json(attendanceRecords);
   } catch (error) {
-    console.error('Error submitting marks:', error);
-    res.status(500).json({ error: 'Error submitting marks' });
+    console.error('Error fetching attendance:', error.message);
+    res.status(500).json({ error: 'Error fetching attendance records.' });
   }
 });
 
@@ -482,3 +441,4 @@ app.post('/marks/submit', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+

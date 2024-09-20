@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>View Attendance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"> <!-- Custom styles if needed -->
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Attendance System</a>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">View Attendance</h5>
+          </div>
+          <div class="card-body">
+            <form id="attendanceForm">
+              <div class="mb-3">
+                <label for="branch" class="form-label">Branch</label>
+                <select class="form-select" id="branch" required onchange="toggleDivision()">
+                  <option value="" disabled selected>Select your branch</option>
+                  <option value="Comps">Computer Science</option>
+                  <option value="EXTC">Electronics and Telecommunication</option>
+                  <option value="IT">Information Technology</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="year" class="form-label">Year</label>
+                <select class="form-select" id="year" required>
+                  <option value="" disabled selected>Select your year</option>
+                  <option value="Second">Second Year</option>
+                  <option value="Third">Third Year</option>
+                  <option value="Fourth">Fourth Year</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="division" class="form-label">Division</label>
+                <select class="form-select" id="division" required>
+                  <option value="" disabled selected>Select your division</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="attendanceMonth" class="form-label">Select Date Range</label>
+                <input type="month" class="form-control" id="attendanceMonth" required>
+              </div>
+
+              <button type="button" class="btn btn-primary" onclick="fetchAttendance()">View Attendance</button>
+            </form>
+
+            <table class="table table-bordered mt-4">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Roll No</th>
+                  <th>College ID</th>
+                  <th>Attendance Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceContainer">
+                <!-- Attendance data will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleDivision() {
+      const branch = document.getElementById('branch').value;
+      const divisionField = document.getElementById('division');
+
+      if (branch === 'IT') {
+        divisionField.setAttribute('disabled', 'true');
+        divisionField.value = ''; // Clear division value if IT is selected
+      } else {
+        divisionField.removeAttribute('disabled');
+      }
+    }
+
+    function fetchAttendance() {
+      const branch = document.getElementById('branch').value;
+      const year = document.getElementById('year').value;
+      const division = document.getElementById('division').value;
+      const selectedMonth = document.getElementById('attendanceMonth').value;
+
+      if (!branch || !year || (!division && branch !== 'IT') || !selectedMonth) {
+        alert('Please fill out all fields.');
+        return;
+      }
+
+      const url = `http://localhost:5000/attendance/${branch}/${year}/${division}?month=${selectedMonth}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('attendanceContainer');
+          container.innerHTML = ''; // Clear previous content
+
+          if (data.length === 0) {
+            container.innerHTML = '<tr><td colspan="4" class="text-center text-danger">No attendance records found for this month.</td></tr>';
+            return;
+          }
+
+          data.forEach(record => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${new Date(record.date).toLocaleDateString()}</td>
+              <td>${record.rollNo || 'N/A'}</td>
+              <td>${record.collegeID}</td>
+              <td>${record.attendanceStatus}</td>
+            `;
+            container.appendChild(row);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching attendance:', error);
+        });
+    }
+  </script>
+</body>
+</html>
