@@ -304,7 +304,13 @@ const studentSchema = new mongoose.Schema({
 const marksSchema = new mongoose.Schema({
   rollNo: String,
   studentName: String,
+// Schema for marks submission
+const marksSchema = new mongoose.Schema({
+  rollNo: String,
+  studentName: String,
   collegeID: String,
+  ia1: { type: Number, default: null },
+  ia2: { type: Number, default: null }
   ia1: { type: Number, default: null },
   ia2: { type: Number, default: null }
 });
@@ -318,29 +324,11 @@ app.post('/register/student', async (req, res) => {
     // Determine the collection name based on branch, year, and division
     let collectionName = "students";  // Default collection
     if (studentData.branch === "EXTC") {
-      if (studentData.year === "Second") {
-        collectionName = `EXTC-SE-${studentData.division}`;
-      } else if (studentData.year === "Third") {
-        collectionName = `EXTC-TE-${studentData.division}`;
-      } else if (studentData.year === "Fourth") {
-        collectionName = `EXTC-BE-${studentData.division}`;
-      }
+      collectionName = `EXTC-${studentData.year}-${studentData.division}`;
     } else if (studentData.branch === "Comps") {
-      if (studentData.year === "Second") {
-        collectionName = `CS-SE-${studentData.division}`;
-      } else if (studentData.year === "Third") {
-        collectionName = `CS-TE-${studentData.division}`;
-      } else if (studentData.year === "Fourth") {
-        collectionName = `CS-BE-${studentData.division}`;
-      }
+      collectionName = `Comps-${studentData.year}-${studentData.division}`;
     } else if (studentData.branch === "IT") {
-      if (studentData.year === "Second") {
-        collectionName = `IT-SE`;
-      } else if (studentData.year === "Third") {
-        collectionName = `IT-TE`;
-      } else if (studentData.year === "Fourth") {
-        collectionName = `IT-BE`;
-      }
+      collectionName = `IT-${studentData.year}-`; // No division for IT
     }
 
     // Dynamically create a model for the correct collection
@@ -354,6 +342,32 @@ app.post('/register/student', async (req, res) => {
   } catch (error) {
     console.error('Error registering student:', error);
     res.status(500).json({ error: 'Error registering student' });
+  }
+});
+
+// -------- Teacher Registration API --------
+app.post('/register/teacher', async (req, res) => {
+  try {
+    const teacherData = req.body;
+    console.log('Received Teacher Data:', teacherData);
+
+    const Teacher = attendanceDB.model('Teacher', new mongoose.Schema({
+      username: String,
+      password: String,
+      name: String,
+      employeeID: String,
+      department: String,
+      contactNumber: String,
+      address: String
+    }), 'teachers');
+
+    const newTeacher = new Teacher(teacherData);
+    await newTeacher.save();
+
+    res.status(200).json({ message: 'Teacher registration successful!' });
+  } catch (error) {
+    console.error('Error registering teacher:', error);
+    res.status(500).json({ error: 'Error registering teacher' });
   }
 });
 
@@ -500,18 +514,10 @@ app.get('/students/:branch/:year/:division?', async (req, res) => {
   const { branch, year, division } = req.params;
 
   let collectionName;
-  if (branch === "EXTC") {
-    if (year === "Second") collectionName = `EXTC-SE-${division}`;
-    else if (year === "Third") collectionName = `EXTC-TE-${division}`;
-    else if (year === "Fourth") collectionName = `EXTC-BE-${division}`;
-  } else if (branch === "Comps") {
-    if (year === "Second") collectionName = `CS-SE-${division}`;
-    else if (year === "Third") collectionName = `CS-TE-${division}`;
-    else if (year === "Fourth") collectionName = `CS-BE-${division}`;
+  if (branch === "EXTC" || branch === "Comps") {
+    collectionName = `${branch}-${year}-${division}`;
   } else if (branch === "IT") {
-    if (year === "Second") collectionName = `IT-SE`;
-    else if (year === "Third") collectionName = `IT-TE`;
-    else if (year === "Fourth") collectionName = `IT-BE`;
+    collectionName = `IT-${year}-`;
   }
 
   try {
