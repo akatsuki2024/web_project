@@ -98,7 +98,8 @@ app.post('/register/teacher', async (req, res) => {
     const teacherData = req.body;
     console.log('Received Teacher Data:', teacherData);
 
-    const Teacher = attendanceDB.model('Teacher', new mongoose.Schema({
+    //(om change) Use 'studentDB' to store teacher data in the 'teachers' collection of the 'database' database
+    const Teacher = studentDB.model('Teacher', new mongoose.Schema({
       username: String,
       password: String,
       name: String,
@@ -118,32 +119,6 @@ app.post('/register/teacher', async (req, res) => {
   }
 });
 
-// // -------- Submit Attendance API --------
-// app.post('/attendance/submit', async (req, res) => {
-//   const { branch, year, division, date, attendanceData } = req.body;
-
-//   try {
-//     const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-//     const Attendance = attendanceDB.model('Attendance', new mongoose.Schema({
-//       collegeID: String,
-//       attendanceStatus: String,
-//       date: { type: Date, default: Date.now }
-//     }), collectionName);
-
-//     for (let record of attendanceData) {
-//       await Attendance.updateOne(
-//         { collegeID: record.collegeID, date: new Date(date) },
-//         { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
-//         { upsert: true }
-//       );
-//     }
-
-//     res.status(200).json({ message: 'Attendance submitted successfully!' });
-//   } catch (error) {
-//     console.error('Error submitting attendance:', error);
-//     res.status(500).json({ error: 'Error submitting attendance' });
-//   }
-// });
 
 // -------- Submit Attendance API --------
 app.post('/attendance/submit', async (req, res) => {

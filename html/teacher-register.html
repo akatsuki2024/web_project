@@ -432,46 +432,45 @@
     });
 
     form.addEventListener('submit', async function(event) {
-  event.preventDefault();
+      event.preventDefault();
 
-  if (!validateForm()) {
-    return; // Prevent form submission if validation fails
-  }
+      if (!validateForm()) {
+        return; // Prevent form submission if validation fails
+      }
 
-  const teacherData = {
-    username: document.getElementById('teacherRegUsername').value,
-    password: document.getElementById('teacherRegPassword').value,
-    name: document.getElementById('teacherName').value,
-    employeeID: document.getElementById('employeeID').value,
-    department: document.getElementById('department').value,
-    contactNumber: document.getElementById('contactNumber').value,
-    address: document.getElementById('address').value
-  };
+      const teacherData = {
+        username: document.getElementById('teacherRegUsername').value,
+        password: document.getElementById('teacherRegPassword').value,
+        name: document.getElementById('teacherName').value,
+        employeeID: document.getElementById('employeeID').value,
+        department: document.getElementById('department').value,
+        contactNumber: document.getElementById('contactNumber').value,
+        address: document.getElementById('address').value
+      };
 
-  try {
-    const response = await fetch('http://localhost:5000/register/teacher', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(teacherData)
+      try {
+        const response = await fetch('http://localhost:5000/register/teacher', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(teacherData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert('Teacher registration successful!');
+        } else {
+          alert(`Error: ${result.error}`);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('There was an error processing the request.');
+      }
     });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      alert('Teacher registration successful!');
-      form.reset(); // Reset the form fields
-    } else {
-      alert(`Error: ${result.error}`);
-    }
-  } catch (error) {
-    console.error('Error registering teacher:', error);
-    alert('An error occurred while registering. Please try again.');
-  }
-});
-
   </script>
+
 </body>
 </html>
 
