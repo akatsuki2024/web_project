@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marks Result</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Marks System</a>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Marks Results</h5>
+          </div>
+          <div class="card-body">
+
+            <!-- Search and Refresh Buttons -->
+            <div class="input-group mb-3">
+              <input type="text" id="searchRollNo" class="form-control" placeholder="Enter Roll No to Search">
+              <button class="btn btn-outline-secondary" type="button" onclick="searchByRollNo()">Search</button>
+              <button class="btn btn-outline-secondary ms-2" type="button" onclick="refreshPage()">Refresh</button>
+            </div>
+
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Roll No</th>
+                  <th>Name</th>
+                  <th>College ID</th>
+                  <th>IA-1 Marks (Out of 20)</th>
+                  <th>IA-2 Marks (Out of 20)</th>
+                </tr>
+              </thead>
+              <tbody id="marksContainer"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const branch = urlParams.get('branch');
+    const year = urlParams.get('year');
+    const division = urlParams.get('division');
+
+    // Fetch marks based on branch, year, and division
+    fetch(`http://localhost:5000/marks/${branch}/${year}/${division || ''}`)
+      .then(response => response.json())
+      .then(marks => {
+        const container = document.getElementById('marksContainer');
+        container.innerHTML = ''; // Clear existing marks
+
+        if (marks.length === 0) {
+          container.innerHTML = '<tr><td colspan="5">No marks found for the selected criteria.</td></tr>';
+          return;
+        }
+
+        // Display marks in table
+        marks.forEach(mark => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${mark.rollNo}</td>
+            <td>${mark.studentName}</td>
+            <td>${mark.collegeID}</td>
+            <td>${mark.ia1 || 'N/A'}</td>
+            <td>${mark.ia2 || 'N/A'}</td>
+          `;
+          container.appendChild(row);
+        });
+      })
+      .catch(error => console.error('Error fetching marks:', error));
+
+    function searchByRollNo() {
+      const rollNo = document.getElementById('searchRollNo').value;
+      if (!rollNo) {
+        alert('Please enter a Roll No to search.');
+        return;
+      }
+
+      fetch(`http://localhost:5000/marks/search?rollNo=${rollNo}`)
+        .then(response => response.json())
+        .then(marks => {
+          const container = document.getElementById('marksContainer');
+          container.innerHTML = ''; // Clear existing marks
+
+          if (marks.length === 0) {
+            container.innerHTML = '<tr><td colspan="5">No marks found for the entered Roll No.</td></tr>';
+            return;
+          }
+
+          marks.forEach(mark => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${mark.rollNo}</td>
+              <td>${mark.studentName}</td>
+              <td>${mark.collegeID}</td>
+              <td>${mark.ia1 || 'N/A'}</td>
+              <td>${mark.ia2 || 'N/A'}</td>
+            `;
+            container.appendChild(row);
+          });
+        })
+        .catch(error => console.error('Error fetching marks by Roll No:', error));
+    }
+
+    function refreshPage() {
+      location.reload();
+    }
+  </script>
+</body>
+</html>

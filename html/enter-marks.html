@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +49,7 @@
                   <tr>
                     <th>Roll No</th>
                     <th>Name</th>
+                    <th>College ID</th>
                     <th>IA-1 (Out of 20)</th>
                     <th>IA-2 (Out of 20)</th>
                   </tr>
@@ -80,7 +79,7 @@
         container.innerHTML = ''; // Clear existing students
 
         if (students.length === 0) {
-          container.innerHTML = '<tr><td colspan="4">No students found for the selected branch, year, and division.</td></tr>';
+          container.innerHTML = '<tr><td colspan="5">No students found for the selected branch, year, and division.</td></tr>';
           return;
         }
 
@@ -90,6 +89,7 @@
           row.innerHTML = `
             <td><input type="text" class="form-control" name="rollNo" value="${student.rollNo}" readonly></td>
             <td><input type="text" class="form-control" name="studentName" value="${student.name}" readonly></td>
+            <td><input type="text" class="form-control" name="collegeID" value="${student.collegeID}" readonly></td>
             <td><input type="number" class="form-control" name="ia1" max="20" min="0"></td>
             <td><input type="number" class="form-control" name="ia2" max="20" min="0"></td>
           `;
@@ -105,6 +105,7 @@
       const marksData = Array.from(document.querySelectorAll('[name="rollNo"]')).map((_, index) => ({
         rollNo: document.querySelectorAll('[name="rollNo"]')[index].value,
         studentName: document.querySelectorAll('[name="studentName"]')[index].value,
+        collegeID: document.querySelectorAll('[name="collegeID"]')[index].value,
         ia1: document.querySelectorAll('[name="ia1"]')[index].value || null,  // Allow IA1 to be null if not filled
         ia2: document.querySelectorAll('[name="ia2"]')[index].value || null   // Allow IA2 to be null if not filled
       }));
