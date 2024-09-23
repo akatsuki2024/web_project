@@ -118,32 +118,6 @@ app.post('/register/teacher', async (req, res) => {
   }
 });
 
-// // -------- Submit Attendance API --------
-// app.post('/attendance/submit', async (req, res) => {
-//   const { branch, year, division, date, attendanceData } = req.body;
-
-//   try {
-//     const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-//     const Attendance = attendanceDB.model('Attendance', new mongoose.Schema({
-//       collegeID: String,
-//       attendanceStatus: String,
-//       date: { type: Date, default: Date.now }
-//     }), collectionName);
-
-//     for (let record of attendanceData) {
-//       await Attendance.updateOne(
-//         { collegeID: record.collegeID, date: new Date(date) },
-//         { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
-//         { upsert: true }
-//       );
-//     }
-
-//     res.status(200).json({ message: 'Attendance submitted successfully!' });
-//   } catch (error) {
-//     console.error('Error submitting attendance:', error);
-//     res.status(500).json({ error: 'Error submitting attendance' });
-//   }
-// });
 
 // -------- Submit Attendance API --------
 app.post('/attendance/submit', async (req, res) => {
@@ -283,6 +257,56 @@ app.get('/students/:branch/:year/:division?', async (req, res) => {
     res.status(500).json({ error: 'Error fetching students' });
   }
 });
+
+
+
+
+
+
+// attendance view -------------------------------------------------
+// Fetch Attendance by Month API
+app.get('/attendance/:branch/:year/:division?', async (req, res) => {
+    const { branch, year, division } = req.params;
+    const { month } = req.query;
+  
+    // Construct the collection name based on branch, year, and division
+    let collectionName = `${branch}-${year}`;
+    if (branch !== 'IT') {
+      collectionName += `-${division}`;
+    }
+  
+    try {
+      const Attendance = attendanceDB.model('Attendance', new mongoose.Schema({
+        collegeID: String,
+        rollNo: String,
+        name: String,
+        attendanceStatus: String,
+        date: { type: Date, default: Date.now }
+      }), collectionName);
+  
+      // Define start and end date for the selected month
+      const startDate = new Date(`${month}-01`);
+      const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+  
+      const attendanceRecords = await Attendance.find({
+        date: {
+          $gte: startDate,
+          $lte: endDate
+        }
+      });
+  
+      if (attendanceRecords.length === 0) {
+        return res.status(404).json({ message: 'No attendance records found for the selected criteria.' });
+      }
+  
+      res.json(attendanceRecords);
+    } catch (error) {
+      console.error('Error fetching attendance:', error.message);
+      res.status(500).json({ error: 'Error fetching attendance. Please check your query and database.' });
+    }
+  });
+  
+  
 
 
 
