@@ -189,7 +189,10 @@
 
 
 
- <!DOCTYPE html>
+
+ 
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -245,7 +248,7 @@
     function refreshPage() {
       window.location.reload();
     }
-
+  
     // Function to search by Roll No
     function searchByRollNo() {
       const rollNo = document.getElementById('rollNoSearch').value;
@@ -253,24 +256,24 @@
       const year = new URLSearchParams(window.location.search).get('year');
       const division = new URLSearchParams(window.location.search).get('division');
       const date = new URLSearchParams(window.location.search).get('date');
-
+  
       const fetchUrl = division ? 
         `http://localhost:5000/students/${branch}/${year}/${division}` : 
         `http://localhost:5000/students/${branch}/${year}/null`;
-
+  
       fetch(fetchUrl)
         .then(response => response.json())
         .then(students => {
           const student = students.find(s => s.rollNo === rollNo);
-
+  
           if (!student) {
             alert('Invalid Roll No');
             return;
           }
-
+  
           const container = document.getElementById('studentsContainer');
           container.innerHTML = ''; // Clear existing students
-
+  
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${student.rollNo}</td>
@@ -285,13 +288,15 @@
                 <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="absent" checked>
               </div>
             </td>
-            <input type="hidden" name="studentIDs" value="${student.collegeID}" data-rollNo="${student.rollNo}" data-name="${student.name}">
+            <input type="hidden" name="studentIDs" value="${student.collegeID}">
+            <input type="hidden" name="studentNames" value="${student.name}">
+            <input type="hidden" name="rollNos" value="${student.rollNo}">
           `;
           container.appendChild(row);
         })
         .catch(error => console.error('Error fetching students:', error));
     }
-
+  
     // Initial fetching of all students
     document.addEventListener("DOMContentLoaded", function() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -299,25 +304,25 @@
       const year = urlParams.get('year');
       const division = urlParams.get('division');
       const date = urlParams.get('date');
-
+  
       const fetchUrl = division ? 
         `http://localhost:5000/students/${branch}/${year}/${division}` : 
         `http://localhost:5000/students/${branch}/${year}/null`;
-
+  
       fetch(fetchUrl)
         .then(response => response.json())
         .then(students => {
           const container = document.getElementById('studentsContainer');
           container.innerHTML = ''; // Clear existing students
-
+  
           if (students.length === 0) {
             container.innerHTML = '<tr><td colspan="4">No students found for the selected branch, year, and division.</td></tr>';
             return;
           }
-
+  
           // Sort students by roll number in ascending order
           students.sort((a, b) => a.rollNo - b.rollNo);
-
+  
           students.forEach(student => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -333,50 +338,93 @@
                   <input class="form-check-input" type="radio" name="attendance-${student.collegeID}" value="absent" checked>
                 </div>
               </td>
-              <input type="hidden" name="studentIDs" value="${student.collegeID}" data-rollNo="${student.rollNo}" data-name="${student.name}">
+              <input type="hidden" name="studentIDs" value="${student.collegeID}">
+              <input type="hidden" name="studentNames" value="${student.name}">
+              <input type="hidden" name="rollNos" value="${student.rollNo}">
             `;
             container.appendChild(row);
           });
         })
         .catch(error => console.error('Error fetching students:', error));
     });
-
-    // Submit attendance
-    document.getElementById('attendanceForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const branch = new URLSearchParams(window.location.search).get('branch');
-      const year = new URLSearchParams(window.location.search).get('year');
-      const division = new URLSearchParams(window.location.search).get('division');
-      const date = new URLSearchParams(window.location.search).get('date');
-
-      const attendanceData = Array.from(document.querySelectorAll('[name="studentIDs"]')).map(input => {
-        const studentID = input.value;
-        const rollNo = input.getAttribute('data-rollNo');  // Get the rollNo
-        const name = input.getAttribute('data-name');      // Get the name
-        const status = document.querySelector(`input[name="attendance-${studentID}"]:checked`).value;
+  
+    // // Submit attendance
+    // document.getElementById('attendanceForm').addEventListener('submit', function(event) {
+    //   event.preventDefault();
+    //   const branch = new URLSearchParams(window.location.search).get('branch');
+    //   const year = new URLSearchParams(window.location.search).get('year');
+    //   const division = new URLSearchParams(window.location.search).get('division');
+    //   const date = new URLSearchParams(window.location.search).get('date');
+  
+    //   const attendanceData = Array.from(document.querySelectorAll('[name="studentIDs"]')).map(input => {
+    //     const studentID = input.value;
+    //     const row = input.closest('tr');
+    //     const status = document.querySelector(`input[name="attendance-${studentID}"]:checked`).value;
+    //     const name = row.querySelector('[name="studentNames"]').value;
+    //     const rollNo = row.querySelector('[name="rollNos"]').value;
         
-        return { 
-          collegeID: studentID, 
-          rollNo: rollNo,   // Include rollNo
-          name: name,       // Include name
-          attendanceStatus: status 
-        };
-      });
+    //     return { collegeID: studentID, name: name, rollNo: rollNo, attendanceStatus: status };
+    //   });
+  
+    //   fetch('http://localhost:5000/attendance/submit', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ branch, year, division, date, attendanceData })
+    //   })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     if (data.message) {
+    //       alert('Attendance submitted successfully!');
+    //       window.close(); // Close the tab after submission
+    //     }
+    //   })
+    //   .catch(error => console.error('Error submitting attendance:', error));
+    // });
+    // Submit attendance
+document.getElementById('attendanceForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const branch = new URLSearchParams(window.location.search).get('branch');
+  const year = new URLSearchParams(window.location.search).get('year');
+  const division = new URLSearchParams(window.location.search).get('division');
+  const date = new URLSearchParams(window.location.search).get('date');
 
-      fetch('http://localhost:5000/attendance/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ branch, year, division, date, attendanceData })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          alert('Attendance submitted successfully!');
-          window.close(); // Close the tab after submission
-        }
-      })
-      .catch(error => console.error('Error submitting attendance:', error));
-    });
+  const attendanceData = Array.from(document.querySelectorAll('[name="studentIDs"]')).map(input => {
+    const studentID = input.value;
+    const row = input.closest('tr');
+    const status = document.querySelector(`input[name="attendance-${studentID}"]:checked`).value;
+    const name = row.querySelector('[name="studentNames"]').value;
+    const rollNo = row.querySelector('[name="rollNos"]').value;
+
+    return { 
+      collegeID: studentID, 
+      name: name, 
+      rollNo: rollNo, 
+      branch: branch,
+      year: year,
+      division: division,
+      attendanceStatus: status 
+    };
+  });
+
+  fetch('http://localhost:5000/attendance/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ branch, year, division, date, attendanceData })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.message) {
+      alert('Attendance submitted successfully!');
+      window.close(); // Close the tab after submission
+    }
+  })
+  .catch(error => console.error('Error submitting attendance:', error));
+});
+
   </script>
+  
 </body>
-</html>
+</html> 
+
+
+
