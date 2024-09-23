@@ -305,6 +305,8 @@ app.get('/attendance/:branch/:year/:division?', async (req, res) => {
       res.status(500).json({ error: 'Error fetching attendance. Please check your query and database.' });
     }
   });
+
+
   
   
 
