@@ -26,6 +26,13 @@
     .btn-success {
       margin-top: 20px;
     }
+    .student-row {
+      background-color: #e9ecef;
+      font-weight: bold;
+    }
+    .attendance-date {
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -40,7 +47,6 @@
       <div class="col-md-8 mx-auto">
         <div class="card p-4">
           <h3 class="text-center">Attendance Results</h3>
-          
 
           <div class="input-group mb-3">
             <input type="text" id="searchRollNo" class="form-control" placeholder="Search by Roll No" aria-label="Search by Roll No" aria-describedby="searchButton">
@@ -52,18 +58,16 @@
             <input type="date" id="specificDate" class="form-control" onchange="filterByDate()">
           </div>
 
-          
           <table class="table table-bordered mt-4" id="attendanceTable">
             <thead>
               <tr>
                 <th>Roll No</th>
                 <th>Name</th>
-                <th>Date</th>
-                <th>Attendance Status</th>
+                <th>Attendance Dates & Status</th>
               </tr>
             </thead>
             <tbody id="attendanceResultsContainer">
-              
+              <!-- Attendance data will be inserted here -->
             </tbody>
           </table>
 
@@ -97,30 +101,51 @@
         .then(response => response.json())
         .then(data => {
           originalData = data; // Store original data for filtering
-          populateTable(data);
+          groupAndDisplayData(data); // Group data by student and display
         })
         .catch(error => {
           console.error('Error fetching attendance:', error);
         });
     }
 
-    // Populate table with data
-    function populateTable(data) {
+    // Group attendance by student and populate table
+    function groupAndDisplayData(data) {
       const container = document.getElementById('attendanceResultsContainer');
       container.innerHTML = ''; // Clear previous content
 
       if (data.length === 0) {
-        container.innerHTML = '<tr><td colspan="4" class="text-center text-danger">No attendance records found for this month.</td></tr>';
+        container.innerHTML = '<tr><td colspan="3" class="text-center text-danger">No attendance records found for this month.</td></tr>';
         return;
       }
 
-      data.forEach(record => {
+      // Group data by student (rollNo)
+      const groupedData = data.reduce((acc, record) => {
+        if (!acc[record.rollNo]) {
+          acc[record.rollNo] = {
+            name: record.name,
+            attendance: []
+          };
+        }
+        acc[record.rollNo].attendance.push({
+          date: new Date(record.date).toLocaleDateString(),
+          status: record.attendanceStatus
+        });
+        return acc;
+      }, {});
+
+      // Display grouped data
+      Object.keys(groupedData).forEach(rollNo => {
+        const student = groupedData[rollNo];
         const row = document.createElement('tr');
+        row.classList.add('student-row');
         row.innerHTML = `
-          <td>${record.rollNo}</td>
-          <td>${record.name}</td>
-          <td>${new Date(record.date).toLocaleDateString()}</td>
-          <td>${record.attendanceStatus}</td>
+          <td>${rollNo}</td>
+          <td>${student.name}</td>
+          <td>
+            <ul>
+              ${student.attendance.map(a => `<li class="attendance-date">${a.date}: ${a.status}</li>`).join('')}
+            </ul>
+          </td>
         `;
         container.appendChild(row);
       });
@@ -130,7 +155,7 @@
     function searchByRollNo() {
       const searchValue = document.getElementById('searchRollNo').value.toLowerCase();
       const filteredData = originalData.filter(record => record.rollNo.toLowerCase().includes(searchValue));
-      populateTable(filteredData);
+      groupAndDisplayData(filteredData);
     }
 
     // Filter by specific date
@@ -139,7 +164,7 @@
       if (!selectedDate) return;
 
       const filteredData = originalData.filter(record => new Date(record.date).toLocaleDateString() === selectedDate.toLocaleDateString());
-      populateTable(filteredData);
+      groupAndDisplayData(filteredData);
     }
 
     // Export table data to Excel
@@ -188,221 +213,3 @@
 
 
 
-
-
-
-
-
-
-
-
-<!-- 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Attendance Results</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
-  <style>
-    body {
-      background-color: #f4f7fa;
-    }
-    .navbar {
-      background-color: #007bff;
-    }
-    .navbar-brand {
-      color: white;
-    }
-    .card {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border: none;
-    }
-    .table-responsive {
-      overflow-x: auto; /* Horizontal scroll for the table */
-      white-space: nowrap;
-    }
-    .btn-search {
-      margin-top: 10px;
-    }
-    .btn-success {
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Attendance System</a>
-    </div>
-  </nav>
-
-  <div class="container mt-5">
-    <div class="row">
-      <div class="col-md-10 mx-auto">
-        <div class="card p-4">
-          <h3 class="text-center">Attendance Results</h3>
-          
-          
-          <div class="input-group mb-3">
-            <input type="text" id="searchRollNo" class="form-control" placeholder="Search by Roll No" aria-label="Search by Roll No" aria-describedby="searchButton">
-            <button class="btn btn-outline-primary" type="button" id="searchButton" onclick="searchByRollNo()">Search</button>
-            <button class="btn btn-outline-secondary" type="button" id="resetButton" onclick="resetTable()">Reset</button>
-          </div>
-
-          <div class="input-group mb-3">
-            <label class="input-group-text" for="specificDate">Select Date: </label>
-            <input type="date" id="specificDate" class="form-control" onchange="filterByDate()">
-          </div>
-
-          
-          <div class="table-responsive">
-            <table class="table table-bordered mt-4" id="attendanceTable">
-              <thead id="tableHeader">
-                <tr>
-                  <th>Roll No</th>
-                  <th>Name</th>
-                  
-                </tr>
-              </thead>
-              <tbody id="attendanceResultsContainer">
-                
-              </tbody>
-            </table>
-          </div>
-
-          <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let originalData = [];
-    let allDates = [];
-
-    // Function to parse query parameters
-    function getQueryParams() {
-      const params = new URLSearchParams(window.location.search);
-      return {
-        branch: params.get('branch'),
-        year: params.get('year'),
-        division: params.get('division'),
-        month: params.get('month')
-      };
-    }
-
-    // Fetch attendance data based on query params
-    function fetchAttendanceData() {
-      const { branch, year, division, month } = getQueryParams();
-
-      const url = `http://localhost:5000/attendance/${branch}/${year}/${division}?month=${month}`;
-
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          originalData = data; // Store original data for filtering
-          allDates = getAllDatesInMonth(month); // Get all dates in the selected month
-          populateTable(data, allDates);
-        })
-        .catch(error => {
-          console.error('Error fetching attendance:', error);
-        });
-    }
-
-    // Get all dates in a month based on the month selected
-    function getAllDatesInMonth(month) {
-      const [year, monthNum] = month.split('-');
-      const startDate = new Date(year, monthNum - 1, 1);
-      const endDate = new Date(year, monthNum, 0);
-
-      const dates = [];
-      for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
-        dates.push(new Date(d));
-      }
-      return dates;
-    }
-
-    // Populate table with data and dynamic date columns
-    function populateTable(data, dates) {
-      const container = document.getElementById('attendanceResultsContainer');
-      container.innerHTML = ''; // Clear previous content
-
-      // Clear and dynamically set the table header
-      const tableHeader = document.getElementById('tableHeader');
-      tableHeader.innerHTML = `
-        <tr>
-          <th>Roll No</th>
-          <th>Name</th>
-          ${dates.map(date => `<th>${date.toLocaleDateString()}</th>`).join('')}
-        </tr>
-      `;
-
-      if (data.length === 0) {
-        container.innerHTML = '<tr><td colspan="100" class="text-center text-danger">No attendance records found for this month.</td></tr>';
-        return;
-      }
-
-      data.forEach(record => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${record.rollNo}</td>
-          <td>${record.name}</td>
-          ${dates.map(date => {
-            const attendance = record.attendanceData.find(a => new Date(a.date).toLocaleDateString() === date.toLocaleDateString());
-            return `<td>${attendance ? attendance.attendanceStatus : '-'}</td>`;
-          }).join('')}
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    // Search by Roll No
-    function searchByRollNo() {
-      const searchValue = document.getElementById('searchRollNo').value.toLowerCase();
-      const filteredData = originalData.filter(record => record.rollNo.toLowerCase().includes(searchValue));
-
-      if (filteredData.length === 0) {
-        alert('No records found for the entered Roll No.');
-        return;
-      }
-      populateTable(filteredData, allDates);
-    }
-
-    // Filter by specific date
-    function filterByDate() {
-      const selectedDate = new Date(document.getElementById('specificDate').value);
-      if (!selectedDate) return;
-
-      const filteredData = originalData.map(record => ({
-        ...record,
-        attendanceData: record.attendanceData.filter(dateRecord => new Date(dateRecord.date).toLocaleDateString() === selectedDate.toLocaleDateString())
-      })).filter(record => record.attendanceData.length > 0);
-
-      if (filteredData.length === 0) {
-        alert('No records found for the selected date.');
-        return;
-      }
-      populateTable(filteredData, allDates);
-    }
-
-    // Reset table to original state
-    function resetTable() {
-      document.getElementById('searchRollNo').value = '';
-      document.getElementById('specificDate').value = '';
-      populateTable(originalData, allDates);
-    }
-
-    // Export table data to Excel
-    function exportToExcel() {
-      const table = document.querySelector('table');
-      const wb = XLSX.utils.table_to_book(table, { sheet: "Attendance Data" });
-      XLSX.writeFile(wb, 'AttendanceData.xlsx');
-    }
-
-    // Fetch data when the page loads
-    document.addEventListener('DOMContentLoaded', fetchAttendanceData);
-  </script>
-</body>
-</html> -->
