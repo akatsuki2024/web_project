@@ -20,6 +20,10 @@
     .bi-eye {
       font-size: 1.2em;
     }
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
   </style>
 </head>
 <body>
@@ -72,6 +76,7 @@
               <div class="mb-3">
                 <label for="collegeID" class="form-label">College ID</label>
                 <input type="text" class="form-control" id="collegeID" placeholder="Enter your college ID" required>
+                <span class="error" id="collegeIDError"></span>
               </div>
 
               <!-- Roll Number Field -->
@@ -117,6 +122,7 @@
               <div class="mb-3">
                 <label for="contactNumber" class="form-label">Contact Number</label>
                 <input type="tel" class="form-control" id="contactNumber" placeholder="Enter your contact number" required>
+                <span class="error" id="contactNumberError"></span>
               </div>
 
               <!-- Address Field -->
@@ -165,12 +171,39 @@
       }
     }
 
+    // Validate the form data
+    function validateForm() {
+      let isValid = true;
+
+      // Phone number validation
+      const contactNumber = document.getElementById('contactNumber').value;
+      const contactNumberError = document.getElementById('contactNumberError');
+      if (!/^\d{10}$/.test(contactNumber)) {
+        contactNumberError.textContent = 'Contact number must be exactly 10 digits.';
+        isValid = false;
+      } else {
+        contactNumberError.textContent = '';
+      }
+
+      // College ID validation
+      const collegeID = document.getElementById('collegeID').value;
+      const collegeIDError = document.getElementById('collegeIDError');
+      if (!collegeID.endsWith('@kccemsr.edu.in')) {
+        collegeIDError.textContent = 'College ID must end with @kccemsr.edu.in';
+        isValid = false;
+      } else {
+        collegeIDError.textContent = '';
+      }
+
+      return isValid;
+    }
+
     // Enable/Disable Submit Button Based on Form Validation and Password Match
     form.addEventListener('input', function() {
       const password = document.getElementById('studentRegPassword').value;
       const confirmPassword = document.getElementById('studentRegConfirmPassword').value;
 
-      if (password === confirmPassword && form.checkValidity()) {
+      if (password === confirmPassword && form.checkValidity() && validateForm()) {
         submitBtn.removeAttribute('disabled');
       } else {
         submitBtn.setAttribute('disabled', 'true');
@@ -180,6 +213,10 @@
     // Handle Form Submission
     form.addEventListener('submit', function(event) {
       event.preventDefault();
+
+      if (!validateForm()) {
+        return; // Prevent form submission if validation fails
+      }
 
       const formData = {
         username: document.getElementById('studentRegUsername').value,
@@ -194,6 +231,7 @@
         address: document.getElementById('address').value,
       };
 
+      // Send data to the server
       fetch('http://localhost:5000/register/student', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -202,11 +240,16 @@
       .then(response => response.json())
       .then(data => {
         if (data.message) {
-          alert('Registration successful!');
-          window.location.href = 'front-page.html';
+          alert(data.message);
+          form.reset();
+        } else if (data.error) {
+          alert(data.error);
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        console.error('Error submitting form:', error);
+        alert('Error submitting form');
+      });
     });
   </script>
 </body>

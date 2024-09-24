@@ -98,7 +98,8 @@ app.post('/register/teacher', async (req, res) => {
     const teacherData = req.body;
     console.log('Received Teacher Data:', teacherData);
 
-    const Teacher = attendanceDB.model('Teacher', new mongoose.Schema({
+    //(om change) Use 'studentDB' to store teacher data in the 'teachers' collection of the 'database' database
+    const Teacher = studentDB.model('Teacher', new mongoose.Schema({
       username: String,
       password: String,
       name: String,
