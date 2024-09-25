@@ -21,5 +21,17 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('teacherRegisterBtn').addEventListener('click', function() {
         window.location.href = 'teacher-register.html';
     });
+
+    document.getElementById('branch').addEventListener('change', function() {
+        const divisionContainer = document.getElementById('divisionContainer');
+        const selectedBranch = this.value;
+      
+        if (selectedBranch === 'IT') {
+          divisionContainer.style.display = 'none'; // Hide division for IT
+        } else {
+          divisionContainer.style.display = 'block'; // Show division for CS and EXTC
+        }
+      });
+      
   });
   

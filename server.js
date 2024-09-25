@@ -1,4 +1,188 @@
 
+// const express = require('express');
+// const mongoose = require('mongoose');
+// const cors = require('cors');
+
+// // Initialize the app
+// const app = express();
+// const port = 5000;
+
+// // Middleware to parse JSON and enable CORS
+// app.use(express.json());
+// app.use(cors());
+
+// // Connect to 'student-registration' MongoDB
+// const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// });
+
+// studentDB.on('error', err => console.error('Error connecting to database:', err));
+// studentDB.once('open', () => {
+//   console.log('Connected to MongoDB (database)');
+// });
+
+// // Create a schema for student registration
+// const studentSchema = new mongoose.Schema({
+//   username: String,
+//   password: String,
+//   name: String,
+//   collegeID: String,
+//   branch: String,
+//   year: String,
+//   contactNumber: String,
+//   address: String
+// });
+
+// // Create a model for student registration
+// const Student = studentDB.model('Student', studentSchema);
+
+// // Connect to 'attendance' MongoDB
+// const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// });
+
+// attendanceDB.on('error', err => console.error('Error connecting to attendance database:', err));
+// attendanceDB.once('open', () => {
+//   console.log('Connected to MongoDB (attendance)');
+// });
+
+// // Create a schema for attendance
+// const attendanceSchema = new mongoose.Schema({
+//   collegeID: String,
+//   attendanceStatus: String,
+//   date: { type: Date, required: true }
+// });
+
+// // API route to handle student registration form submission
+// app.post('/register/student', async (req, res) => {
+//   try {
+//     const studentData = req.body;
+//     console.log('Received Student Data:', studentData); // Debugging line
+
+//     // Create a new student document in the database
+//     const newStudent = new Student(studentData);
+//     await newStudent.save();
+
+//     res.status(200).json({ message: 'Student registration successful!' });
+//   } catch (error) {
+//     console.error('Error registering student:', error);
+//     res.status(500).json({ error: 'Error registering student' });
+//   }
+// });
+
+// // Create a schema for teacher registration
+// const teacherSchema = new mongoose.Schema({
+//   username: String,
+//   password: String,
+//   name: String,
+//   employeeID: String,
+//   department: String,
+//   contactNumber: String,
+//   address: String
+// });
+
+// // Create a model for teacher registration
+// const Teacher = attendanceDB.model('Teacher', teacherSchema, 'teachers');
+
+// // API route to handle teacher registration form submission
+// app.post('/register/teacher', async (req, res) => {
+//   try {
+//     const teacherData = req.body;
+//     console.log('Received Teacher Data:', teacherData); // Debugging line
+
+//     // Create a new teacher document in the database
+//     const newTeacher = new Teacher(teacherData);
+//     await newTeacher.save();
+
+//     res.status(200).json({ message: 'Teacher registration successful!' });
+//   } catch (error) {
+//     console.error('Error registering teacher:', error);
+//     res.status(500).json({ error: 'Error registering teacher' });
+//   }
+// });
+
+// // Fetch students by branch and year
+// app.get('/students/:branch/:year', async (req, res) => {
+//   const { branch, year } = req.params;
+//   try {
+//     const students = await Student.find({ branch, year });
+//     res.json(students);
+//   } catch (error) {
+//     console.error('Error fetching students:', error);
+//     res.status(500).json({ error: 'Error fetching students' });
+//   }
+// });
+
+// // Submit attendance
+// app.post('/attendance/submit', async (req, res) => {
+//   const { branch, year, division, date, attendanceData } = req.body; // Now use the date from the request
+
+//   try {
+//     // Connect to the attendance database
+//     const attendanceDb = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true
+//     });
+
+//     attendanceDb.on('error', err => console.error('Error connecting to attendance database:', err));
+//     attendanceDb.once('open', async () => {
+//       // Create a collection name based on branch, year, and division
+//       const collectionName = `${branch}-${year}-${division}`;
+//       const Attendance = attendanceDb.model('Attendance', new mongoose.Schema({
+//         collegeID: String,
+//         attendanceStatus: String,
+//         date: { type: Date, default: Date.now }
+//       }), collectionName);
+
+//       // Create or update attendance for the provided date
+//       for (let record of attendanceData) {
+//         await Attendance.updateOne(
+//           { collegeID: record.collegeID, date: new Date(date) }, // Use the provided date here
+//           { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
+//           { upsert: true }
+//         );
+//       }
+
+//       res.status(200).json({ message: 'Attendance submitted successfully!' });
+//     });
+//   } catch (error) {
+//     console.error('Error submitting attendance:', error);
+//     res.status(500).json({ error: 'Error submitting attendance' });
+//   }
+// });
+
+
+// // Start the server
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -11,16 +195,18 @@ const port = 5000;
 app.use(express.json());
 app.use(cors());
 
-// Connect to 'database' MongoDB for student registration
-const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database');
+// Connect to 'student-registration' MongoDB for both student and teacher registration
+const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/student-registration', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
-// Connect to 'attendance' MongoDB
-const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance');
+studentDB.on('error', err => console.error('Error connecting to student database:', err));
+studentDB.once('open', () => {
+  console.log('Connected to MongoDB (student-registration database)');
+});
 
-// Connect to 'marks' MongoDB for marks submission and fetching
-const marksDb = mongoose.createConnection('mongodb://127.0.0.1:27017/marks');
-
-// Schema for student registration
+// Create a schema for student registration
 const studentSchema = new mongoose.Schema({
   username: String,
   password: String,
@@ -34,55 +220,58 @@ const studentSchema = new mongoose.Schema({
   division: String
 });
 
-// Schema for marks submission
-const marksSchema = new mongoose.Schema({
-  rollNo: String,
-  studentName: String,
-  collegeID: String,
-  ia1: { type: Number, default: null },
-  ia2: { type: Number, default: null }
+// Create a model for student registration
+const Student = studentDB.model('Student', studentSchema, 'students');
+
+// Create a schema for teacher registration
+const teacherSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+  name: String,
+  employeeID: String,
+  department: String,
+  contactNumber: String,
+  address: String
 });
 
-// -------- Student Registration API --------
+// Create a model for teacher registration in 'student-registration' database
+const Teacher = studentDB.model('Teacher', teacherSchema, 'teachers');
+
+// Connect to 'attendance' MongoDB for attendance management
+const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+attendanceDB.on('error', err => console.error('Error connecting to attendance database:', err));
+attendanceDB.once('open', () => {
+  console.log('Connected to MongoDB (attendance)');
+});
+
+// Validation functions
+const validatePhoneNumber = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
+const validateEmployeeID = (employeeID) => employeeID.endsWith('@kccemsr.edu.in');
+
+// API route to handle student registration form submission
 app.post('/register/student', async (req, res) => {
   try {
     const studentData = req.body;
     console.log('Received Student Data:', studentData);
 
-    // Determine the collection name based on branch, year, and division
-    let collectionName = "students";  // Default collection
-    if (studentData.branch === "EXTC") {
-      if (studentData.year === "Second") {
-        collectionName = `EXTC-SE-${studentData.division}`;
-      } else if (studentData.year === "Third") {
-        collectionName = `EXTC-TE-${studentData.division}`;
-      } else if (studentData.year === "Fourth") {
-        collectionName = `EXTC-BE-${studentData.division}`;
-      }
-    } else if (studentData.branch === "Comps") {
-      if (studentData.year === "Second") {
-        collectionName = `CS-SE-${studentData.division}`;
-      } else if (studentData.year === "Third") {
-        collectionName = `CS-TE-${studentData.division}`;
-      } else if (studentData.year === "Fourth") {
-        collectionName = `CS-BE-${studentData.division}`;
-      }
-    } else if (studentData.branch === "IT") {
-      if (studentData.year === "Second") {
-        collectionName = `IT-SE`;
-        
-      } else if (studentData.year === "Third") {
-        collectionName = `IT-TE`;
-      } else if (studentData.year === "Fourth") {
-        collectionName = `IT-BE`;
-      }
+    // Validate phone number
+    if (!validatePhoneNumber(studentData.contactNumber)) {
+      console.log('Invalid phone number:', studentData.contactNumber);
+      return res.status(400).json({ error: 'Contact number must be exactly 10 digits.' });
     }
 
-    // Dynamically create a model for the correct collection
-    const DynamicStudent = studentDB.model('Student', studentSchema, collectionName);
+    // Validate college ID
+    if (!validateEmployeeID(studentData.collegeID)) {
+      console.log('Invalid college ID:', studentData.collegeID);
+      return res.status(400).json({ error: 'College ID must end with @kccemsr.edu.in' });
+    }
 
-    // Create a new student document in the correct collection
-    const newStudent = new DynamicStudent(studentData);
+    // Create a new student document in the database
+    const newStudent = new Student(studentData);
     await newStudent.save();
 
     res.status(200).json({ message: 'Student registration successful!' });
@@ -92,23 +281,25 @@ app.post('/register/student', async (req, res) => {
   }
 });
 
-// -------- Teacher Registration API --------
+// API route to handle teacher registration form submission
 app.post('/register/teacher', async (req, res) => {
   try {
     const teacherData = req.body;
     console.log('Received Teacher Data:', teacherData);
 
-    //(om change) Use 'studentDB' to store teacher data in the 'teachers' collection of the 'database' database
-    const Teacher = studentDB.model('Teacher', new mongoose.Schema({
-      username: String,
-      password: String,
-      name: String,
-      employeeID: String,
-      department: String,
-      contactNumber: String,
-      address: String
-    }), 'teachers');
+    // Validate employee ID
+    if (!validateEmployeeID(teacherData.employeeID)) {
+      console.log('Invalid employee ID:', teacherData.employeeID);
+      return res.status(400).json({ error: 'Employee ID must end with @kccemsr.edu.in' });
+    }
 
+    // Validate phone number
+    if (!validatePhoneNumber(teacherData.contactNumber)) {
+      console.log('Invalid contact number:', teacherData.contactNumber);
+      return res.status(400).json({ error: 'Contact number must be exactly 10 digits.' });
+    }
+
+    // Create a new teacher document in the 'teachers' collection of 'student-registration' database
     const newTeacher = new Teacher(teacherData);
     await newTeacher.save();
 
@@ -119,139 +310,36 @@ app.post('/register/teacher', async (req, res) => {
   }
 });
 
-
-// -------- Submit Attendance API --------
-app.post('/attendance/submit', async (req, res) => {
-    const { branch, year, division, date, attendanceData } = req.body;
-  
-    try {
-      const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-      const Attendance = attendanceDB.model('Attendance', new mongoose.Schema({
-        collegeID: String,
-        rollNo: String,
-        name: String,
-        branch: String,
-        year: String,
-        division: String,
-        attendanceStatus: String,
-        date: { type: Date, default: Date.now }
-      }), collectionName);
-  
-      for (let record of attendanceData) {
-        await Attendance.updateOne(
-          { collegeID: record.collegeID, date: new Date(date) },
-          { $set: { 
-              attendanceStatus: record.attendanceStatus,
-              rollNo: record.rollNo,
-              name: record.name,
-              branch: branch,
-              year: year,
-              division: division
-            }, $setOnInsert: { date: new Date(date) }
-          },
-          { upsert: true }
-        );
-      }
-  
-      res.status(200).json({ message: 'Attendance submitted successfully!' });
-    } catch (error) {
-      console.error('Error submitting attendance:', error);
-      res.status(500).json({ error: 'Error submitting attendance' });
-    }
-  });
-  
-
-// -------- Submit Marks API --------
-app.post('/marks/submit', async (req, res) => {
-    const { branch, year, division, marksData } = req.body;
-  
-    let collectionName = `${branch}-${year}`;
-    if (branch !== 'IT') {
-      collectionName += `-${division}`;
-    }
-  
-    try {
-      const Marks = marksDb.model('Marks', marksSchema, collectionName);
-  
-      for (let record of marksData) {
-        // Prepare the update object, which only updates ia1 and ia2 if they are present in the submission
-        const updateData = {};
-        if (record.ia1 !== undefined && record.ia1 !== null) {
-          updateData.ia1 = record.ia1;
-        }
-        if (record.ia2 !== undefined && record.ia2 !== null) {
-          updateData.ia2 = record.ia2;
-        }
-  
-        // Only update the fields provided in the current submission
-        await Marks.updateOne(
-          { rollNo: record.rollNo },
-          { $set: updateData, $setOnInsert: { studentName: record.studentName, collegeID: record.collegeID } },
-          { upsert: true } // Upsert to create the record if it doesn't exist
-        );
-      }
-  
-      res.status(200).json({ message: 'Marks submitted successfully!' });
-    } catch (error) {
-      console.error('Error submitting marks:', error);
-      res.status(500).json({ error: 'Error submitting marks' });
-    }
-  });
-  
-
-// -------- Fetch Marks for a Class API (Updated) --------
-app.get('/marks/:branch/:year/:division?', async (req, res) => {
-  const { branch, year, division } = req.params;
-
-  // Construct the collection name based on branch, year, and division
-  let collectionName;
-  
-  // For IT branch, don't include division in the collection name
-  if (branch === 'IT') {
-    collectionName = `IT-${year}`;
-  } else {
-    // For other branches, include division in the collection name
-    collectionName = `${branch}-${year}-${division}`;
-  }
+// API route to handle student login
+app.post('/login/student', async (req, res) => {
+  const { username, password, branch, year, division } = req.body;
 
   try {
-    const Marks = marksDb.model('Marks', marksSchema, collectionName);
-    const marks = await Marks.find({});
+    // Find the student based on username and password
+    const student = await Student.findOne({
+      username,
+      password,
+      branch,
+      year,
+      division: division !== 'None' ? division : { $exists: true } // Handle 'None' for IT branch
+    });
 
-    if (marks.length === 0) {
-      return res.status(404).json({ message: 'No marks found for the selected criteria.' });
+    if (student) {
+      res.status(200).json({ message: 'Login successful!', student });
+    } else {
+      res.status(401).json({ error: 'Invalid credentials or details' });
     }
-
-    res.json(marks);
   } catch (error) {
-    console.error('Error fetching marks:', error.message);
-    res.status(500).json({ error: 'Error fetching marks. Please check your query and database.' });
+    console.error('Error logging in student:', error);
+    res.status(500).json({ error: 'Error logging in student' });
   }
 });
 
-
-// -------- Fetch Students by Branch, Year, and Division --------
-app.get('/students/:branch/:year/:division?', async (req, res) => {
-  const { branch, year, division } = req.params;
-
-  let collectionName;
-  if (branch === "EXTC") {
-    if (year === "Second") collectionName = `EXTC-SE-${division}`;
-    else if (year === "Third") collectionName = `EXTC-TE-${division}`;
-    else if (year === "Fourth") collectionName = `EXTC-BE-${division}`;
-  } else if (branch === "Comps") {
-    if (year === "Second") collectionName = `CS-SE-${division}`;
-    else if (year === "Third") collectionName = `CS-TE-${division}`;
-    else if (year === "Fourth") collectionName = `CS-BE-${division}`;
-  } else if (branch === "IT") {
-    if (year === "Second") collectionName = `IT-SE`;
-    else if (year === "Third") collectionName = `IT-TE`;
-    else if (year === "Fourth") collectionName = `IT-BE`;
-  }
-
+// Fetch students by branch and year
+app.get('/students/:branch/:year', async (req, res) => {
+  const { branch, year } = req.params;
   try {
-    const DynamicStudent = studentDB.model('Student', studentSchema, collectionName);
-    const students = await DynamicStudent.find({});
+    const students = await Student.find({ branch, year });
     res.json(students);
   } catch (error) {
     console.error('Error fetching students:', error);
@@ -259,298 +347,42 @@ app.get('/students/:branch/:year/:division?', async (req, res) => {
   }
 });
 
+// Submit attendance
+app.post('/attendance/submit', async (req, res) => {
+  const { branch, year, division, date, attendanceData } = req.body;
 
+  try {
+    const attendanceDb = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    attendanceDb.on('error', err => console.error('Error connecting to attendance database:', err));
+    attendanceDb.once('open', async () => {
+      const collectionName = `${branch}-${year}-${division}`;
+      const Attendance = attendanceDb.model('Attendance', new mongoose.Schema({
+        collegeID: String,
+        attendanceStatus: String,
+        date: { type: Date, default: Date.now }
+      }), collectionName);
+
+      for (let record of attendanceData) {
+        await Attendance.updateOne(
+          { collegeID: record.collegeID, date: new Date(date) },
+          { $set: { attendanceStatus: record.attendanceStatus }, $setOnInsert: { date: new Date(date) } },
+          { upsert: true }
+        );
+      }
+
+      res.status(200).json({ message: 'Attendance submitted successfully!' });
+    });
+  } catch (error) {
+    console.error('Error submitting attendance:', error);
+    res.status(500).json({ error: 'Error submitting attendance' });
+  }
+});
 
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const express = require('express');
-// const mongoose = require('mongoose');
-// const cors = require('cors');
-
-// // Initialize the app
-// const app = express();
-// const port = 5000;
-
-// // Middleware to parse JSON and enable CORS
-// app.use(express.json());
-// app.use(cors());
-
-// // Connect to 'database' MongoDB for student registration
-// const studentDB = mongoose.createConnection('mongodb://127.0.0.1:27017/database');
-
-// // Connect to 'attendance' MongoDB
-// const attendanceDB = mongoose.createConnection('mongodb://127.0.0.1:27017/attendance');
-
-// // Connect to 'marks' MongoDB for marks submission and fetching
-// const marksDb = mongoose.createConnection('mongodb://127.0.0.1:27017/marks');
-
-// // Schema for student registration
-// const studentSchema = new mongoose.Schema({
-//   username: String,
-//   password: String,
-//   name: String,
-//   collegeID: String,
-//   branch: String,
-//   year: String,
-//   contactNumber: String,
-//   address: String,
-//   rollNo: String,
-//   division: String
-// });
-
-// // Schema for marks submission
-// const marksSchema = new mongoose.Schema({
-//   rollNo: String,
-//   studentName: String,
-//   collegeID: String,
-//   ia1: { type: Number, default: null },
-//   ia2: { type: Number, default: null }
-// });
-
-
-// // -------- Student Registration API --------
-// app.post('/register/student', async (req, res) => {
-//   try {
-//     const studentData = req.body;
-//     console.log('Received Student Data:', studentData);
-
-//     // Determine the collection name based on branch, year, and division
-//     let collectionName = "students";  // Default collection
-//     if (studentData.branch === "EXTC") {
-//       collectionName = `EXTC-${studentData.year}-${studentData.division}`;
-//     } else if (studentData.branch === "Comps") {
-//       collectionName = `Comps-${studentData.year}-${studentData.division}`;
-//     } else if (studentData.branch === "IT") {
-//       collectionName = `IT-${studentData.year}-`; // No division for IT
-//     }
-
-//     // Dynamically create a model for the correct collection
-//     const DynamicStudent = studentDB.model('Student', studentSchema, collectionName);
-
-//     // Create a new student document in the correct collection
-//     const newStudent = new DynamicStudent(studentData);
-//     await newStudent.save();
-
-//     res.status(200).json({ message: 'Student registration successful!' });
-//   } catch (error) {
-//     console.error('Error registering student:', error);
-//     res.status(500).json({ error: 'Error registering student' });
-//   }
-// });
-
-// // -------- Teacher Registration API --------
-// app.post('/register/teacher', async (req, res) => {
-//   try {
-//     const teacherData = req.body;
-//     console.log('Received Teacher Data:', teacherData);
-
-//     const Teacher = attendanceDB.model('Teacher', new mongoose.Schema({
-//       username: String,
-//       password: String,
-//       name: String,
-//       employeeID: String,
-//       department: String,
-//       contactNumber: String,
-//       address: String
-//     }), 'teachers');
-
-//     const newTeacher = new Teacher(teacherData);
-//     await newTeacher.save();
-
-//     res.status(200).json({ message: 'Teacher registration successful!' });
-//   } catch (error) {
-//     console.error('Error registering teacher:', error);
-//     res.status(500).json({ error: 'Error registering teacher' });
-//   }
-// });
-
-// // -------- Teacher Registration API --------
-// app.post('/register/teacher', async (req, res) => {
-//   try {
-//     const teacherData = req.body;
-//     console.log('Received Teacher Data:', teacherData);
-
-//     const Teacher = attendanceDB.model('Teacher', new mongoose.Schema({
-//       username: String,
-//       password: String,
-//       name: String,
-//       employeeID: String,
-//       department: String,
-//       contactNumber: String,
-//       address: String
-//     }), 'teachers');
-
-//     const newTeacher = new Teacher(teacherData);
-//     await newTeacher.save();
-
-//     res.status(200).json({ message: 'Teacher registration successful!' });
-//   } catch (error) {
-//     console.error('Error registering teacher:', error);
-//     res.status(500).json({ error: 'Error registering teacher' });
-//   }
-// });
-
-// // -------- Submit Attendance API --------
-// app.post('/attendance/submit', async (req, res) => {
-//     const { branch, year, division, date, attendanceData } = req.body;
-
-//     try {
-//       const collectionName = `${branch}-${year}-${division || ''}`; // Division will be '' for IT
-//       const Attendance = attendanceDB.model('Attendance', new mongoose.Schema({
-//         collegeID: String,
-//         rollNo: String,   // Store the roll number
-//         name: String,     // Store the student name
-//         branch: String,   // Store the branch
-//         year: String,     // Store the year
-//         division: String, // Store the division
-//         attendanceStatus: String,
-//         date: { type: Date, default: Date.now }
-//       }), collectionName);
-
-//       for (let record of attendanceData) {
-//         await Attendance.updateOne(
-//           { collegeID: record.collegeID, date: new Date(date) },
-//           { 
-//             $set: { 
-//               attendanceStatus: record.attendanceStatus,
-//               rollNo: record.rollNo,       // Store the roll number
-//               name: record.name,           // Store the student name
-//               branch: branch,              // Store the branch
-//               year: year,                  // Store the year
-//               division: division || null   // Store the division (null for IT)
-//             }, 
-//             $setOnInsert: { date: new Date(date) } 
-//           },
-//           { upsert: true } // Insert a new document if it doesn't exist
-//         );
-//       }
-
-//       res.status(200).json({ message: 'Attendance submitted successfully!' });
-//     } catch (error) {
-//       console.error('Error submitting attendance:', error);
-//       res.status(500).json({ error: 'Error submitting attendance' });
-//     }
-// });
-  
-
-// // -------- Submit Marks API --------
-// app.post('/marks/submit', async (req, res) => {
-//     const { branch, year, division, marksData } = req.body;
-  
-//     let collectionName = `${branch}-${year}`;
-//     if (branch !== 'IT') {
-//       collectionName += `-${division}`;
-//     }
-  
-//     try {
-//       const Marks = marksDb.model('Marks', marksSchema, collectionName);
-  
-//       for (let record of marksData) {
-//         // Prepare the update object, which only updates ia1 and ia2 if they are present in the submission
-//         const updateData = {};
-//         if (record.ia1 !== undefined && record.ia1 !== null) {
-//           updateData.ia1 = record.ia1;
-//         }
-//         if (record.ia2 !== undefined && record.ia2 !== null) {
-//           updateData.ia2 = record.ia2;
-//         }
-  
-//         // Only update the fields provided in the current submission
-//         await Marks.updateOne(
-//           { rollNo: record.rollNo },
-//           { $set: updateData, $setOnInsert: { studentName: record.studentName, collegeID: record.collegeID } },
-//           { upsert: true } // Upsert to create the record if it doesn't exist
-//         );
-//       }
-  
-//       res.status(200).json({ message: 'Marks submitted successfully!' });
-//     } catch (error) {
-//       console.error('Error submitting marks:', error);
-//       res.status(500).json({ error: 'Error submitting marks' });
-//     }
-//   });
-  
-
-// // -------- Fetch Marks for a Class API (Updated) --------
-// app.get('/marks/:branch/:year/:division?', async (req, res) => {
-//   const { branch, year, division } = req.params;
-
-//   // Construct the collection name based on branch, year, and division
-//   let collectionName;
-  
-//   // For IT branch, don't include division in the collection name
-//   if (branch === 'IT') {
-//     collectionName = `IT-${year}`;
-//   } else {
-//     // For other branches, include division in the collection name
-//     collectionName = `${branch}-${year}-${division}`;
-//   }
-
-//   try {
-//     const Marks = marksDb.model('Marks', marksSchema, collectionName);
-//     const marks = await Marks.find({});
-
-//     if (marks.length === 0) {
-//       return res.status(404).json({ message: 'No marks found for the selected criteria.' });
-//     }
-
-//     res.json(marks);
-//   } catch (error) {
-//     console.error('Error fetching marks:', error.message);
-//     res.status(500).json({ error: 'Error fetching marks. Please check your query and database.' });
-//   }
-// });
-
-
-// // -------- Fetch Students by Branch, Year, and Division --------
-// app.get('/students/:branch/:year/:division?', async (req, res) => {
-//   const { branch, year, division } = req.params;
-
-//   let collectionName;
-//   if (branch === "EXTC" || branch === "Comps") {
-//     collectionName = `${branch}-${year}-${division}`;
-//   } else if (branch === "IT") {
-//     collectionName = `IT-${year}-`;
-//   }
-
-//   try {
-//     const DynamicStudent = studentDB.model('Student', studentSchema, collectionName);
-//     const students = await DynamicStudent.find({});
-//     res.json(students);
-//   } catch (error) {
-//     console.error('Error fetching students:', error);
-//     res.status(500).json({ error: 'Error fetching students' });
-//   }
-// });
-
-
-
-// // Start the server
-// app.listen(port, () => {
-//   console.log(`Server is running on http://localhost:${port}`);
-// });
-
-
-
-
-
-
