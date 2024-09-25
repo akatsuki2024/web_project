@@ -1,163 +1,194 @@
-/* General body and header styles */
+/* General Styles */
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7f7f7;
   margin: 0;
   padding: 0;
 }
 
-/* Navbar brand styling */
-.navbar-brand {
-  font-weight: bold;
-  font-size: 1.8rem;
-  color: #007bff;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  position: relative;
-  transition: color 0.3s ease-in-out;
+.container {
+  max-width: 700px;
+  margin: 50px auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 40px;
 }
 
-/* Brand hover effect */
-.navbar-brand:hover {
-  color: #0056b3;
-}
-
-/* Center the header content */
-header {
-  background-color: #007bff;
-  color: white;
-  padding: 120px 0;
+/* Header Styles */
+h2 {
   text-align: center;
-  position: relative;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Adding some animation to the title */
-header h1 {
-  font-size: 3.5rem;
   margin-bottom: 20px;
-  animation: fadeInDown 1s ease-in-out;
-  letter-spacing: 2px;
+  color: #333;
+  font-size: 1.8rem;
+  text-transform: uppercase;
 }
 
-header p {
-  font-size: 1.4rem;
-  animation: fadeInUp 1s ease-in-out;
+/* Form Styles */
+form {
+  display: flex;
+  flex-direction: column;
 }
 
-@media (max-width: 768px) {
-  header h1 {
-    font-size: 2.5rem;
-  }
-
-  header p {
-    font-size: 1.1rem;
-  }
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
 }
 
-/* Button Styles (Login and Register) */
-.nav-item .btn {
-  font-size: 1rem;
+label {
+  display: block;
   font-weight: bold;
-  padding: 12px 25px;
-  border-radius: 30px; /* Rounded corners */
-  transition: all 0.3s ease-in-out;
-  background: linear-gradient(135deg, #007bff, #00aaff); /* Gradient background */
-  color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  color: #333;
+  margin-bottom: 8px;
 }
 
-.nav-item .btn:hover {
-  background: linear-gradient(135deg, #0056b3, #0088cc); /* Darker gradient on hover */
-  transform: scale(1.05); /* Slight zoom-in on hover */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+input, select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
 }
 
-/* Modal Styles */
-.modal-content {
-  border-radius: 20px; /* Rounded modal */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow for depth */
-  border: none;
+input:focus, select:focus {
+  border-color: #0056b3;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 86, 179, 0.2);
 }
 
-.modal-header {
-  background-color: #007bff; /* Modal header background */
-  color: white;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+small.error-message {
+  color: #ff4d4d;
+  font-size: 0.875rem;
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  display: none;
 }
 
-.modal-title {
-  font-size: 1.5rem;
-  font-weight: bold;
+small.error-message.active {
+  display: block;
 }
 
-.modal-body {
-  padding: 30px; /* Extra padding for space */
-  background-color: #f1f1f1;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+/* Hover and focus effects */
+input:hover, select:hover {
+  border-color: #007bff;
 }
 
-.modal-body button {
+input:focus {
+  border-color: #007bff;
+}
+
+/* Button Styles */
+button {
   width: 100%;
   padding: 15px;
-  margin-bottom: 15px;
-  font-size: 1.1rem;
+  font-size: 16px;
   font-weight: bold;
-  border-radius: 50px; /* Rounded buttons inside modal */
-  transition: all 0.3s ease-in-out;
-  background: linear-gradient(135deg, #007bff, #00aaff); /* Gradient for modal buttons */
+  text-transform: uppercase;
   color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Button shadow */
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
 }
 
-.modal-body button:hover {
-  background: linear-gradient(135deg, #0056b3, #0088cc); /* Darker hover gradient */
-  transform: scale(1.05); /* Slight zoom on hover */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Shadow increase on hover */
+button:hover {
+  background-color: #218838;
 }
 
-/* Modal close button */
-.modal-header .btn-close {
-  background-color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
-/* Inputs in forms */
-.modal-body .form-control {
+button:disabled:hover {
+  background-color: #cccccc;
+}
+
+/* Section Header Styles */
+h3, h4 {
+  font-size: 1.2rem;
+  margin-top: 30px;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* Compulsory/Optional Subjects Styling */
+#compulsory-subjects-container p, #optional-subjects-container div {
   padding: 10px;
-  border-radius: 8px;
-  border: 2px solid #007bff;
-  transition: border 0.3s ease-in-out;
+  background-color: #f8f9fa;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  border-left: 5px solid #007bff;
 }
 
-.modal-body .form-control:focus {
-  border-color: #00aaff;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+#optional-subjects-container select {
+  margin-bottom: 15px;
 }
 
-/* Animations */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Styling the container for dropdowns */
+select {
+  background-color: #f8f9fa;
+  color: #333;
+  cursor: pointer;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+select option {
+  background-color: white;
+  color: #333;
+}
+
+select:disabled {
+  background-color: #f1f1f1;
+  cursor: not-allowed;
+}
+
+/* Spacing for Password Fields */
+.form-group.password {
+  display: flex;
+  justify-content: space-between;
+}
+
+input[type="password"] {
+  width: 95%;
+}
+
+/* Password Eye Icon */
+.toggle-password {
+  cursor: pointer;
+  position: absolute;
+  top: 38px;
+  right: 10px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .container {
+      padding: 20px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  h2 {
+      font-size: 1.5rem;
+  }
+
+  h3, h4 {
+      font-size: 1rem;
+  }
+
+  input, select, button {
+      font-size: 14px;
+      padding: 10px;
+  }
+
+  .toggle-password {
+      top: 34px;
+      right: 8px;
   }
 }
