@@ -1,9 +1,5 @@
 
 
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +17,7 @@
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
-      cursor: pointer;
+      cursor: pointer;  
     }
     .bi-eye {
       font-size: 1.2em;
@@ -181,16 +177,16 @@
 
         if (response.ok) {
           alert('Teacher registration successful!');
-          window.location.href = 'front-page.html'; // Redirect to the front page or any other page
         } else {
           alert(`Error: ${result.error}`);
         }
       } catch (error) {
-        console.error('Error registering teacher:', error);
-        alert('An error occurred while registering. Please try again.');
+        console.error('Error:', error);
+        alert('There was an error processing the request.');
       }
     });
   </script>
+
 </body>
 </html>
 
