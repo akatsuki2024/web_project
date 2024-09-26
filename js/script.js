@@ -267,10 +267,8 @@ $(document).ready(function () {
                 {"id": "ITC302", "name": "Data Structure and Analysis"},
                 {"id": "ITC303", "name": "Database Management System"},
                 {"id": "ITC304", "name": "Principle of Communication"},
-                {"id": "ITC305", "name": "Paradigms and Computer Programming Fundamentals"},
-                {"id": "ITL301", "name": "Data Structure Lab"},
-                {"id": "ITL302", "name": "SQL Lab"},
-                {"id": "ITL303", "name": "Computer Programming Paradigms Lab"}
+                {"id": "ITC305", "name": "Paradigms and Computer Programming Fundamentals"}
+                
             ],
             optional: []
         },
