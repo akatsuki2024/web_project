@@ -374,64 +374,23 @@ $(document).ready(function () {
                 });
             }
 
-                                        // Special handling for semester VII
-                        if (selectedSem === "VII") {
-                            optionalContainer.append('<h4>Select Department Level Subjects for Semester VII:</h4>');
-                            optionalContainer.append('<select id="department-optional1" name="department-optional1" required><option value="" disabled selected>Select Department Level Subject 1</option></select>');
-                            optionalContainer.append('<select id="department-optional2" name="department-optional2" required><option value="" disabled selected>Select Department Level Subject 2</option></select>');
+            // Special handling for semesters VII and VIII
+            if (selectedSem === "VII" || selectedSem === "VIII") {
+                optionalContainer.append('<h4>Select Department Level Subjects:</h4>');
+                optionalContainer.append('<select id="department-optional1" name="department-optional1" required><option value="" disabled selected>Select Department Level Subject 1</option></select>');
+                optionalContainer.append('<select id="department-optional2" name="department-optional2" required><option value="" disabled selected>Select Department Level Subject 2</option></select>');
+                
+                subjects[selectedSem].optional.department.forEach(subject => {
+                    $('#department-optional1').append(`<option value="${subject.id}">${subject.name}</option>`);
+                    $('#department-optional2').append(`<option value="${subject.id}">${subject.name}</option>`);
+                });
 
-                            // Append department level subjects for Semester VII
-                            subjects['VII'].optional.department.forEach(subject => {
-                                $('#department-optional1').append(`<option value="${subject.id}">${subject.name}</option>`);
-                                $('#department-optional2').append(`<option value="${subject.id}">${subject.name}</option>`);
-                            });
-
-                            optionalContainer.append('<h4>Select Institute Level Subject for Semester VII:</h4>');
-                            optionalContainer.append('<select id="institute-optional" name="institute-optional" required><option value="" disabled selected>Select Institute Level Subject</option></select>');
-
-                            // Append institute level subjects for Semester VII
-                            subjects['VII'].optional.institute.forEach(subject => {
-                                $('#institute-optional').append(`<option value="${subject.id}">${subject.name}</option>`);
-                            });
-
-                            // Add event listener for "department-optional1" to filter "department-optional2"
-                            $('#department-optional1').on('change', function() {
-                                const selectedSubject1 = $(this).val();
-
-                                // Reset the options for department-optional2
-                                $('#department-optional2').empty();
-                                $('#department-optional2').append('<option value="" disabled selected>Select Department Level Subject 2</option>');
-
-                                // Append subjects to "department-optional2", excluding the one selected in "department-optional1"
-                                subjects['VII'].optional.department.forEach(subject => {
-                                    if (subject.id !== selectedSubject1) {
-                                        $('#department-optional2').append(`<option value="${subject.id}">${subject.name}</option>`);
-                                    }
-                                });
-                            });
-                        }
-
-
-                                // Special handling for semester VIII
-                    if (selectedSem === "VIII") {
-                        optionalContainer.append('<h4>Select Department Level Subject for Semester VIII:</h4>');
-                        optionalContainer.append('<select id="department-optional1" name="department-optional1" required><option value="" disabled selected>Select Department Level Subject</option></select>');
-
-                        // Append department level subjects for Semester VIII (only one dropdown)
-                        subjects['VIII'].optional.department.forEach(subject => {
-                            $('#department-optional1').append(`<option value="${subject.id}">${subject.name}</option>`);
-                        });
-
-                        optionalContainer.append('<h4>Select Institute Level Subject for Semester VIII:</h4>');
-                        optionalContainer.append('<select id="institute-optional" name="institute-optional" required><option value="" disabled selected>Select Institute Level Subject</option></select>');
-
-                        // Append institute level subjects for Semester VIII
-                        subjects['VIII'].optional.institute.forEach(subject => {
-                            $('#institute-optional').append(`<option value="${subject.id}">${subject.name}</option>`);
-                        });
-                    }
-
-
+                optionalContainer.append('<h4>Select Institute Level Subject:</h4>');
+                optionalContainer.append('<select id="institute-optional" name="institute-optional" required><option value="" disabled selected>Select Institute Level Subject</option></select>');
+                subjects[selectedSem].optional.institute.forEach(subject => {
+                    $('#institute-optional').append(`<option value="${subject.id}">${subject.name}</option>`);
+                });
+            }
         }
     });
 
@@ -499,22 +458,43 @@ $(document).ready(function () {
     }
 
     // Handle form submission
-    $('#student-register-form').submit(function (event) {
-        event.preventDefault();
-        
-        const formData = $(this).serialize();
+$('#student-register-form').submit(function (event) {
+    event.preventDefault();
 
-        $.ajax({
-            type: 'POST',
-            url: 'http://127.0.0.1:5000/register-student',
-            data: formData,
-            success: function (response) {
-                alert(response.message);
-            },
-            error: function () {
-                alert("Error in registration");
-            }
-        });
+    const formData = $(this).serializeArray();  // Serialize the form data
+    const selectedSem = $('#sem').val();
+    let selectedSubjects = [];
+
+    // Collect compulsory subjects
+    subjects[selectedSem].compulsory.forEach(subject => {
+        selectedSubjects.push(subject.id);  // Push compulsory subjects
     });
+
+    // Collect optional subjects (if any)
+    if (selectedSem === "V" || selectedSem === "VI") {
+        selectedSubjects.push($('#department-optional').val());
+    } else if (selectedSem === "VII" || selectedSem === "VIII") {
+        selectedSubjects.push($('#department-optional1').val());
+        selectedSubjects.push($('#department-optional2').val());
+        selectedSubjects.push($('#institute-optional').val());
+    }
+
+    // Add selected subjects to form data
+    formData.push({ name: 'subjects', value: selectedSubjects });
+
+    // Send form data via AJAX
+    $.ajax({
+        type: 'POST',
+        url: 'http://127.0.0.1:5000/register-student',
+        data: $.param(formData),  // Serialize formData object
+        success: function (response) {
+            alert(response.message);
+        },
+        error: function () {
+            alert("Error in registration");
+        }
+    });
+});
+
 });
 
