@@ -83,15 +83,16 @@
         </form>
     </div>
 
+    <script src="../js/script.js"></script>
     <script>
         // Redirect to student registration page when "Register as Student" is clicked
         document.getElementById('register-btn').addEventListener('click', function() {
-            window.location.href = 'index.html'; // Ensure this path points to the correct file location
-        });
-    </script>
-    
 
-    <!-- Link to your JS -->
-    <script src="../js/script.js"></script>
+            //pop up for sucessfully registered
+            alert('Successfully registered');
+            //window change
+            window.location.href = 'index.html'; // Since both files are in the same folder, no need for extra path
+        });
+      </script>
 </body>
 </html>
