@@ -505,7 +505,6 @@
 
 
 
-
 $(document).ready(function () {
     const phoneRegex = /^\d{10}$/;
     const emailRegex = /^[a-zA-Z0-9._$]+@kccemsr\.edu\.in$/;
@@ -518,7 +517,6 @@ $(document).ready(function () {
                 {"id": "ITC303", "name": "Database Management System"},
                 {"id": "ITC304", "name": "Principle of Communication"},
                 {"id": "ITC305", "name": "Paradigms and Computer Programming Fundamentals"}
-                
             ],
             optional: []
         },
@@ -622,6 +620,15 @@ $(document).ready(function () {
                 });
             }
 
+            // Handle optional subjects for semesters V and VI
+            if (selectedSem === "V" || selectedSem === "VI") {
+                optionalContainer.append('<h4>Select Department Level Subject:</h4>');
+                optionalContainer.append('<select id="department-optional" name="department-optional" required><option value="" disabled selected>Select Department Level Subject</option></select>');
+                subjects[selectedSem].optional.forEach(subject => {
+                    $('#department-optional').append(`<option value="${subject.id}">${subject.name}</option>`);
+                });
+            }
+
             // Special handling for semesters VII and VIII
             if (selectedSem === "VII" || selectedSem === "VIII") {
                 optionalContainer.append('<h4>Select Department Level Subjects:</h4>');
@@ -640,7 +647,6 @@ $(document).ready(function () {
                     $('#department-optional2 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
                 });
 
-                // Similarly, if department-optional2 changes, disable the selected option in department-optional1
                 $('#department-optional2').change(function() {
                     const selectedValue = $(this).val();
                     $('#department-optional1 option').prop('disabled', false); // Re-enable all options initially
@@ -655,6 +661,7 @@ $(document).ready(function () {
             }
         }
     });
+
 
     // Validate phone number
     $('#phoneno').on('input', function () {
@@ -707,17 +714,19 @@ $(document).ready(function () {
         const isValidPhone = phoneRegex.test($('#phoneno').val());
         const isValidEmail = emailRegex.test($('#collegeid').val());
         const isPasswordMatch = $('#password').val() === $('#confirmpassword').val();
+        const areRequiredFieldsFilled = $('#username').val() && $('#fullname').val() && $('#address').val() && $('#rollno').val() && $('#sem').val();
 
-        if (isValidPhone && isValidEmail && isPasswordMatch) {
+        if (isValidPhone && isValidEmail && isPasswordMatch && areRequiredFieldsFilled) {
             $('#register-btn').removeAttr('disabled');
-        } else {
-            $('#register-btn').attr('disabled', true);
         }
     }
 
     function disableRegisterButton() {
         $('#register-btn').attr('disabled', true);
     }
+
+    // Initially disable the register button if fields are not filled
+    disableRegisterButton();
 
     // Handle form submission
     $('#student-register-form').submit(function (event) {
@@ -729,20 +738,32 @@ $(document).ready(function () {
 
         // Collect compulsory subjects
         subjects[selectedSem].compulsory.forEach(subject => {
-            selectedSubjects.push(subject.id);  // Push compulsory subjects
+            selectedSubjects.push({ id: subject.id, name: subject.name });
         });
 
         // Collect optional subjects (if any)
         if (selectedSem === "V" || selectedSem === "VI") {
-            selectedSubjects.push($('#department-optional').val());
+            const optionalSubject = $('#department-optional').val();
+            const subject = subjects[selectedSem].optional.find(opt => opt.id === optionalSubject);
+            if (subject) {
+                selectedSubjects.push({ id: subject.id, name: subject.name });
+            }
         } else if (selectedSem === "VII" || selectedSem === "VIII") {
-            selectedSubjects.push($('#department-optional1').val());
-            selectedSubjects.push($('#department-optional2').val());
-            selectedSubjects.push($('#institute-optional').val());
+            const departmentOptional1 = $('#department-optional1').val();
+            const departmentOptional2 = $('#department-optional2').val();
+            const instituteOptional = $('#institute-optional').val();
+
+            const dept1 = subjects[selectedSem].optional.department.find(opt => opt.id === departmentOptional1);
+            const dept2 = subjects[selectedSem].optional.department.find(opt => opt.id === departmentOptional2);
+            const institute = subjects[selectedSem].optional.institute.find(opt => opt.id === instituteOptional);
+
+            if (dept1) selectedSubjects.push({ id: dept1.id, name: dept1.name });
+            if (dept2) selectedSubjects.push({ id: dept2.id, name: dept2.name });
+            if (institute) selectedSubjects.push({ id: institute.id, name: institute.name });
         }
 
         // Add selected subjects to form data
-        formData.push({ name: 'subjects', value: selectedSubjects });
+        formData.push({ name: 'subjects', value: JSON.stringify(selectedSubjects) });
 
         // Send form data via AJAX
         $.ajax({
@@ -757,5 +778,4 @@ $(document).ready(function () {
             }
         });
     });
-
 });
