@@ -1,0 +1,156 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Information</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/studentinfo.css">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Collegiate Administrator</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-primary me-2" href="#">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="text-center my-5">
+    <div class="container">
+      <h1>Welcome to Your Dashboard</h1>
+      <p class="lead">Here is your student information</p>
+    </div>
+  </header>
+
+  <div class="student-info-container">
+    <h2>Student Information</h2>
+    
+    <div class="info-box">
+      <h3>Personal Details</h3>
+      <p class="student-info"><strong>Name:</strong> John Doe</p>
+      <p class="student-info"><strong>Email:</strong> john.doe@kccemsr.edu.in</p>
+      <p class="student-info"><strong>College ID:</strong> 123456</p>
+    </div>
+
+    <div class="info-box">
+      <h3>Academic Information</h3>
+      <p class="student-info"><strong>Course:</strong> B.E. in Computer Engineering</p>
+      <p class="student-info"><strong>Year:</strong> Third Year</p>
+      <p class="student-info"><strong>Current GPA:</strong> 9.1</p>
+    </div>
+
+    <div class="info-box">
+      <h3>Attendance</h3>
+      <p class="student-info"><strong>Total Attendance:</strong> 85%</p>
+      <p class="student-info"><strong>Subjects:</strong></p>
+      <ul>
+        <li>Data Structures: 90%</li>
+        <li>Operating Systems: 87%</li>
+        <li>Computer Networks: 80%</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Information</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/studentinfo.css">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Collegiate Administrator</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-primary me-2" href="#">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="text-center my-5">
+    <div class="container">
+      <h1>Welcome to Your Dashboard</h1>
+      <p class="lead">Here is your student information</p>
+    </div>
+  </header>
+
+  <div class="student-info-container">
+    <h2>Student Information</h2>
+
+    <!-- Buttons to toggle different sections -->
+    <div class="btn-group my-3">
+      <button class="btn btn-primary" onclick="toggleSection('personalDetails')">View Personal Details</button>
+      <button class="btn btn-primary" onclick="toggleSection('academicDetails')">View Academic Information</button>
+      <button class="btn btn-primary" onclick="toggleSection('attendanceDetails')">View Attendance</button>
+    </div>
+
+    <!-- Personal Details Section -->
+    <div id="personalDetails" class="info-box" style="display:none;">
+      <h3>Personal Details</h3>
+      <p class="student-info"><strong>Name:</strong> John Doe</p>
+      <p class="student-info"><strong>Email:</strong> john.doe@kccemsr.edu.in</p>
+      <p class="student-info"><strong>College ID:</strong> 123456</p>
+    </div>
+
+    <!-- Academic Information Section -->
+    <div id="academicDetails" class="info-box" style="display:none;">
+      <h3>Academic Information</h3>
+      <p class="student-info"><strong>Course:</strong> B.E. in Computer Engineering</p>
+      <p class="student-info"><strong>Year:</strong> Third Year</p>
+      <p class="student-info"><strong>Current GPA:</strong> 9.1</p>
+    </div>
+
+    <!-- Attendance Section -->
+    <div id="attendanceDetails" class="info-box" style="display:none;">
+      <h3>Attendance</h3>
+      <p class="student-info"><strong>Total Attendance:</strong> 85%</p>
+      <p class="student-info"><strong>Subjects:</strong></p>
+      <ul>
+        <li>Data Structures: 90%</li>
+        <li>Operating Systems: 87%</li>
+        <li>Computer Networks: 80%</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleSection(sectionId) {
+      const sections = document.querySelectorAll('.info-box');
+      sections.forEach(section => {
+        if (section.id === sectionId) {
+          section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        } else {
+          section.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
