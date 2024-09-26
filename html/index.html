@@ -188,5 +188,13 @@
       document.getElementById('studentLoginForm').style.display = 'none';
     });
   </script>
+
+      <script>
+        // Redirect to student registration page when "Register as Student" is clicked
+        document.getElementById('studentRegisterBtn').addEventListener('click', function() {
+            window.location.href = 'student-register.html'; // Since both files are in the same folder, no need for extra path
+        });
+      </script>
+
 </body>
 </html>
