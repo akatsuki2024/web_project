@@ -504,7 +504,6 @@
 
 
 
-
 $(document).ready(function () {
     const phoneRegex = /^\d{10}$/;
     const emailRegex = /^[a-zA-Z0-9._$]+@kccemsr\.edu\.in$/;
@@ -611,7 +610,7 @@ $(document).ready(function () {
                 compulsoryContainer.append(`<p>${subject.id} - ${subject.name}</p>`);
             });
 
-            // Handle optional subjects for semesters V and VI
+            // Handle optional subjects for Semester V and VI
             if (selectedSem === "V" || selectedSem === "VI") {
                 optionalContainer.append('<h4>Select Department Level Subject:</h4>');
                 optionalContainer.append('<select id="department-optional" name="department-optional" required><option value="" disabled selected>Select Department Level Subject</option></select>');
@@ -620,16 +619,7 @@ $(document).ready(function () {
                 });
             }
 
-            // Handle optional subjects for semesters V and VI
-            if (selectedSem === "V" || selectedSem === "VI") {
-                optionalContainer.append('<h4>Select Department Level Subject:</h4>');
-                optionalContainer.append('<select id="department-optional" name="department-optional" required><option value="" disabled selected>Select Department Level Subject</option></select>');
-                subjects[selectedSem].optional.forEach(subject => {
-                    $('#department-optional').append(`<option value="${subject.id}">${subject.name}</option>`);
-                });
-            }
-
-            // Special handling for semesters VII and VIII
+            // Special handling for Semester VII and VIII
             if (selectedSem === "VII" || selectedSem === "VIII") {
                 optionalContainer.append('<h4>Select Department Level Subjects:</h4>');
                 optionalContainer.append('<select id="department-optional1" name="department-optional1" required><option value="" disabled selected>Select Department Level Subject 1</option></select>');
@@ -640,14 +630,13 @@ $(document).ready(function () {
                     $('#department-optional2').append(`<option value="${subject.id}">${subject.name}</option>`);
                 });
 
-                // Handle disabling of selected subject in department-optional2 dropdown
-                $('#department-optional1').change(function() {
+                $('#department-optional1').change(function () {
                     const selectedValue = $(this).val();
                     $('#department-optional2 option').prop('disabled', false); // Re-enable all options initially
                     $('#department-optional2 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
                 });
 
-                $('#department-optional2').change(function() {
+                $('#department-optional2').change(function () {
                     const selectedValue = $(this).val();
                     $('#department-optional1 option').prop('disabled', false); // Re-enable all options initially
                     $('#department-optional1 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
@@ -661,7 +650,6 @@ $(document).ready(function () {
             }
         }
     });
-
 
     // Validate phone number
     $('#phoneno').on('input', function () {

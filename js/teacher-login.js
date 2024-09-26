@@ -18,14 +18,17 @@ document.getElementById('teacherLoginForm').addEventListener('submit', function 
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        window.location.href = 'Teacher-Page.html'; // Redirect to teacher's dashboard
+        // Store the username in sessionStorage
+        sessionStorage.setItem('username', teacherIdentifier);
+  
+        // Redirect to the teacher dashboard
+        window.location.href = '/html/teacher-page.html';
       } else {
-        document.getElementById('loginError').innerText = 'Invalid username or password';
+        alert('Login failed. Please check your username and password.');
       }
     })
     .catch(error => {
       console.error('Error during login:', error);
       document.getElementById('loginError').innerText = 'An error occurred. Please try again.';
     });
-  });
-  
+});
