@@ -322,7 +322,7 @@
 
 
 
-
+// CUURRENT WORKING CODE----
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -433,3 +433,4 @@ app.post('/register-student', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
