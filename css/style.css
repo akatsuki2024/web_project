@@ -1,7 +1,7 @@
 /* General Styles */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: rgb(7, 214, 246);
+  background-color: #fffec8;
   margin: 0;
   padding: 10px;
 }
@@ -9,10 +9,10 @@ body {
 .container {
   max-width: 700px;
   margin: 10px auto;
-  background-color: #ffffff;
+  background-color: rgb(7, 214, 246);
   border-radius: 20px;
-  box-shadow: 20px 20px 10px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+  box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.5); /* Adjusted to a darker shadow */
+  padding: 40px 40px 50px;
 }
 
 /* Header Styles */
@@ -27,7 +27,87 @@ body {
 .whole-top{
   padding: 10px 10px 20px;
   border-radius: 10px;
+  background-color: #008fe2;
 }
+
+/*login and register button functionality*/
+.btn-p {
+  background-color: #008fe2; 
+  color: white;
+  border: 2px solid #008fe2; 
+  font-weight: bold; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.btn-p:hover {
+  background-color: #218838; /* Green background on hover */
+  color: white; /* White text on hover */
+  border: 2px solid #218838; /* Green border on hover */
+  transform: scale(1.05); /* Slight scaling on hover */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+}
+
+
+.btn-outline-primary {
+  background-color: #008fe2; 
+  color: white;
+  border: 2px solid #008fe2; 
+  font-weight: bold; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.btn-outline-primary:hover {
+  background-color: red; 
+  color: white; 
+  border: 2px solid red; /
+  transform: scale(1.05); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+}
+
+
+.main-content {
+  position: relative; 
+  z-index: 1; 
+  padding: 40px; 
+  min-height: 100vh;
+}
+
+.main-content::after {
+  content: ''; 
+  background-image: url('../images/img.jpg'); 
+  background-size: cover; 
+  background-position: center; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0;
+  height: 50%;
+  opacity: 0.7; 
+  z-index: -1;
+}
+
+.main-content::before {
+  content: ''; 
+  background-image: url('../images/im2.jpg'); 
+  background-size: cover; 
+  background-position: center; 
+  position: absolute; 
+  top: calc(50% + 2px); 
+  left: 0; 
+  right: 0;
+  height: 50%; 
+  opacity: 0.7; 
+  z-index: -1;
+  border-top: 10px solid black; 
+}
+
+
+/*insex.html ka first page preview yahi khatam hota hai*/
+
+
+
 
 
 
