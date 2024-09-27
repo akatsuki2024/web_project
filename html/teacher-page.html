@@ -4,15 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css"> <!-- Link to the custom CSS for dashboard styling -->
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to the Teacher Dashboard</h1>
-        <p>Select a subject to perform actions:</p>
+        <!-- Header Section with Logout Button -->
+        <div class="header">
+            <h1 class="center-title">Welcome to the Teacher Dashboard</h1>
+            <button id="logout-button" class="logout-button">Logout</button>
+        </div>
 
-        <!-- Container where subject buttons will be dynamically added -->
-        <div id="subject-container"></div>
+        <!-- Instructions -->
+        <p class="instructions">Select a subject to perform actions:</p>
+
+        <!-- Container for Subject Buttons -->
+        <div id="subject-container" class="subject-container">
+            <!-- Subject buttons will be dynamically added here -->
+        </div>
 
         <!-- Modal for showing subject options (optional) -->
         <div id="options-modal" style="display:none;">
@@ -23,6 +32,16 @@
         </div>
     </div>
 
+    <script>
+        // Add logout functionality to the logout button
+        document.getElementById('logout-button').addEventListener('click', function() {
+            // Clear the session storage
+            sessionStorage.clear();
+
+            // Redirect to index.html
+            window.location.href = '../html/index.html';
+        });
+    </script>
     <script src="../js/teacher-dashboard.js"></script>
 </body>
 </html>
