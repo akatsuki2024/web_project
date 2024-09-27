@@ -1,27 +1,40 @@
 /* General Styles */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f7f7;
+  background-color: rgb(7, 214, 246);
   margin: 0;
-  padding: 0;
+  padding: 10px;
 }
 
 .container {
   max-width: 700px;
-  margin: 50px auto;
+  margin: 10px auto;
   background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 20px 20px 10px rgba(0, 0, 0, 0.1);
   padding: 40px;
 }
 
 /* Header Styles */
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 1.8rem;
-  text-transform: uppercase;
+
+.navbar-brand{
+  box-shadow: 2px 2px 5px;
+  font-size: 2.5rem;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.whole-top{
+  padding: 10px 10px 20px;
+  border-radius: 10px;
+}
+
+
+
+.heading{
+  background-color: #008fe2;
+  position: centre;
+
 }
 
 /* Form Styles */
@@ -72,7 +85,7 @@ small.error-message.active {
 
 /* Hover and focus effects */
 input:hover, select:hover {
-  border-color: #007bff;
+  border-color: #f95a0b;
 }
 
 input:focus {
