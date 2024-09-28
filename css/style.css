@@ -11,18 +11,39 @@ body {
   margin: 10px auto;
   background-color: rgb(7, 214, 246);
   border-radius: 20px;
-  box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.5); /* Adjusted to a darker shadow */
+  box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.5); 
   padding: 40px 40px 50px;
 }
 
 /* Header Styles */
 
-.navbar-brand{
-  box-shadow: 2px 2px 5px;
-  font-size: 2.5rem;
-  justify-content: center;
-  border-radius: 10px;
+.container-fluid {
+  position: relative;
 }
+
+/* Center the "Branch-Hub" title */
+h1.navbar-brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); 
+  font-size: 5rem; 
+  font-weight: bold;
+  background: linear-gradient(to right, #000000, #0381fe); 
+  -webkit-background-clip: text;
+  color:rgb(7, 214, 246);
+  animation: glowingText 2s infinite;
+  text-shadow: 0 0 20px rgba(1, 1, 1, 0.6), 0 0 30px rgb(0, 162, 255); 
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Glowing text animation */
+@keyframes glowingText {
+  0%, 100% { text-shadow: 0 0 10px #000000, 0 0 20px #ffffff, 0 0 30px #1e90ff; }
+  50% { text-shadow: 0 0 20px #000000, 0 0 40px #0000ff; }
+}
+
+
+
 
 .whole-top{
   padding: 10px 10px 20px;
@@ -41,11 +62,11 @@ body {
 }
 
 .btn-p:hover {
-  background-color: #218838; /* Green background on hover */
-  color: white; /* White text on hover */
-  border: 2px solid #218838; /* Green border on hover */
-  transform: scale(1.05); /* Slight scaling on hover */
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+  background-color: #218838; 
+  color: white; 
+  border: 2px solid #218838; 
+  transform: scale(1.05); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
 }
 
 
