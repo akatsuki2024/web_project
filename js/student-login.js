@@ -1,3 +1,4 @@
+// Student login script
 document.getElementById('studentLogin').addEventListener('submit', function (event) {
     event.preventDefault();
 
@@ -18,11 +19,11 @@ document.getElementById('studentLogin').addEventListener('submit', function (eve
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Store the username in sessionStorage
-            sessionStorage.setItem('username', studentIdentifier); // Using the updated identifier
+            // Store the student information in sessionStorage
+            sessionStorage.setItem('studentInfo', JSON.stringify(data.studentInfo)); // Assuming your backend sends student info in this format
 
             // Redirect to the student dashboard
-            window.location.href = '/html/student-page.html';
+            window.location.href = '/html/student-info.html';
         } else {
             alert('Login failed. Please check your credentials.');
         }
@@ -32,4 +33,3 @@ document.getElementById('studentLogin').addEventListener('submit', function (eve
         document.getElementById('loginError').innerText = 'An error occurred. Please try again.';
     });
 });
-

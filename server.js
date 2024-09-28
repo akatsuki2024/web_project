@@ -446,6 +446,370 @@
 
 
 
+// const express = require('express');
+// const mongoose = require('mongoose');
+// const bodyParser = require('body-parser');
+// const cors = require('cors');
+// const Teacher = require('./models/Teacher'); // Ensure this path is correct
+
+// // Initialize the app
+// const app = express();
+// const port = 5000;
+
+// // Middleware to parse JSON and enable CORS
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(cors());
+
+// // Connect to MongoDB (IT-Students database for storing student information)
+// const studentConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/IT-Students');
+
+// studentConnection.on('connected', () => {
+//     console.log('Connected to MongoDB IT-Students');
+// });
+
+// studentConnection.on('error', (error) => {
+//     console.error('Error connecting to IT-Students database:', error);
+// });
+
+// // Connect to MongoDB (Teacher-Details database for storing teacher information)
+// const teacherConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/Teacher-Details');
+
+// teacherConnection.on('connected', () => {
+//     console.log('Connected to MongoDB Teacher-Details');
+// });
+
+// teacherConnection.on('error', (error) => {
+//     console.error('Error connecting to Teacher-Details database:', error);
+// });
+
+// // Schema for teacher registration
+// const teacherSchema = new mongoose.Schema({
+//     username: String,
+//     fullname: String,
+//     employeeid: String,
+//     phoneno: String,
+//     address: String,
+//     subjects: Object, // Store { "III": { "code": "subject_code", "name": "subject_name" }, ... }
+//     password: String
+// });
+
+// // Schema for student registration
+// const studentSchema = new mongoose.Schema({
+//     username: String,
+//     fullname: String,
+//     collegeid: String,
+//     phoneno: String,
+//     address: String,
+//     rollno: String,
+//     semester: String,
+//     subjects: Array,
+//     password: String
+// });
+
+// // Pre-existing collection names for each semester (students)
+// const semesterCollections = {
+//     "III": "IT-Semester-III",
+//     "IV": "IT-Semester-IV",
+//     "V": "IT-Semester-V",
+//     "VI": "IT-Semester-VI",
+//     "VII": "IT-Semester-VII",
+//     "VIII": "IT-Semester-VIII"
+// };
+
+// // Helper function to get the collection name based on the selected semester (for students)
+// function getCollectionForSemester(semester) {
+//     return semesterCollections[semester];
+// }
+
+// // Student registration endpoint
+// app.post('/register-student', async (req, res) => {
+//     try {
+//         const { username, fullname, collegeid, phoneno, address, rollno, sem, password } = req.body;
+//         let selectedSubjects = req.body.subjects || {};  // Default to an empty object if no subjects
+
+//         console.log('Received Student Data:', req.body);
+
+//         // Validate required fields
+//         if (!username || !fullname || !collegeid || !phoneno || !address || !rollno || !sem || !password) {
+//             console.log('Missing required fields:', req.body);
+//             return res.status(400).json({ message: 'All fields are required.' });
+//         }
+
+//         // Ensure subjects is in object format
+//         if (typeof selectedSubjects === 'string') {
+//             selectedSubjects = JSON.parse(selectedSubjects);
+//         }
+
+//         // Prepare student data with subjects as an object
+//         const studentData = {
+//             username,
+//             fullname,
+//             collegeid,
+//             phoneno,
+//             address,
+//             rollno,
+//             semester: sem,
+//             subjects: selectedSubjects,  // Now storing as object
+//             password
+//         };
+
+//         // Get the correct collection name based on the selected semester
+//         const collectionName = getCollectionForSemester(sem);
+
+//         // If the semester is invalid, return an error
+//         if (!collectionName) {
+//             console.error('Invalid semester selected:', sem);
+//             return res.status(400).json({ message: 'Invalid semester selected!' });
+//         }
+
+//         // Use the pre-existing collection based on the semester
+//         const StudentModel = studentConnection.model(collectionName, studentSchema, collectionName);
+
+//         // Save the student data in the appropriate collection
+//         const newStudent = new StudentModel(studentData);
+//         await newStudent.save();
+
+//         console.log(`Student registered successfully in ${collectionName}`);
+//         res.status(200).json({ message: `Student registered successfully in ${collectionName}` });
+//     } catch (error) {
+//         console.error('Error registering student:', error); // Log any errors
+//         res.status(500).json({ message: 'Error registering student', error: error.message });
+//     }
+// });
+
+// // Teacher registration endpoint (unchanged)
+
+// // Student login endpoint
+// app.post('/login-student', async (req, res) => {
+//     const { username, password } = req.body; // Removed semester from request body
+
+//     try {
+//         // Find the student in all semester collections (assuming each semester is stored in its own collection)
+//         const semesterCollections = ['IT-Semester-III', 'IT-Semester-IV', 'IT-Semester-V', 'IT-Semester-VI', 'IT-Semester-VII', 'IT-Semester-VIII'];
+//         let foundStudent = null;
+
+//         // Loop through the collections to find the student
+//         for (const collectionName of semesterCollections) {
+//             const StudentModel = studentConnection.model(collectionName, studentSchema, collectionName);
+//             foundStudent = await StudentModel.findOne({ username: username });
+
+//             if (foundStudent) {
+//                 break; // Exit the loop if the student is found
+//             }
+//         }
+
+//         if (foundStudent) {
+//             // Check if the password matches (assuming passwords are stored as plain text; otherwise, hash comparison is needed)
+//             if (foundStudent.password === password) {
+//                 res.json({ success: true });
+//             } else {
+//                 res.json({ success: false, message: 'Incorrect password' });
+//             }
+//         } else {
+//             res.json({ success: false, message: 'Student not found' });
+//         }
+//     } catch (error) {
+//         console.error('Error during student login:', error);
+//         res.status(500).json({ success: false, message: 'Internal server error' });
+//     }
+// });
+
+// // Teacher login endpoint (unchanged)
+
+// // Start the server
+// app.listen(port, () => {
+//     console.log(`Server is running on http://localhost:${port}`);
+// });
+
+
+
+
+
+
+
+
+// working code 2
+// const express = require('express');
+// const mongoose = require('mongoose');
+// const bodyParser = require('body-parser');
+// const cors = require('cors');
+// const Teacher = require('./models/Teacher'); // Ensure this path is correct
+
+// // Initialize the app
+// const app = express();
+// const port = 5000;
+
+// // Middleware to parse JSON and enable CORS
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(cors());
+
+// // Connect to MongoDB (IT-Students database for storing student information)
+// const studentConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/IT-Students');
+
+// studentConnection.on('connected', () => {
+//     console.log('Connected to MongoDB IT-Students');
+// });
+
+// studentConnection.on('error', (error) => {
+//     console.error('Error connecting to IT-Students database:', error);
+// });
+
+// // Connect to MongoDB (Teacher-Details database for storing teacher information)
+// const teacherConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/Teacher-Details');
+
+// teacherConnection.on('connected', () => {
+//     console.log('Connected to MongoDB Teacher-Details');
+// });
+
+// teacherConnection.on('error', (error) => {
+//     console.error('Error connecting to Teacher-Details database:', error);
+// });
+
+// // Schema for teacher registration
+// const teacherSchema = new mongoose.Schema({
+//     username: String,
+//     fullname: String,
+//     employeeid: String,
+//     phoneno: String,
+//     address: String,
+//     subjects: Object, // Store { "III": { "code": "subject_code", "name": "subject_name" }, ... }
+//     password: String
+// });
+
+// // Schema for student registration
+// const studentSchema = new mongoose.Schema({
+//     username: String,
+//     fullname: String,
+//     collegeid: String,
+//     phoneno: String,
+//     address: String,
+//     rollno: String,
+//     semester: String,
+//     subjects: Array,
+//     password: String
+// });
+
+// // Pre-existing collection names for each semester (students)
+// const semesterCollections = {
+//     "III": "IT-Semester-III",
+//     "IV": "IT-Semester-IV",
+//     "V": "IT-Semester-V",
+//     "VI": "IT-Semester-VI",
+//     "VII": "IT-Semester-VII",
+//     "VIII": "IT-Semester-VIII"
+// };
+
+// // Helper function to get the collection name based on the selected semester (for students)
+// function getCollectionForSemester(semester) {
+//     return semesterCollections[semester];
+// }
+
+// // Student registration endpoint
+// app.post('/register-student', async (req, res) => {
+//     try {
+//         const { username, fullname, collegeid, phoneno, address, rollno, sem, password } = req.body;
+//         let selectedSubjects = req.body.subjects || {};  // Default to an empty object if no subjects
+
+//         console.log('Received Student Data:', req.body);
+
+//         // Validate required fields
+//         if (!username || !fullname || !collegeid || !phoneno || !address || !rollno || !sem || !password) {
+//             console.log('Missing required fields:', req.body);
+//             return res.status(400).json({ message: 'All fields are required.' });
+//         }
+
+//         // Ensure subjects is in object format
+//         if (typeof selectedSubjects === 'string') {
+//             selectedSubjects = JSON.parse(selectedSubjects);
+//         }
+
+//         // Prepare student data with subjects as an object
+//         const studentData = {
+//             username,
+//             fullname,
+//             collegeid,
+//             phoneno,
+//             address,
+//             rollno,
+//             semester: sem,
+//             subjects: selectedSubjects,  // Now storing as object
+//             password
+//         };
+
+//         // Get the correct collection name based on the selected semester
+//         const collectionName = getCollectionForSemester(sem);
+
+//         // If the semester is invalid, return an error
+//         if (!collectionName) {
+//             console.error('Invalid semester selected:', sem);
+//             return res.status(400).json({ message: 'Invalid semester selected!' });
+//         }
+
+//         // Use the pre-existing collection based on the semester
+//         const StudentModel = studentConnection.model(collectionName, studentSchema, collectionName);
+
+//         // Save the student data in the appropriate collection
+//         const newStudent = new StudentModel(studentData);
+//         await newStudent.save();
+
+//         console.log(`Student registered successfully in ${collectionName}`);
+//         res.status(200).json({ message: `Student registered successfully in ${collectionName}` });
+//     } catch (error) {
+//         console.error('Error registering student:', error); // Log any errors
+//         res.status(500).json({ message: 'Error registering student', error: error.message });
+//     }
+// });
+
+// // Teacher registration endpoint (unchanged)
+
+// // Student login endpoint
+// app.post('/login-student', async (req, res) => {
+//     const { username, password } = req.body; // Removed semester from request body
+
+//     try {
+//         // Find the student in all semester collections (assuming each semester is stored in its own collection)
+//         const semesterCollections = ['IT-Semester-III', 'IT-Semester-IV', 'IT-Semester-V', 'IT-Semester-VI', 'IT-Semester-VII', 'IT-Semester-VIII'];
+//         let foundStudent = null;
+
+//         // Loop through the collections to find the student
+//         for (const collectionName of semesterCollections) {
+//             const StudentModel = studentConnection.model(collectionName, studentSchema, collectionName);
+//             foundStudent = await StudentModel.findOne({ username: username });
+
+//             if (foundStudent) {
+//                 break; // Exit the loop if the student is found
+//             }
+//         }
+
+//         if (foundStudent) {
+//             // Check if the password matches (assuming passwords are stored as plain text; otherwise, hash comparison is needed)
+//             if (foundStudent.password === password) {
+//                 res.json({ success: true });
+//             } else {
+//                 res.json({ success: false, message: 'Incorrect password' });
+//             }
+//         } else {
+//             res.json({ success: false, message: 'Student not found' });
+//         }
+//     } catch (error) {
+//         console.error('Error during student login:', error);
+//         res.status(500).json({ success: false, message: 'Internal server error' });
+//     }
+// });
+
+// // Teacher login endpoint (unchanged)
+
+// // Start the server
+// app.listen(port, () => {
+//     console.log(`Server is running on http://localhost:${port}`);
+// });
+
+
+
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -616,6 +980,37 @@ app.post('/login-student', async (req, res) => {
 });
 
 // Teacher login endpoint (unchanged)
+
+// Endpoint to fetch student information based on username
+app.get('/student-info/:username', async (req, res) => {
+    const username = req.params.username;
+
+    try {
+        // Loop through all semester collections to find the student
+        const semesterCollections = ['IT-Semester-III', 'IT-Semester-IV', 'IT-Semester-V', 'IT-Semester-VI', 'IT-Semester-VII', 'IT-Semester-VIII'];
+        let foundStudent = null;
+
+        // Check each collection
+        for (const collectionName of semesterCollections) {
+            const StudentModel = studentConnection.model(collectionName, studentSchema, collectionName);
+            foundStudent = await StudentModel.findOne({ username: username });
+
+            if (foundStudent) {
+                break; // Exit the loop if the student is found
+            }
+        }
+
+        // Check if student was found
+        if (foundStudent) {
+            res.json(foundStudent); // Return student data as JSON
+        } else {
+            res.status(404).json({ message: 'Student not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching student data:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 // Start the server
 app.listen(port, () => {
