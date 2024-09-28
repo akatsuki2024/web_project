@@ -104,7 +104,41 @@ body {
 }
 
 
-/*insex.html ka first page preview yahi khatam hota hai*/
+/*index.html ka first page preview yahi khatam hota hai*/
+
+.btn-primary {
+  background-color: #008fe2; 
+  color: white;
+  border: 2px solid #008fe2; 
+  font-weight: bold; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.btn-primary:hover {
+  background-color: #218838; /* Green background on hover */
+  color: white; /* White text on hover */
+  border: 2px solid #218838; /* Green border on hover */
+  transform: scale(1.05); /* Slight scaling on hover */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+}
+
+.btn-secondary {
+  background-color: #008fe2; 
+  color: white;
+  border: 2px solid #008fe2; 
+  font-weight: bold; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.btn-secondary:hover {
+  background-color: #218838; /* Green background on hover */
+  color: white; /* White text on hover */
+  border: 2px solid #218838; /* Green border on hover */
+  transform: scale(1.05); /* Slight scaling on hover */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+}
 
 
 
