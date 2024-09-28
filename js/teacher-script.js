@@ -196,15 +196,15 @@ $(document).ready(function () {
     // Handle form submission
     $('#teacher-register-form').submit(function (event) {
         event.preventDefault();
-    
+
         const formData = $(this).serializeArray();
         const selectedSubjects = {};
-    
+
         ['III', 'IV', 'V', 'VI', 'VII', 'VIII'].forEach(function (semester) {
             const compulsory = $(`#sem-${semester}-compulsory`).val();
             const department = $(`#sem-${semester}-department`).val();
             const institute = $(`#sem-${semester}-institute`).val();
-    
+
             if (compulsory) {
                 const subject = subjects[semester].compulsory.find(sub => sub.id === compulsory);
                 selectedSubjects[semester] = { code: subject.id, name: subject.name };
@@ -216,20 +216,23 @@ $(document).ready(function () {
                 selectedSubjects[semester] = { code: subject.id, name: subject.name };
             }
         });
-    
+
         formData.push({ name: 'subjects', value: JSON.stringify(selectedSubjects) });
-    
+
         $.ajax({
             type: 'POST',
             url: 'http://127.0.0.1:5000/register-teacher',
             data: $.param(formData),
             success: function (response) {
                 alert(response.message);
+                // Redirect back to index.html after successful registration
+                window.location.href = 'index.html'; // Change this path if necessary
             },
             error: function () {
                 alert("Error in registration");
             }
         });
     });
+
     
 });

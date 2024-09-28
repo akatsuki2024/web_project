@@ -1,0 +1,97 @@
+/* dashboard.css */
+
+/* Container Styling */
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Center-align the header */
+.center-title {
+    width: 100%;
+    font-size: 24px;
+    text-align: center;
+    margin: 0 auto; /* Center-align the text */
+}
+
+/* Header Section */
+.header {
+    display: flex;
+    justify-content: center; /* Center the header content */
+    align-items: center;
+    gap: 20px; /* Spacing between header elements */
+    margin-bottom: 20px;
+    flex-direction: column;
+}
+
+/* Logout Button Styling */
+.logout-button {
+    background-color: #ff4b5c;
+    color: white;
+    border: none;
+    padding: 8px 16px; /* Reduce padding for a smaller button */
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #ff7878;
+}
+
+/* Instructions Styling */
+.instructions {
+    font-size: 18px;
+    margin: 20px 0;
+}
+
+/* Subject Container */
+.subject-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center; /* Center the buttons */
+}
+
+/* Subject Button Styling */
+.subject-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 15px;
+    width: 60%; /* Adjust width for better layout */
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.subject-button:hover {
+    background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    .subject-button {
+        width: 80%;
+        font-size: 14px;
+    }
+
+    .header {
+        flex-direction: column; /* Stack elements in header on small screens */
+    }
+
+    .logout-button {
+        font-size: 12px; /* Smaller font size for small screens */
+    }
+}
