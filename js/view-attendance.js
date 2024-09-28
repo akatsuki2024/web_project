@@ -1,155 +1,8 @@
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     let originalData = [];  // Store the original fetched data for filtering
-
-//     const subjectCode = sessionStorage.getItem('selectedSubjectCode');
-//     const semester = sessionStorage.getItem('selectedSemester');
-
-//     if (!subjectCode || !semester) {
-//         alert('Subject or semester information is missing. Please go back and select the subject again.');
-//         window.location.href = '../html/teacher-page.html';
-//         return;
-//     }
-
-//     // Fetch attendance data from the server based on the selected subject and semester
-//     fetch(`http://localhost:5000/view-attendance/${semester}/${subjectCode}`)
-//         .then(response => response.json())
-//         .then(data => {
-//             if (data.success) {
-//                 originalData = data.attendanceRecords;  // Store the fetched data for filtering
-//                 displayAttendanceRecords(originalData);  // Display data initially
-//             } else {
-//                 displayNoRecordsMessage();
-//                 console.error('Failed to fetch attendance records:', data.message);
-//             }
-//         })
-//         .catch(error => {
-//             displayNoRecordsMessage();
-//             console.error('Error fetching attendance records:', error);
-//         });
-
-//     // Function to display attendance records in the table
-//     function displayAttendanceRecords(records) {
-//         const container = document.getElementById('attendanceResultsContainer');
-//         container.innerHTML = ''; // Clear previous content
-
-//         if (!records || records.length === 0) {
-//             displayNoRecordsMessage();
-//             return;
-//         }
-
-//         const groupedRecords = groupRecordsByStudent(records);
-
-//         Object.keys(groupedRecords).forEach(rollNo => {
-//             const student = groupedRecords[rollNo];
-//             const row = document.createElement('tr');
-//             row.classList.add('student-row');
-//             row.innerHTML = `
-//                 <td>${rollNo}</td>
-//                 <td>${student.name}</td>
-//                 <td>
-//                     <ul>
-//                         ${student.attendance.map(record => `<li>${record.date}: ${record.status}</li>`).join('')}
-//                     </ul>
-//                 </td>
-//             `;
-//             container.appendChild(row);
-//         });
-//     }
-
-//     // Function to group records by student
-//     function groupRecordsByStudent(records) {
-//         return records.reduce((acc, record) => {
-//             record.attendance.forEach(studentRecord => {
-//                 const rollNo = studentRecord.rollno;
-//                 if (!acc[rollNo]) {
-//                     acc[rollNo] = { name: studentRecord.name, attendance: [] };
-//                 }
-//                 acc[rollNo].attendance.push({
-//                     date: new Date(record.date).toLocaleDateString(),
-//                     status: studentRecord.present || "Absent"
-//                 });
-//             });
-//             return acc;
-//         }, {});
-//     }
-
-//     // Display a message when no records are found
-//     function displayNoRecordsMessage() {
-//         const container = document.getElementById('attendanceResultsContainer');
-//         container.innerHTML = '<tr><td colspan="3" class="text-center text-danger">No attendance records found for this subject and semester.</td></tr>';
-//     }
-
-//     // Search by Roll No
-//     document.getElementById('searchButton').addEventListener('click', function () {
-//         const searchValue = document.getElementById('searchRollNo').value.trim().toLowerCase();
-        
-//         // Filter the original data based on the roll number search
-//         const filteredRecords = originalData
-//             .map(record => ({
-//                 date: record.date,
-//                 attendance: record.attendance.filter(student => student.rollno.toLowerCase() === searchValue)
-//             }))
-//             .filter(record => record.attendance.length > 0);
-
-//         displayAttendanceRecords(filteredRecords);
-//     });
-
-//     // Filter by Date
-//     document.getElementById('specificDate').addEventListener('change', function () {
-//         const selectedDate = new Date(document.getElementById('specificDate').value);
-//         if (isNaN(selectedDate.getTime())) return;  // Invalid date, exit
-
-//         const filteredRecords = originalData.filter(record =>
-//             new Date(record.date).toLocaleDateString() === selectedDate.toLocaleDateString()
-//         );
-//         displayAttendanceRecords(filteredRecords);
-//     });
-
-//     // Export table data to Excel
-//     document.getElementById('exportButton').addEventListener('click', function () {
-//         const table = document.querySelector('table');
-//         const wb = XLSX.utils.table_to_book(table, { sheet: "Attendance Data" });
-//         XLSX.writeFile(wb, 'AttendanceData.xlsx');
-//     });
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ------------------------------------------------------------------------------
-
-
 
 document.addEventListener('DOMContentLoaded', function () {
-    let originalData = []; // Store the original fetched data for filtering
-    let defaulterData = []; // Store defaulters data separately
+    let originalData = [];
+    let defaulterData = [];
 
     const subjectCode = sessionStorage.getItem('selectedSubjectCode');
     const semester = sessionStorage.getItem('selectedSemester');
@@ -165,9 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                originalData = data.attendanceRecords; // Store the fetched data for filtering
-                displayAttendanceRecords(originalData); // Display data initially
-                calculateAttendancePercentage(originalData); // Calculate percentage after data is fetched
+                originalData = data.attendanceRecords;
+                displayAttendanceRecords(originalData);
+                calculateAttendancePercentage(originalData); // Calculate percentage initially
             } else {
                 displayNoRecordsMessage();
                 console.error('Failed to fetch attendance records:', data.message);
@@ -178,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching attendance records:', error);
         });
 
-    // Function to display attendance records in a table format similar to Excel
+    // Function to display attendance records in a table format
     function displayAttendanceRecords(records) {
         const container = document.getElementById('attendanceResultsContainer');
         const tableHead = document.getElementById('attendanceTableHead');
@@ -192,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Create the header with dates as columns
         const headerRow = document.createElement('tr');
-        headerRow.innerHTML = `<th>Roll No</th><th>Name</th>`; // Fixed headers for Roll No and Name
+        headerRow.innerHTML = `<th class="fixed-column">Roll No</th><th class="fixed-column">Name</th>`;
         const uniqueDates = [...new Set(records.map(record => new Date(record.date).toLocaleDateString()))]; // Extract unique dates
 
         uniqueDates.forEach(date => {
@@ -200,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dateHeader.textContent = date; // Add each date as a column header
             headerRow.appendChild(dateHeader);
         });
-        headerRow.innerHTML += `<th>Attendance Percentage</th>`; // Add Percentage column
+        headerRow.innerHTML += `<th class="fixed-column">Attendance Percentage</th>`; // Add Percentage column
         tableHead.appendChild(headerRow);
 
         // Group records by student
@@ -213,8 +66,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Create a cell for Roll No and Name
             row.innerHTML = `
-                <td>${rollNo}</td>
-                <td>${student.name}</td>
+                <td class="fixed-column">${rollNo}</td>
+                <td class="fixed-column">${student.name}</td>
             `;
 
             // Create cells for each date (mark Present/Absent)
@@ -227,10 +80,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Add attendance percentage cell
             const percentageCell = document.createElement('td');
-            percentageCell.classList.add('attendance-percentage');
+            percentageCell.classList.add('fixed-column');
             percentageCell.textContent = student.percentage ? student.percentage.toFixed(2) + "%" : "N/A";
             percentageCell.style.color = student.percentage < 75 ? 'red' : 'black';
             row.appendChild(percentageCell);
+
+            // Highlight defaulter students with background color
+            if (student.percentage < 75) {
+                row.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // Light red background for defaulters
+                defaulterData.push({ rollNo, ...student }); // Add to defaulters list if below 75%
+            }
 
             container.appendChild(row);
         });
@@ -238,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to group records by student and calculate attendance percentage
     function groupRecordsByStudent(records) {
-        const totalDays = records.length;
+        const totalDays = [...new Set(records.map(record => record.date))].length; // Calculate total unique days
         const grouped = records.reduce((acc, record) => {
             record.attendance.forEach(studentRecord => {
                 const rollNo = studentRecord.rollno;
@@ -258,22 +117,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         Object.keys(grouped).forEach(rollNo => {
             grouped[rollNo].percentage = (grouped[rollNo].presentDays / totalDays) * 100;
-            if (grouped[rollNo].percentage < 75) {
-                defaulterData.push({ rollNo, ...grouped[rollNo] }); // Add to defaulters list if below 75%
-            }
         });
         return grouped;
     }
 
-    // Function to calculate attendance percentage (to fix the missing function issue)
+    // Function to calculate attendance percentage (ensures correct display)
     function calculateAttendancePercentage(records) {
+        defaulterData = []; // Reset defaulter data
         const grouped = groupRecordsByStudent(records);
         const rows = document.querySelectorAll('.student-row');
         rows.forEach(row => {
             const rollNo = row.children[0].innerText.trim();
             const student = grouped[rollNo];
             if (student && student.percentage < 75) {
-                row.style.color = 'red'; // Highlight rows for students with percentage < 75%
+                row.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // Light red background for defaulters
+                defaulterData.push({ rollNo, ...student });
+            } else {
+                row.style.backgroundColor = ''; // Reset background color if not a defaulter
             }
         });
     }
@@ -281,11 +141,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Display a message when no records are found
     function displayNoRecordsMessage() {
         const container = document.getElementById('attendanceResultsContainer');
-        container.innerHTML = '<tr><td colspan="4" class="text-center text-danger">No attendance records found for this subject and semester.</td></tr>';
+        container.innerHTML = '<tr><td colspan="5" class="text-center text-danger">No attendance records found for this subject and semester.</td></tr>';
     }
 
-    // Search by Roll No
-    document.getElementById('searchButton').addEventListener('click', function () {
+    // Search by Roll No (on input change)
+    document.getElementById('searchRollNo').addEventListener('input', function () {
         const searchValue = document.getElementById('searchRollNo').value.trim().toLowerCase();
 
         // Filter the original data based on the roll number search
@@ -299,20 +159,39 @@ document.addEventListener('DOMContentLoaded', function () {
         displayAttendanceRecords(filteredRecords);
     });
 
-    // Filter by Date
+    // Handle date selection
     document.getElementById('specificDate').addEventListener('change', function () {
-        const selectedDate = new Date(document.getElementById('specificDate').value);
-        if (isNaN(selectedDate.getTime())) return; // Invalid date, exit
+        const selectedDate = document.getElementById('specificDate').value;
+        if (!selectedDate) return; // Exit if no date is selected
 
-        const filteredRecords = originalData.filter(record =>
-            new Date(record.date).toLocaleDateString() === selectedDate.toLocaleDateString()
-        );
-        displayAttendanceRecords(filteredRecords);
+        const formattedDate = new Date(selectedDate).toLocaleDateString();
+
+        // Filter the original data based on the selected date
+        const filteredRecords = originalData
+            .map(record => ({
+                date: record.date,
+                attendance: record.attendance.filter(student => new Date(record.date).toLocaleDateString() === formattedDate)
+            }))
+            .filter(record => record.attendance.length > 0);
+
+        displayAttendanceRecords(filteredRecords); // Display the filtered records based on date
     });
 
     // View Defaulter List
     document.getElementById('viewDefaulterButton').addEventListener('click', function () {
-        displayDefaulterRecords(); // Display only defaulters
+        calculateAttendancePercentage(originalData); // Recalculate percentage for accurate results
+        const defaultersOnly = originalData
+            .map(record => ({
+                date: record.date,
+                attendance: record.attendance.filter(student => {
+                    const rollNo = student.rollno;
+                    const percentage = defaulterData.find(def => def.rollNo === rollNo)?.percentage;
+                    return percentage < 75;
+                })
+            }))
+            .filter(record => record.attendance.length > 0);
+
+        displayAttendanceRecords(defaultersOnly); // Show only defaulters
     });
 
     // Export table data to Excel
@@ -346,8 +225,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const wb = XLSX.utils.table_to_book(container, { sheet: "Defaulter List" });
         XLSX.writeFile(wb, 'DefaulterList.xlsx');
     });
+
+    // Refresh button to reload the page
+    document.getElementById('refreshButton').addEventListener('click', function () {
+        location.reload();
+    });
 });
-
-
-
-//------------------------------------------------------------------------

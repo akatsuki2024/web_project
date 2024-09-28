@@ -1064,6 +1064,27 @@ app.get('/view-attendance/:semester/:subjectCode', async (req, res) => {
 
 
 
+// Route to get existing marks data for a subject and semester
+app.get('/get-marks/:semester/:subjectCode', async (req, res) => {
+    const { semester, subjectCode } = req.params;
+
+    try {
+        // Use uppercase for the collection name
+        const collectionName = `marks_${semester.toUpperCase()}_${subjectCode.toUpperCase()}`;
+        const MarksModel = marksConnection.model('Marks', marksSchema, collectionName);
+
+        // Fetch all marks for the given semester and subject code
+        const marks = await MarksModel.find({});
+
+        res.status(200).json({ success: true, marks });
+    } catch (error) {
+        console.error('Failed to fetch marks:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch marks', error: error.message });
+    }
+});
+
+
+
 
 // Start the server
 app.listen(port, () => {
