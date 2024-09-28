@@ -1,0 +1,162 @@
+/* General Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+/* Search and Filter Section */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input[type="text"], input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button#searchButton {
+    background-color: #007bff;
+    color: white;
+}
+
+button#viewDefaulterButton {
+    background-color: #dc3545;
+    color: white;
+}
+
+button#exportButton, button#exportDefaulterButton {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Table Container Styles */
+.attendance-table-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    border: 1px solid #dee2e6;
+}
+
+/* Fixed Column Styles */
+.fixed-columns,
+.fixed-percentage {
+    flex: 0 0 auto; /* Fixed size, no flex-grow */
+    overflow: hidden; /* Prevent scroll */
+}
+
+.fixed-columns table, .fixed-percentage table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.fixed-columns th, .fixed-columns td, .fixed-percentage th, .fixed-percentage td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    background: #f1f1f1;
+}
+
+/* Scrollable Dates Table */
+.scrollable-dates {
+    flex: 1; /* Grow to fill available space */
+    overflow-x: auto;
+    border-left: 0;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.scrollable-dates table {
+    border-collapse: collapse;
+    width: max-content; /* Table fits to content */
+}
+
+.scrollable-dates th, .scrollable-dates td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    white-space: nowrap;
+}
+
+thead th {
+    background-color: #343a40;
+    color: white;
+}
+
+tbody td {
+    background-color: #ffffff;
+    font-size: 14px;
+}
+
+/* Attendance Percentage Styles */
+.attendance-percentage {
+    font-weight: bold;
+}
+
+.attendance-percentage.red {
+    color: red;
+}
+
+/* Button Container Styles */
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* Scrollbar Styling */
+.scrollable-dates::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scrollable-dates::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+}
+
+.scrollable-dates::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .fixed-columns, .fixed-percentage, .scrollable-dates {
+        display: block;
+        overflow-x: auto;
+    }
+}

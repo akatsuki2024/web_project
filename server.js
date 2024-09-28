@@ -1043,6 +1043,28 @@ app.post('/submit-attendance', async (req, res) => {
     }
 });
 
+
+// Route to get attendance records for a specific subject and semester
+app.get('/view-attendance/:semester/:subjectCode', async (req, res) => {
+    const { semester, subjectCode } = req.params;
+
+    try {
+        // Create the collection name based on the provided semester and subject code
+        const collectionName = `attendance_${semester}_${subjectCode}`;
+        const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, collectionName);
+
+        // Fetch all attendance records for the specified semester and subject code
+        const attendanceRecords = await AttendanceModel.find({});
+        res.status(200).json({ success: true, attendanceRecords });
+    } catch (error) {
+        console.error('Failed to fetch attendance records:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch attendance records', error: error.message });
+    }
+});
+
+
+
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
