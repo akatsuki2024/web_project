@@ -1,27 +1,175 @@
 /* General Styles */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f7f7;
+  background-color: #fffec8;
   margin: 0;
-  padding: 0;
+  padding: 10px;
 }
 
 .container {
   max-width: 700px;
-  margin: 50px auto;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+  margin: 10px auto;
+  background-color: rgb(7, 214, 246);
+  border-radius: 20px;
+  box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.5); 
+  padding: 40px 40px 50px;
 }
 
 /* Header Styles */
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 1.8rem;
-  text-transform: uppercase;
+
+.container-fluid {
+  position: relative;
+}
+
+/* Center the "Branch-Hub" title */
+h1.navbar-brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); 
+  font-size: 5rem; 
+  font-weight: bold;
+  background: linear-gradient(to right, #000000, #0381fe); 
+  -webkit-background-clip: text;
+  color:rgb(7, 214, 246);
+  animation: glowingText 2s infinite;
+  text-shadow: 0 0 20px rgba(1, 1, 1, 0.6), 0 0 30px rgb(0, 162, 255); 
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Glowing text animation */
+@keyframes glowingText {
+  0%, 100% { text-shadow: 0 0 10px #000000, 0 0 20px #ffffff, 0 0 30px #1e90ff; }
+  50% { text-shadow: 0 0 20px #000000, 0 0 40px #0000ff; }
+}
+
+
+
+
+.whole-top{
+  padding: 10px 10px 20px;
+  border-radius: 10px;
+  background-color: #008fe2;
+}
+
+/*login and register button functionality*/
+.btn-p {
+  background-color: #008fe2; 
+  color: white;
+  border: 2px solid #008fe2; 
+  font-weight: bold; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.btn-p:hover {
+  background-color: #218838; 
+  color: white; 
+  border: 2px solid #218838; 
+  transform: scale(1.05); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+}
+
+
+.btn-outline-primary {
+  background-color: #008fe2; 
+  color: white;
+  border: 2px solid #008fe2; 
+  font-weight: bold; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.btn-outline-primary:hover {
+  background-color: red; 
+  color: white; 
+  border: 2px solid red; /
+  transform: scale(1.05); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+}
+
+
+.main-content {
+  position: relative; 
+  z-index: 1; 
+  padding: 40px; 
+  min-height: 100vh;
+}
+
+.main-content::after {
+  content: ''; 
+  background-image: url('../images/img.jpg'); 
+  background-size: cover; 
+  background-position: center; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0;
+  height: 50%;
+  opacity: 0.7; 
+  z-index: -1;
+}
+
+.main-content::before {
+  content: ''; 
+  background-image: url('../images/im2.jpg'); 
+  background-size: cover; 
+  background-position: center; 
+  position: absolute; 
+  top: calc(50% + 2px); 
+  left: 0; 
+  right: 0;
+  height: 50%; 
+  opacity: 0.7; 
+  z-index: -1;
+  border-top: 10px solid black; 
+}
+
+
+/*index.html ka first page preview yahi khatam hota hai*/
+
+.btn-primary {
+  background-color: #008fe2; 
+  color: white;
+  border: 2px solid #008fe2; 
+  font-weight: bold; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.btn-primary:hover {
+  background-color: #218838; 
+  color: white; 
+  border: 2px solid #218838; 
+  transform: scale(1.05); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+  background-color: #008fe2; 
+  color: white;
+  border: 2px solid #008fe2; 
+  font-weight: bold; 
+  transition: all 0.3s ease; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.btn-secondary:hover {
+  background-color: #218838; 
+  color: white; 
+  border: 2px solid #218838; 
+  transform: scale(1.05); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+}
+
+
+
+
+
+
+.heading{
+  background-color: #008fe2;
+  position: centre;
+
 }
 
 /* Form Styles */
@@ -72,7 +220,7 @@ small.error-message.active {
 
 /* Hover and focus effects */
 input:hover, select:hover {
-  border-color: #007bff;
+  border-color: #f95a0b;
 }
 
 input:focus {
