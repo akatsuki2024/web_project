@@ -31,31 +31,38 @@
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <h1 class="navbar-brand" href="#">Branch-Hub</h1>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <button class="nav-link btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
-          </li>
-        </ul>
+  <div class="whole-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <h1 class="navbar-brand" id="" href="#">BRANCH-HUB</h1>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="nav ms-auto">
+            <li class="nav-item">
+              <button class="nav-link btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link btn btn-p" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </div>
 
-  <header class="text-center my-5">
-    <div class="container">
-      <h1>Welcome to Branch-Hub</h1>
-      <p class="lead">Manage your attendance and marks with ease!</p>
-    </div>
-  </header>
+  <div class="main-content"> <!-- New div for main content -->
+    <header class="text-center my-5">
+      <div class="container">
+        <h1>Welcome to Branch-Hub</h1>
+        <h3>Manage your attendance and marks with ease!</h3>
+      </div>
+    </header>
+  </div>
+</body>
+
+
 
   
   <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -162,8 +169,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center">
-          <button class="btn btn-outline-primary mb-3" id="studentRegisterBtn">Register as Student</button>
-          <button class="btn btn-outline-secondary" id="teacherRegisterBtn">Register as Teacher</button>
+          <button class="btn btn-primary mb-3" id="studentRegisterBtn">Register as Student</button>
+          <button class="btn btn-secondary" id="teacherRegisterBtn">Register as Teacher</button>
         </div>
       </div>
     </div>
