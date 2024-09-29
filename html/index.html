@@ -1,4 +1,5 @@
-<!-- <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,34 +7,62 @@
   <title>Collegiate Administrator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
-  
+  <style>
+    
+    .modal-dialog {
+      max-width: 400px;
+    }
+
+    .login-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <h1 class="navbar-brand" href="#">Branch-Hub</h1>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <button class="nav-link btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
-          </li>
-        </ul>
+  <div class="whole-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <h1 class="navbar-brand" id="" href="#">BRANCH-HUB</h1>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="nav ms-auto">
+            <li class="nav-item">
+              <button class="nav-link btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link btn btn-p" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </div>
 
-  <header class="text-center my-5">
-    <div class="container">
-      <h1>Welcome to Branch-Hub</h1>
-      <p class="lead">Manage your attendance and marks with ease!</p>
-    </div>
-  </header>
+  <div class="main-content"> 
+    <header class="text-center my-5">
+      <div class="container">
+        <h1>Welcome to Branch-Hub</h1>
+        <h3>Manage your attendance and marks with ease!</h3>
+      </div>
+    </header>
+  </div>
+</body>
+
+
 
   
   <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -45,12 +74,13 @@
         </div>
         <div class="modal-body">
           <button class="btn btn-primary login-btn" id="studentLoginBtn">Student Login</button>
-          <button class="btn btn-secondary login-btn" id="teacherLoginBtn">Teacher Login</button>
+          <button class="btn btn-secondary login-btn" id="teacherLoginBtn" data-bs-toggle="modal" data-bs-target="#teacherLoginModal">Teacher Login</button>
 
-          
+     
           <div id="studentLoginForm" class="form-container">
             <h5>Student Login</h5>
             <form id="studentLogin">
+              
               <div class="mb-3">
                 <label for="branch" class="form-label">Branch</label>
                 <select class="form-select custom-select" id="branch" required>
@@ -79,165 +109,6 @@
                   <option value="None">No Division (IT)</option>
                 </select>
               </div>
-              <div class="mb-3">
-                <label for="studentIdentifier" class="form-label">Username or College ID</label>
-                <input type="text" class="form-control" id="studentIdentifier" placeholder="Enter your username or college ID" required>
-              </div>
-              <div class="mb-3">
-                <label for="studentPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="studentPassword" placeholder="Enter your password" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-          </div>
-
-          
-          <div id="teacherLoginForm" class="form-container">
-            <h5>Teacher Login</h5>
-            <form id="teacherLogin">
-              <div class="mb-3">
-                <label for="teacherIdentifier" class="form-label">Username or Employee ID</label>
-                <input type="text" class="form-control" id="teacherIdentifier" placeholder="Enter your username or employee ID" required>
-              </div>
-              <div class="mb-3">
-                <label for="teacherPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="teacherPassword" placeholder="Enter your password" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  
-  <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="registerModalLabel">Select Registration Type</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <button class="btn btn-outline-primary mb-3" id="studentRegisterBtn">Register as Student</button>
-          <button class="btn btn-outline-secondary" id="teacherRegisterBtn">Register as Teacher</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.getElementById('studentLoginBtn').addEventListener('click', function() {
-      document.getElementById('studentLoginForm').style.display = 'block';
-      document.getElementById('teacherLoginForm').style.display = 'none';
-    });
-
-    document.getElementById('teacherLoginBtn').addEventListener('click', function() {
-      document.getElementById('teacherLoginForm').style.display = 'block';
-      document.getElementById('studentLoginForm').style.display = 'none';
-    });
-  </script>
-
-      <script>
-        // Redirect to student registration page when "Register as Student" is clicked
-        document.getElementById('studentRegisterBtn').addEventListener('click', function() {
-            window.location.href = 'student-register.html'; // Since both files are in the same folder, no need for extra path
-        });
-      </script>
-
-</body>
-</html> -->
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Collegiate Administrator</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
-  <style>
-    /* Custom modal styling for the small teacher login window */
-    .modal-dialog {
-      max-width: 400px;
-    }
-
-    .login-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .btn-primary {
-      width: 100%;
-    }
-
-    .form-container {
-      display: none; /* Hide the student login form initially */
-    }
-  </style>
-</head>
-<body>
-  <div class="whole-top">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <h1 class="navbar-brand" id="" href="#">BRANCH-HUB</h1>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="nav ms-auto">
-            <li class="nav-item">
-              <button class="nav-link btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-            </li>
-            <li class="nav-item">
-              <button class="nav-link btn btn-p" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </div>
-
-  <div class="main-content"> <!-- New div for main content -->
-    <header class="text-center my-5">
-      <div class="container">
-        <h1>Welcome to Branch-Hub</h1>
-        <h3>Manage your attendance and marks with ease!</h3>
-      </div>
-    </header>
-  </div>
-</body>
-
-
-
-  
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="loginModalLabel">Select Login Type</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <button class="btn btn-primary login-btn" id="studentLoginBtn">Student Login</button>
-          <button class="btn btn-secondary login-btn" id="teacherLoginBtn" data-bs-toggle="modal" data-bs-target="#teacherLoginModal">Teacher Login</button>
-
-     
-          <div id="studentLoginForm" class="form-container">
-            <h5>Student Login</h5>
-            <form id="studentLogin">
-              <!-- Form inputs for student login -->
               <div class="mb-3">
                 <label for="studentIdentifier" class="form-label">Username or College ID</label>
                 <input type="text" class="form-control" id="studentIdentifier" placeholder="Enter your username or college ID" required>
@@ -321,53 +192,9 @@
     });
   </script>
 
-  <!-- Toggle visibility of student login form -->
-  <script>
-    document.getElementById('studentLoginBtn').addEventListener('click', function() {
-        document.getElementById('studentLoginForm').style.display = 'block'; // Show student login form
-    });
-    
-    document.getElementById('teacherLoginBtn').addEventListener('click', function() {
-        document.getElementById('studentLoginForm').style.display = 'none'; // Hide student login form
-    });
-  </script>
 
-  <!-- Student login script -->
-  <script>
-    document.getElementById('studentLogin').addEventListener('submit', function (event) {
-        event.preventDefault();
+  <script src="../js/teacher-login.js"></script>
 
-        const studentIdentifier = document.getElementById('studentIdentifier').value; // Username or College ID
-        const studentPassword = document.getElementById('studentPassword').value;
-
-        // AJAX request to server for authentication
-        fetch('http://127.0.0.1:5000/login-student', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: studentIdentifier, // Using the updated identifier
-                password: studentPassword
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Store the username in sessionStorage
-                sessionStorage.setItem('username', studentIdentifier); // Using the updated identifier
-
-                // Redirect to the student dashboard
-                window.location.href = '/html/student-info.html';
-            } else {
-                alert('Login failed. Please check your credentials.');
-            }
-        })
-        .catch(error => {
-            console.error('Error during login:', error);
-            document.getElementById('loginError').innerText = 'An error occurred. Please try again.';
-        });
-    });
-  </script>
 </body>
 </html>
+ 
