@@ -194,35 +194,32 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => console.error('Error fetching existing marks data:', error));
 
-    document.getElementById('marks-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const marksData = [];
-        document.querySelectorAll('#marksContainer tr').forEach(row => {
-            const rollNo = row.cells[0].textContent;
-            const name = row.cells[1].textContent;
-            const collegeID = row.cells[2].textContent;
-            const ia1 = row.querySelector(`input[name=ia1-${rollNo}]`).value || null;
-            const ia2 = row.querySelector(`input[name=ia2-${rollNo}]`).value || null;
-
-            marksData.push({
-                rollno: rollNo,
-                studentName: name,
-                collegeID,
-                ia1: ia1 ? parseInt(ia1) : null,
-                ia2: ia2 ? parseInt(ia2) : null
+        document.getElementById('marks-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+        
+            const marksData = [];
+            document.querySelectorAll('#marksContainer tr').forEach(row => {
+                const rollNo = row.cells[0].textContent;
+                const name = row.cells[1].textContent;
+                const collegeID = row.cells[2].textContent;
+                const ia1 = row.querySelector(`input[name=ia1-${rollNo}]`).value || null;
+                const ia2 = row.querySelector(`input[name=ia2-${rollNo}]`).value || null;
+        
+                marksData.push({
+                    rollno: rollNo,
+                    studentName: name,
+                    collegeID,
+                    ia1: ia1 ? parseInt(ia1) : null,
+                    ia2: ia2 ? parseInt(ia2) : null
+                    // Removed semester and subjectCode since they are not in the form
+                });
             });
-        });
-
-        fetch('http://localhost:5000/submit-marks', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                subjectCode,
-                semester,
-                marks: marksData
+        
+            fetch('http://localhost:5000/submit-marks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(marksData)  // Send marksData directly
             })
-        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -233,5 +230,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(error => console.error('Error submitting marks:', error));
-    });
+        });
+        
+        
+        
 });
