@@ -1,0 +1,53 @@
+body {
+    background-color: #f4f7fa;
+    font-family: 'Roboto', sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #007bff;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    border-color: #ddd;
+}
+
+.table th {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.table td {
+    background-color: #f8f9fa;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.table .failed {
+    color: #ff0000;
+}
+
+.input-group-text {
+    background-color: #007bff;
+    color: white;
+}
+
+input[type="text"], input[type="number"] {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    font-weight: 600;
+}

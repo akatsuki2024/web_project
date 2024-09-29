@@ -214,7 +214,7 @@
     </div>
   </header>
 
-  <!-- Login Modal -->
+  
   <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -226,11 +226,11 @@
           <button class="btn btn-primary login-btn" id="studentLoginBtn">Student Login</button>
           <button class="btn btn-secondary login-btn" id="teacherLoginBtn" data-bs-toggle="modal" data-bs-target="#teacherLoginModal">Teacher Login</button>
 
-          <!-- Student Login Form -->
+     
           <div id="studentLoginForm" class="form-container">
             <h5>Student Login</h5>
             <form id="studentLogin">
-              <!-- Form inputs for student login -->
+              
               <div class="mb-3">
                 <label for="studentIdentifier" class="form-label">Username or College ID</label>
                 <input type="text" class="form-control" id="studentIdentifier" placeholder="Enter your username or college ID" required>
@@ -248,7 +248,7 @@
     </div>
   </div>
 
-  <!-- Teacher Login Modal -->
+  
   <div class="modal fade" id="teacherLoginModal" tabindex="-1" aria-labelledby="teacherLoginModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -264,7 +264,7 @@
                 <input type="text" class="form-control" id="teacherIdentifier" placeholder="Enter your username or employee ID" required>
               </div>
               
-              <!-- Hidden password field to trick browser autofill -->
+              
               <input type="password" style="display:none;">
               
               <div class="mb-3">
@@ -282,7 +282,7 @@
     </div>
   </div>
 
-  <!-- Register Modal -->
+ 
   <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -300,14 +300,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Redirect to student registration page -->
+
   <script>
     document.getElementById('studentRegisterBtn').addEventListener('click', function() {
         window.location.href = 'student-register.html'; // Redirect to student registration
     });
   </script>
 
-  <!-- Redirect to teacher registration page -->
+
   <script>
     document.getElementById('teacherRegisterBtn').addEventListener('click', function() {
         window.location.href = 'teacher-register.html'; // Redirect to teacher registration
@@ -329,6 +329,7 @@
   <script>
     document.getElementById('studentLogin').addEventListener('submit', function (event) {
         event.preventDefault();
+  <script src="../js/teacher-login.js"></script>
 
         const studentIdentifier = document.getElementById('studentIdentifier').value; // Username or College ID
         const studentPassword = document.getElementById('studentPassword').value;
