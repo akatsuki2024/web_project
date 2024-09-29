@@ -173,92 +173,36 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     // Get the logged-in teacher's username from sessionStorage (set after login)
-    const username = sessionStorage.getItem('username');
-
+    const username = sessionStorage.getItem('username');  // Ensure username is stored in session after login
+    
     if (username) {
         // Fetch teacher subjects from the server using the username
         fetch(`http://localhost:5000/get-teacher-subjects/${username}`)
             .then(response => response.json())
             .then(data => {
                 const subjectContainer = document.getElementById('subject-container');
-
+                
                 if (data.success && data.subjects && Object.keys(data.subjects).length > 0) {
+                    // Clear any previous content in the container
                     subjectContainer.innerHTML = '';
+                    
+                    // Get the subjects from the response
+                    const subjects = data.subjects;
+                    
+                    // Loop over the subjects and dynamically create buttons
+                    Object.keys(subjects).forEach(sem => {
+                        const subject = subjects[sem];
 
-                    Object.keys(data.subjects).forEach(sem => {
-                        const subject = data.subjects[sem];
-
-                        const subjectCard = document.createElement('div');
-                        subjectCard.className = 'subject-card';
-
-                        const subjectTitle = document.createElement('h3');
-                        subjectTitle.innerHTML = `${subject.code} - ${subject.name}`;
-                        subjectCard.appendChild(subjectTitle);
-
-                        // Create Mark Attendance button
-                        const attendanceButton = document.createElement('button');
-                        attendanceButton.innerHTML = 'Mark Attendance';
-                        attendanceButton.className = 'action-button';
-                        attendanceButton.dataset.semester = sem;
-                        attendanceButton.dataset.code = subject.code;
-                        attendanceButton.dataset.name = subject.name;
-                        attendanceButton.addEventListener('click', function () {
-                            sessionStorage.setItem('selectedSemester', this.dataset.semester);
-                            sessionStorage.setItem('selectedSubjectCode', this.dataset.code);
-                            sessionStorage.setItem('selectedSubjectName', this.dataset.name);
-                            window.location.href = '../html/attendance-mark.html';
-                        });
-                        subjectCard.appendChild(attendanceButton);
-
-                        // Create Enter Marks button
-                        const marksButton = document.createElement('button');
-                        marksButton.innerHTML = 'Enter Marks';
-                        marksButton.className = 'action-button';
-                        marksButton.dataset.semester = sem;
-                        marksButton.dataset.code = subject.code;
-                        marksButton.dataset.name = subject.name;
-                        marksButton.addEventListener('click', function () {
-                            sessionStorage.setItem('selectedSemester', this.dataset.semester);
-                            sessionStorage.setItem('selectedSubjectCode', this.dataset.code);
-                            sessionStorage.setItem('selectedSubjectName', this.dataset.name);
-                            window.location.href = '../html/enter-marks.html';
-                        });
-                        subjectCard.appendChild(marksButton);
-
-                        // Create View Marks button
-                        const viewMarksButton = document.createElement('button');
-                        viewMarksButton.innerHTML = 'View Marks';
-                        viewMarksButton.className = 'action-button';
-                        viewMarksButton.dataset.semester = sem;
-                        viewMarksButton.dataset.code = subject.code;
-                        viewMarksButton.dataset.name = subject.name;
-                        viewMarksButton.addEventListener('click', function () {
-                            sessionStorage.setItem('selectedSemester', this.dataset.semester);
-                            sessionStorage.setItem('selectedSubjectCode', this.dataset.code);
-                            sessionStorage.setItem('selectedSubjectName', this.dataset.name);
-                            window.location.href = '../html/view-marks.html';
-                        });
-                        subjectCard.appendChild(viewMarksButton);
-
-                        // Create View Attendance Details button
-                        const viewAttendanceButton = document.createElement('button');
-                        viewAttendanceButton.innerHTML = 'View Attendance Details';
-                        viewAttendanceButton.className = 'action-button';
-                        viewAttendanceButton.dataset.semester = sem;
-                        viewAttendanceButton.dataset.code = subject.code;
-                        viewAttendanceButton.dataset.name = subject.name;
-                        viewAttendanceButton.addEventListener('click', function () {
-                            sessionStorage.setItem('selectedSemester', this.dataset.semester);
-                            sessionStorage.setItem('selectedSubjectCode', this.dataset.code);
-                            sessionStorage.setItem('selectedSubjectName', this.dataset.name);
-                            window.location.href = '../html/view-attendance.html';
-                        });
-                        subjectCard.appendChild(viewAttendanceButton);
-
-                        // Append the subject card to the container
-                        subjectContainer.appendChild(subjectCard);
+                        // Create the subject button with subject code and name
+                        const subjectButton = document.createElement('button');
+                        subjectButton.innerHTML = `${subject.code} - ${subject.name}`;
+                        subjectButton.className = 'subject-button';
+                        
+                        // Append the subject button to the container
+                        subjectContainer.appendChild(subjectButton);
                     });
                 } else {
+                    // Display a message if no subjects are found
                     subjectContainer.innerHTML = "<p>No subjects found for this teacher.</p>";
                 }
             })
