@@ -78,10 +78,11 @@
       const divisionField = document.getElementById('division');
       
       if (branch === 'IT') {
-        divisionField.setAttribute('disabled', 'true');
-        divisionField.value = '';
+        divisionField.value = 'A'; // Automatically set the division to A for IT
+        divisionField.setAttribute('disabled', 'true'); // Disable the division field for IT
       } else {
         divisionField.removeAttribute('disabled');
+        divisionField.value = ''; // Reset the division value for other branches
       }
     }
 
@@ -91,7 +92,7 @@
       const year = document.getElementById('year').value;
 
       if (branch && year && (branch !== 'IT' ? division : true)) {
-        window.location.href = `enter-marks.html?branch=${branch}&year=${year}&division=${division}`;
+        window.location.href = `enter-marks.html?branch=${branch}&year=${year}&division=${branch === 'IT' ? 'A' : division}`;
       } else {
         alert('Please fill out all the fields.');
       }

@@ -35,7 +35,6 @@
                 </select>
               </div>
 
-              <!-- Division Field (conditional) -->
               <div class="mb-3">
                 <label for="division" class="form-label">Division</label>
                 <select class="form-select" id="division" required>
@@ -73,10 +72,11 @@
       const divisionField = document.getElementById('division');
 
       if (branch === 'IT') {
-        divisionField.setAttribute('disabled', 'true'); // Disable the division for IT
-        divisionField.value = ''; // Clear the division value
+        divisionField.value = 'A'; // Automatically select 'A' for IT branch
+        divisionField.setAttribute('disabled', 'true'); // Disable the division selection for IT
       } else {
         divisionField.removeAttribute('disabled');
+        divisionField.value = ''; // Clear division when other branches are selected
       }
     }
 
@@ -87,7 +87,7 @@
       const date = document.getElementById('date').value;
 
       if (branch && year && date && (branch !== 'IT' ? division : true)) {
-        const url = `attendance-mark.html?branch=${branch}&division=${branch !== 'IT' ? division : ''}&year=${year}&date=${date}`;
+        const url = `attendance-mark.html?branch=${branch}&division=${branch !== 'IT' ? division : 'A'}&year=${year}&date=${date}`;
         window.location.href = url; // Redirect to attendance-mark.html
       } else {
         alert('Please fill out all the fields.');
@@ -95,4 +95,4 @@
     }
   </script>
 </body>
-</html>
+</html> 
