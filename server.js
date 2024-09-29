@@ -1043,6 +1043,49 @@ app.post('/submit-attendance', async (req, res) => {
     }
 });
 
+
+// Route to get attendance records for a specific subject and semester
+app.get('/view-attendance/:semester/:subjectCode', async (req, res) => {
+    const { semester, subjectCode } = req.params;
+
+    try {
+        // Create the collection name based on the provided semester and subject code
+        const collectionName = `attendance_${semester}_${subjectCode}`;
+        const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, collectionName);
+
+        // Fetch all attendance records for the specified semester and subject code
+        const attendanceRecords = await AttendanceModel.find({});
+        res.status(200).json({ success: true, attendanceRecords });
+    } catch (error) {
+        console.error('Failed to fetch attendance records:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch attendance records', error: error.message });
+    }
+});
+
+
+
+// Route to get existing marks data for a subject and semester
+app.get('/get-marks/:semester/:subjectCode', async (req, res) => {
+    const { semester, subjectCode } = req.params;
+
+    try {
+        // Use uppercase for the collection name
+        const collectionName = `marks_${semester.toUpperCase()}_${subjectCode.toUpperCase()}`;
+        const MarksModel = marksConnection.model('Marks', marksSchema, collectionName);
+
+        // Fetch all marks for the given semester and subject code
+        const marks = await MarksModel.find({});
+
+        res.status(200).json({ success: true, marks });
+    } catch (error) {
+        console.error('Failed to fetch marks:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch marks', error: error.message });
+    }
+});
+
+
+
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
