@@ -1,0 +1,43 @@
+/* Fixed Column Styles */
+.fixed-column {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 10;
+    border-right: 1px solid #dee2e6; /* Add a border for distinction */
+}
+
+.fixed-percentage {
+    position: sticky;
+    right: 0;
+    background: white;
+    z-index: 10;
+    border-left: 1px solid #dee2e6; /* Add a border for distinction */
+}
+
+/* Modify Table Header and Body Styles */
+thead th {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    z-index: 5; /* Ensures the header stays on top */
+}
+
+tbody td {
+    background-color: #ffffff;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Adjustments for Scrolling */
+.table-responsive {
+    overflow-x: auto;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Scrollable Dates */
+.scrollable-dates th,
+.scrollable-dates td {
+    min-width: 100px;
+    text-align: center;
+}
