@@ -1,7 +1,4 @@
 
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,10 +27,6 @@
 
     .btn-primary {
       width: 100%;
-    }
-
-    .form-container {
-      display: none; /* Hide the student login form initially */
     }
   </style>
 </head>
@@ -81,6 +74,39 @@
             <h5>Student Login</h5>
             <form id="studentLogin">
               <!-- Form inputs for student login -->
+              <div class="mb-3">
+                <label for="branch" class="form-label">Branch</label>
+                <select class="form-select custom-select" id="branch" required disabled>
+                    <option value="IT" selected>Information Technology (IT)</option>
+                </select>
+            </div>
+            
+              <div class="mb-3">
+                <label for="year" class="form-label">Year</label>
+                <select class="form-select custom-select" id="year" required>
+                  <option value="" disabled selected>Select your year</option>
+                  
+                  <option value="SE">Second Year</option>
+                  <option value="TE">Third Year</option>
+                  <option value="BE">Fourth Year</option>
+                </select>
+              </div>
+              <!-- <div class="mb-3" id="divisionContainer">
+                <label for="division" class="form-label">Division</label>
+                <select class="form-select custom-select" id="division" required>
+                  <option value="" disabled selected>Select your division</option>
+                  <!-- <option value="A">A</option>
+                  <option value="B">B</option> -->
+                  <!-- <option value="None">No Division (IT)</option>
+                </select>
+              </div> -->
+              <div class="mb-3" id="divisionContainer">
+                <label for="division" class="form-label">Division</label>
+                <select class="form-select custom-select" id="division" required disabled>
+                    <option value="None" selected>No Division (IT)</option>
+                </select>
+            </div>
+            
               <div class="mb-3">
                 <label for="studentIdentifier" class="form-label">Username or College ID</label>
                 <input type="text" class="form-control" id="studentIdentifier" placeholder="Enter your username or college ID" required>
@@ -164,53 +190,15 @@
     });
   </script>
 
-  <!-- Toggle visibility of student login form -->
-  <script>
-    document.getElementById('studentLoginBtn').addEventListener('click', function() {
-        document.getElementById('studentLoginForm').style.display = 'block'; // Show student login form
-    });
-    
-    document.getElementById('teacherLoginBtn').addEventListener('click', function() {
-        document.getElementById('studentLoginForm').style.display = 'none'; // Hide student login form
-    });
-  </script>
 
-  <!-- Student login script -->
-  <script>
-    document.getElementById('studentLogin').addEventListener('submit', function (event) {
-        event.preventDefault();
+  <script src="../js/teacher-login.js"></script>
 
-        const studentIdentifier = document.getElementById('studentIdentifier').value; // Username or College ID
-        const studentPassword = document.getElementById('studentPassword').value;
-
-        // AJAX request to server for authentication
-        fetch('http://127.0.0.1:5000/login-student', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: studentIdentifier, // Using the updated identifier
-                password: studentPassword
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Store the username in sessionStorage
-                sessionStorage.setItem('username', studentIdentifier); // Using the updated identifier
-
-                // Redirect to the student dashboard
-                window.location.href = '/html/student-info.html';
-            } else {
-                alert('Login failed. Please check your credentials.');
-            }
-        })
-        .catch(error => {
-            console.error('Error during login:', error);
-            document.getElementById('loginError').innerText = 'An error occurred. Please try again.';
-        });
-    });
-  </script>
 </body>
 </html>
+ 
+
+
+
+
+
+
