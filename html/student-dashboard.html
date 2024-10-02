@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .dashboard {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard h1 {
+            text-align: center;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .button-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Student Dashboard</h1>
+        <div id="studentInfo"></div>
+        <div class="button-container">
+            <button id="viewAttendanceBtn">View Attendance</button>
+            <button id="viewMarksBtn">View Marks</button>
+        </div>
+    </div>
+
+    <script>
+        // Retrieve student data from local storage
+        const studentInfo = JSON.parse(localStorage.getItem('studentInfo'));
+        
+        if (studentInfo) {
+            // Display student data on the dashboard
+            document.getElementById('studentInfo').innerHTML = `
+                <h2>Welcome, ${studentInfo.fullname}</h2>
+                <p>Full Name: ${studentInfo.fullname}</p>
+                <p>Username: ${studentInfo.username}</p>
+                <p>College ID: ${studentInfo.collegeid}</p>
+                <p>Phone No: ${studentInfo.phoneno}</p>
+                <p>Roll No: ${studentInfo.rollno}</p>
+                <p>Semester: ${studentInfo.semester}</p>
+                <p>Address:${studentInfo.address}</p>
+            `;
+        } else {
+            document.getElementById('studentInfo').innerHTML = '<p>No student information available. Please log in.</p>';
+        }
+
+        // Event listeners for buttons
+        document.getElementById('viewAttendanceBtn').addEventListener('click', function() {
+            alert('Redirecting to Attendance Page...');
+            // You can implement redirection or other functionality here
+        });
+
+        document.getElementById('viewMarksBtn').addEventListener('click', function() {
+            alert('Redirecting to Marks Page...');
+            // You can implement redirection or other functionality here
+        });
+    </script>
+</body>
+</html>
