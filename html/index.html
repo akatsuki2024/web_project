@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,12 +30,14 @@
     }
   </style>
 </head>
+
 <body>
   <div class="whole-top">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <h1 class="navbar-brand" id="" href="#">BRANCH-HUB</h1>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <h1 class="navbar-brand" href="#">BRANCH-HUB</h1>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -52,7 +54,7 @@
     </nav>
   </div>
 
-  <div class="main-content"> <!-- New div for main content -->
+  <div class="main-content">
     <header class="text-center my-5">
       <div class="container">
         <h1>Welcome to Branch-Hub</h1>
@@ -60,11 +62,7 @@
       </div>
     </header>
   </div>
-</body>
 
-
-
-  
   <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -73,47 +71,23 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <button class="btn btn-primary login-btn" id="studentLoginBtn">Student Login</button>
+          <button class="btn btn-primary login-btn" id="studentLoginBtn" data-bs-toggle="modal" data-bs-target="#studentLoginModal">Student Login</button>
           <button class="btn btn-secondary login-btn" id="teacherLoginBtn" data-bs-toggle="modal" data-bs-target="#teacherLoginModal">Teacher Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-     
-          <div id="studentLoginForm" class="form-container">
-            <h5>Student Login</h5>
-            <form id="studentLogin">
-              
-              <div class="mb-3">
-                <label for="branch" class="form-label">Branch</label>
-                <select class="form-select custom-select" id="branch" required disabled>
-                    <option value="IT" selected>Information Technology (IT)</option>
-                </select>
-            </div>
-            
-              <div class="mb-3">
-                <label for="year" class="form-label">Year</label>
-                <select class="form-select custom-select" id="year" required>
-                  <option value="" disabled selected>Select your year</option>
-                  
-                  <option value="SE">Second Year</option>
-                  <option value="TE">Third Year</option>
-                  <option value="BE">Fourth Year</option>
-                </select>
-              </div>
-              <!-- <div class="mb-3" id="divisionContainer">
-                <label for="division" class="form-label">Division</label>
-                <select class="form-select custom-select" id="division" required>
-                  <option value="" disabled selected>Select your division</option>
-                  <!-- <option value="A">A</option>
-                  <option value="B">B</option> -->
-                  <!-- <option value="None">No Division (IT)</option>
-                </select>
-              </div> -->
-              <div class="mb-3" id="divisionContainer">
-                <label for="division" class="form-label">Division</label>
-                <select class="form-select custom-select" id="division" required disabled>
-                    <option value="None" selected>No Division (IT)</option>
-                </select>
-            </div>
-            
+  <div class="modal fade" id="studentLoginModal" tabindex="-1" aria-labelledby="studentLoginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="studentLoginModalLabel">Student Login</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="login-container">
+            <form id="studentLoginForm">
               <div class="mb-3">
                 <label for="studentIdentifier" class="form-label">Username or College ID</label>
                 <input type="text" class="form-control" id="studentIdentifier" placeholder="Enter your username or college ID" required>
@@ -124,14 +98,13 @@
               </div>
               <button type="submit" class="btn btn-primary">Login</button>
             </form>
+            <div id="loginError" class="text-danger mt-3"></div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 
-  
   <div class="modal fade" id="teacherLoginModal" tabindex="-1" aria-labelledby="teacherLoginModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -146,18 +119,12 @@
                 <label for="teacherIdentifier" class="form-label">Username or Employee ID</label>
                 <input type="text" class="form-control" id="teacherIdentifier" placeholder="Enter your username or employee ID" required>
               </div>
-              
-              
-              <input type="password" style="display:none;">
-              
               <div class="mb-3">
                 <label for="teacherPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="teacherPassword" placeholder="Enter your password" required autocomplete="off">
+                <input type="password" class="form-control" id="teacherPassword" placeholder="Enter your password" required>
               </div>
-              
               <button type="submit" class="btn btn-primary">Login</button>
             </form>
-            
             <div id="loginError" class="text-danger mt-3"></div>
           </div>
         </div>
@@ -165,7 +132,6 @@
     </div>
   </div>
 
- 
   <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -181,31 +147,73 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-
-  <script>
-    document.getElementById('studentRegisterBtn').addEventListener('click', function() {
-        window.location.href = 'student-register.html'; // Redirect to student registration
-    });
-  </script>
-
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <script>
-    document.getElementById('teacherRegisterBtn').addEventListener('click', function() {
-        window.location.href = 'teacher-register.html'; // Redirect to teacher registration
+    document.getElementById('studentRegisterBtn').addEventListener('click', function () {
+      window.location.href = 'student-register.html'; // Redirect to student registration
+    });
+
+    document.getElementById('teacherRegisterBtn').addEventListener('click', function () {
+      window.location.href = 'teacher-register.html'; // Redirect to teacher registration
     });
   </script>
-
 
   <script src="../js/teacher-login.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#studentLoginForm').on('submit', function (event) {
+        event.preventDefault();
 
+        const identifier = $('#studentIdentifier').val(); // Identifier can be either username or college ID
+        const password = $('#studentPassword').val();
+
+        $.ajax({
+          type: 'POST',
+          url: 'http://localhost:5000/login-student',
+          data: JSON.stringify({ identifier, password }), // Send identifier instead of separate fields
+          contentType: 'application/json',
+          success: function (response) {
+            if (response.success) {
+              localStorage.setItem('studentInfo', JSON.stringify(response.student));
+              window.location.href = 'student-dashboard.html'; // Redirect to student dashboard
+            } else {
+              $('#loginError').text(response.message);
+            }
+          },
+          error: function () {
+            $('#loginError').text('Incorrect username or password.');
+          }
+        });
+      });
+
+      $('#teacherLoginForm').on('submit', function (event) {
+        event.preventDefault();
+
+        const identifier = $('#teacherIdentifier').val(); // Use identifier for username or employee ID
+        const password = $('#teacherPassword').val();
+
+        $.ajax({
+          type: 'POST',
+          url: 'http://localhost:5000/api/login',
+          data: JSON.stringify({ identifier, password }), // Send identifier instead of separate fields
+          contentType: 'application/json',
+          success: function (response) {
+            if (response.success) {
+              window.location.href = 'teacher-dashboard.html'; // Redirect to teacher dashboard
+            } else {
+              $('#loginError').text(response.message);
+            }
+          },
+          error: function () {
+            $('#loginError').text('An error occurred while logging in.');
+          }
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>
- 
-
-
-
-
-
-
