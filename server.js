@@ -95,6 +95,53 @@ function getCollectionForSemester(semester) {
 }
 
 // Student registration endpoint
+// app.post('/register-student', async (req, res) => {
+//     try {
+//         const { username, fullname, collegeid, phoneno, address, rollno, sem, password } = req.body;
+//         let selectedSubjects = req.body.subjects || {};  // Default to an empty object if no subjects
+
+//         // Validate required fields
+//         if (!username || !fullname || !collegeid || !phoneno || !address || !rollno || !sem || !password) {
+//             return res.status(400).json({ message: 'All fields are required.' });
+//         }
+
+//         // Ensure subjects is in object format
+//         if (typeof selectedSubjects === 'string') {
+//             selectedSubjects = JSON.parse(selectedSubjects);
+//         }
+
+//         // Prepare student data with subjects as an object
+//         const studentData = {
+//             username,
+//             fullname,
+//             collegeid,
+//             phoneno,
+//             address,
+//             rollno,
+//             semester: sem,
+//             subjects: selectedSubjects,
+//             password
+//         };
+
+//         // Get the correct collection name based on the selected semester
+//         const collectionName = getCollectionForSemester(sem);
+
+//         if (!collectionName) {
+//             return res.status(400).json({ message: 'Invalid semester selected!' });
+//         }
+
+//         // Use the pre-existing collection based on the semester
+//         const StudentModel = mongoose.model(collectionName, studentSchema, collectionName);
+
+//         const newStudent = new StudentModel(studentData);
+//         await newStudent.save();
+
+//         res.status(200).json({ message: `Student registered successfully in ${collectionName}` });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error registering student', error: error.message });
+//     }
+// });
+
 app.post('/register-student', async (req, res) => {
     try {
         const { username, fullname, collegeid, phoneno, address, rollno, sem, password } = req.body;
@@ -110,6 +157,28 @@ app.post('/register-student', async (req, res) => {
             selectedSubjects = JSON.parse(selectedSubjects);
         }
 
+        // Get the correct collection name based on the selected semester
+        const collectionName = getCollectionForSemester(sem);
+
+        if (!collectionName) {
+            return res.status(400).json({ message: 'Invalid semester selected!' });
+        }
+
+        // Use the pre-existing collection based on the semester
+        const StudentModel = mongoose.model(collectionName, studentSchema, collectionName);
+
+        // Check if username, college ID, or roll number already exists
+        const existingUser = await StudentModel.findOne({ $or: [{ username }, { collegeid }, { rollno }] });
+        if (existingUser) {
+            let message = 'The following fields already exist: ';
+            if (existingUser.username === username) message += 'Username, ';
+            if (existingUser.collegeid === collegeid) message += 'College ID, ';
+            if (existingUser.rollno === rollno) message += 'Roll Number, ';
+            message = message.replace(/,\s*$/, ''); // Remove trailing comma and space
+
+            return res.status(400).json({ message });
+        }
+
         // Prepare student data with subjects as an object
         const studentData = {
             username,
@@ -123,16 +192,7 @@ app.post('/register-student', async (req, res) => {
             password
         };
 
-        // Get the correct collection name based on the selected semester
-        const collectionName = getCollectionForSemester(sem);
-
-        if (!collectionName) {
-            return res.status(400).json({ message: 'Invalid semester selected!' });
-        }
-
-        // Use the pre-existing collection based on the semester
-        const StudentModel = mongoose.model(collectionName, studentSchema, collectionName);
-
+        // Save the new student to the appropriate collection
         const newStudent = new StudentModel(studentData);
         await newStudent.save();
 
@@ -141,6 +201,36 @@ app.post('/register-student', async (req, res) => {
         res.status(500).json({ message: 'Error registering student', error: error.message });
     }
 });
+
+
+
+
+//------------------------------------------------------------------------------
+// Check if username, roll number, or college ID already exists in the selected semester collection
+app.get('/check-attribute/:semester/:attributeType/:attributeValue', async (req, res) => {
+    const { semester, attributeType, attributeValue } = req.params;
+
+    try {
+        const collectionName = getCollectionForSemester(semester);
+        const StudentModel = mongoose.model(collectionName, studentSchema, collectionName);
+
+        const query = {};
+        query[attributeType] = attributeValue;
+
+        const existingStudent = await StudentModel.findOne(query);
+
+        if (existingStudent) {
+            res.json({ exists: true });
+        } else {
+            res.json({ exists: false });
+        }
+    } catch (error) {
+        console.error(`Error checking ${attributeType} for ${semester}:`, error);
+        res.status(500).json({ exists: false });
+    }
+});
+
+//---------------------------------------------------------------------------
 
 // Student login endpoint
 
