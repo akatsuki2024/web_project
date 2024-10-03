@@ -54,6 +54,12 @@
         
         if (studentInfo) {
             // Display student data on the dashboard
+            let subjectsHtml = "<ul>";
+            studentInfo.subjects.forEach(subject => {
+                subjectsHtml += `<li>${subject.id}: ${subject.name}</li>`;
+            });
+            subjectsHtml += "</ul>";
+            
             document.getElementById('studentInfo').innerHTML = `
                 <h2>Welcome, ${studentInfo.fullname}</h2>
                 <p>Full Name: ${studentInfo.fullname}</p>
@@ -62,21 +68,22 @@
                 <p>Phone No: ${studentInfo.phoneno}</p>
                 <p>Roll No: ${studentInfo.rollno}</p>
                 <p>Semester: ${studentInfo.semester}</p>
-                <p>Address:${studentInfo.address}</p>
+                <p>Address: ${studentInfo.address}</p>
+                <h3>Subjects:</h3>
+                ${subjectsHtml}
             `;
         } else {
             document.getElementById('studentInfo').innerHTML = '<p>No student information available. Please log in.</p>';
         }
 
-        // Event listeners for buttons
+        // Event listener for View Attendance button
         document.getElementById('viewAttendanceBtn').addEventListener('click', function() {
-            alert('Redirecting to Attendance Page...');
-            // You can implement redirection or other functionality here
+            window.location.href = 'view-student-attendance.html'; // Redirect to the new attendance page
         });
 
+        // Event listener for View Marks button
         document.getElementById('viewMarksBtn').addEventListener('click', function() {
             alert('Redirecting to Marks Page...');
-            // You can implement redirection or other functionality here
         });
     </script>
 </body>
