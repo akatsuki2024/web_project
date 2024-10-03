@@ -1,3 +1,6 @@
+
+//working code iwth subject codes showing
+
 // $(document).ready(function () {
 //     const phoneRegex = /^\d{10}$/;
 //     const emailRegex = /^[a-zA-Z0-9._$]+@kccemsr\.edu\.in$/;
@@ -9,7 +12,10 @@
 //                 {"id": "ITC302", "name": "Data Structure and Analysis"},
 //                 {"id": "ITC303", "name": "Database Management System"},
 //                 {"id": "ITC304", "name": "Principle of Communication"},
-//                 {"id": "ITC305", "name": "Paradigms and Computer Programming Fundamentals"}
+//                 {"id": "ITC305", "name": "Paradigms and Computer Programming Fundamentals"},
+//                 {"id": "ITL301", "name": "Data Structure Lab"},
+//                 {"id": "ITL302", "name": "SQL Lab"},
+//                 {"id": "ITL303", "name": "Computer Programming Paradigms Lab"}
 //             ],
 //             optional: []
 //         },
@@ -104,7 +110,7 @@
 //                 compulsoryContainer.append(`<p>${subject.id} - ${subject.name}</p>`);
 //             });
 
-//             // Handle optional subjects for Semester V and VI
+//             // Handle optional subjects for semesters V and VI
 //             if (selectedSem === "V" || selectedSem === "VI") {
 //                 optionalContainer.append('<h4>Select Department Level Subject:</h4>');
 //                 optionalContainer.append('<select id="department-optional" name="department-optional" required><option value="" disabled selected>Select Department Level Subject</option></select>');
@@ -113,7 +119,7 @@
 //                 });
 //             }
 
-//             // Special handling for Semester VII and VIII
+//             // Special handling for semesters VII and VIII
 //             if (selectedSem === "VII" || selectedSem === "VIII") {
 //                 optionalContainer.append('<h4>Select Department Level Subjects:</h4>');
 //                 optionalContainer.append('<select id="department-optional1" name="department-optional1" required><option value="" disabled selected>Select Department Level Subject 1</option></select>');
@@ -122,18 +128,6 @@
 //                 subjects[selectedSem].optional.department.forEach(subject => {
 //                     $('#department-optional1').append(`<option value="${subject.id}">${subject.name}</option>`);
 //                     $('#department-optional2').append(`<option value="${subject.id}">${subject.name}</option>`);
-//                 });
-
-//                 $('#department-optional1').change(function () {
-//                     const selectedValue = $(this).val();
-//                     $('#department-optional2 option').prop('disabled', false); // Re-enable all options initially
-//                     $('#department-optional2 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
-//                 });
-
-//                 $('#department-optional2').change(function () {
-//                     const selectedValue = $(this).val();
-//                     $('#department-optional1 option').prop('disabled', false); // Re-enable all options initially
-//                     $('#department-optional1 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
 //                 });
 
 //                 optionalContainer.append('<h4>Select Institute Level Subject:</h4>');
@@ -211,68 +205,45 @@
 //     disableRegisterButton();
 
 //     // Handle form submission
-//     $('#student-register-form').submit(function (event) {
-//         event.preventDefault();
+// $('#student-register-form').submit(function (event) {
+//     event.preventDefault();
 
-//         const formData = $(this).serializeArray();  // Serialize the form data
-//         const selectedSem = $('#sem').val();
-//         let selectedSubjects = [];
+//     const formData = $(this).serializeArray();  // Serialize the form data
+//     const selectedSem = $('#sem').val();
+//     let selectedSubjects = [];
 
-//         // Collect compulsory subjects
-//         subjects[selectedSem].compulsory.forEach(subject => {
-//             selectedSubjects.push({ id: subject.id, name: subject.name });
-//         });
+//     // Collect compulsory subjects
+//     subjects[selectedSem].compulsory.forEach(subject => {
+//         selectedSubjects.push(subject.id);  // Push compulsory subjects
+//     });
 
-//         // Collect optional subjects (if any)
-//         if (selectedSem === "V" || selectedSem === "VI") {
-//             const optionalSubject = $('#department-optional').val();
-//             const subject = subjects[selectedSem].optional.find(opt => opt.id === optionalSubject);
-//             if (subject) {
-//                 selectedSubjects.push({ id: subject.id, name: subject.name });
-//             }
-//         } else if (selectedSem === "VII" || selectedSem === "VIII") {
-//             const departmentOptional1 = $('#department-optional1').val();
-//             const departmentOptional2 = $('#department-optional2').val();
-//             const instituteOptional = $('#institute-optional').val();
+//     // Collect optional subjects (if any)
+//     if (selectedSem === "V" || selectedSem === "VI") {
+//         selectedSubjects.push($('#department-optional').val());
+//     } else if (selectedSem === "VII" || selectedSem === "VIII") {
+//         selectedSubjects.push($('#department-optional1').val());
+//         selectedSubjects.push($('#department-optional2').val());
+//         selectedSubjects.push($('#institute-optional').val());
+//     }
 
-//             const dept1 = subjects[selectedSem].optional.department.find(opt => opt.id === departmentOptional1);
-//             const dept2 = subjects[selectedSem].optional.department.find(opt => opt.id === departmentOptional2);
-//             const institute = subjects[selectedSem].optional.institute.find(opt => opt.id === instituteOptional);
+//     // Add selected subjects to form data
+//     formData.push({ name: 'subjects', value: selectedSubjects });
 
-//             if (dept1) selectedSubjects.push({ id: dept1.id, name: dept1.name });
-//             if (dept2) selectedSubjects.push({ id: dept2.id, name: dept2.name });
-//             if (institute) selectedSubjects.push({ id: institute.id, name: institute.name });
+//     // Send form data via AJAX
+//     $.ajax({
+//         type: 'POST',
+//         url: 'http://127.0.0.1:5000/register-student',
+//         data: $.param(formData),  // Serialize formData object
+//         success: function (response) {
+//             alert(response.message);
+//         },
+//         error: function () {
+//             alert("Error in registration");
 //         }
-
-//         // Add selected subjects to form data
-//         formData.push({ name: 'subjects', value: JSON.stringify(selectedSubjects) });
-
-//         // Send form data via AJAX
-//         $.ajax({
-//             type: 'POST',
-//             url: 'http://127.0.0.1:5000/register-student',
-//             data: $.param(formData),  // Serialize formData object
-//             success: function (response) {
-//                 alert(response.message);
-//             },
-//             error: function () {
-//                 alert("Error in registration");
-//             }
-//         });
 //     });
 // });
 
-
-
-
-
-
-
-
-
-
-
-
+// });
 
 
 
@@ -294,7 +265,6 @@
 //     const phoneRegex = /^\d{10}$/;
 //     const emailRegex = /^[a-zA-Z0-9._$]+@kccemsr\.edu\.in$/;
 
-//     // Subjects data remains unchanged
 //     const subjects = {
 //         "III": {
 //             compulsory: [
@@ -303,6 +273,7 @@
 //                 {"id": "ITC303", "name": "Database Management System"},
 //                 {"id": "ITC304", "name": "Principle of Communication"},
 //                 {"id": "ITC305", "name": "Paradigms and Computer Programming Fundamentals"}
+                
 //             ],
 //             optional: []
 //         },
@@ -382,25 +353,6 @@
 //         }
 //     };
 
-//     // Function to validate if username, college ID, or roll number already exists in the selected semester
-//     function validateExistingAttributes(attributeType, attributeValue, callback) {
-//         const selectedSem = $('#sem').val();
-//         if (!selectedSem) return;
-
-//         // Perform an AJAX request to check if the attribute already exists in the database
-//         $.ajax({
-//             url: `http://127.0.0.1:5000/check-attribute/${selectedSem}/${attributeType}/${attributeValue}`,
-//             type: 'GET',
-//             success: function (response) {
-//                 callback(response.exists);
-//             },
-//             error: function () {
-//                 console.error(`Error checking ${attributeType} in database.`);
-//                 callback(false);
-//             }
-//         });
-//     }
-
 //     // Handle semester change
 //     $('#sem').change(function () {
 //         const selectedSem = $(this).val();
@@ -416,7 +368,7 @@
 //                 compulsoryContainer.append(`<p>${subject.id} - ${subject.name}</p>`);
 //             });
 
-//             // Handle optional subjects for Semester V and VI
+//             // Handle optional subjects for semesters V and VI
 //             if (selectedSem === "V" || selectedSem === "VI") {
 //                 optionalContainer.append('<h4>Select Department Level Subject:</h4>');
 //                 optionalContainer.append('<select id="department-optional" name="department-optional" required><option value="" disabled selected>Select Department Level Subject</option></select>');
@@ -425,7 +377,7 @@
 //                 });
 //             }
 
-//             // Special handling for Semester VII and VIII
+//             // Special handling for semesters VII and VIII
 //             if (selectedSem === "VII" || selectedSem === "VIII") {
 //                 optionalContainer.append('<h4>Select Department Level Subjects:</h4>');
 //                 optionalContainer.append('<select id="department-optional1" name="department-optional1" required><option value="" disabled selected>Select Department Level Subject 1</option></select>');
@@ -434,18 +386,6 @@
 //                 subjects[selectedSem].optional.department.forEach(subject => {
 //                     $('#department-optional1').append(`<option value="${subject.id}">${subject.name}</option>`);
 //                     $('#department-optional2').append(`<option value="${subject.id}">${subject.name}</option>`);
-//                 });
-
-//                 $('#department-optional1').change(function () {
-//                     const selectedValue = $(this).val();
-//                     $('#department-optional2 option').prop('disabled', false); // Re-enable all options initially
-//                     $('#department-optional2 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
-//                 });
-
-//                 $('#department-optional2').change(function () {
-//                     const selectedValue = $(this).val();
-//                     $('#department-optional1 option').prop('disabled', false); // Re-enable all options initially
-//                     $('#department-optional1 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
 //                 });
 
 //                 optionalContainer.append('<h4>Select Institute Level Subject:</h4>');
@@ -457,98 +397,33 @@
 //         }
 //     });
 
-//     /// Function to validate if username, college ID, or roll number already exists in the selected semester
-//     function validateExistingAttributes(attributeType, attributeValue, callback) {
-//         const selectedSem = $('#sem').val();
-//         if (!selectedSem) return;
-
-//         // Perform an AJAX request to check if the attribute already exists in the database
-//         $.ajax({
-//             url: `http://127.0.0.1:5000/check-attribute/${selectedSem}/${attributeType}/${attributeValue}`,
-//             type: 'GET',
-//             success: function (response) {
-//                 callback(response.exists);
-//             },
-//             error: function () {
-//                 console.error(`Error checking ${attributeType} in database.`);
-//                 callback(false);
-//             }
-//         });
-//     }
-
-//     // Function to show error message and disable register button
-//     function showError(field, message) {
-//         const errorElement = $(`#${field}-error`);
-//         errorElement.text(message).addClass('active').show(); // Ensure error message is displayed
-//         disableRegisterButton();
-//     }
-
-//     // Function to hide error message and re-enable register button if valid
-//     function hideError(field) {
-//         const errorElement = $(`#${field}-error`);
-//         errorElement.removeClass('active').hide(); // Hide error message
-//         enableRegisterButtonIfValid();
-//     }
-
-//     // Handle username change and check if it already exists
-//     $('#username').on('input', function () {
-//         const username = $(this).val();
-//         if (!username) return;
-
-//         validateExistingAttributes('username', username, function (exists) {
-//             if (exists) {
-//                 showError('username', 'The username already exists. Please choose a different one.');
-//             } else {
-//                 hideError('username');
-//             }
-//         });
-//     });
-
-//     // Handle roll number change and check if it already exists
-//     $('#rollno').on('input', function () {
-//         const rollNo = $(this).val();
-//         if (!rollNo) return;
-
-//         validateExistingAttributes('rollno', rollNo, function (exists) {
-//             if (exists) {
-//                 showError('rollno', 'The roll number already exists. Please choose a different one.');
-//             } else {
-//                 hideError('rollno');
-//             }
-//         });
-//     });
-
-//     // Handle college ID change and check if it already exists
-//     $('#collegeid').on('input', function () {
-//         const collegeID = $(this).val();
-//         if (!collegeID) return;
-
-//         if (!emailRegex.test(collegeID)) {
-//             showError('collegeid', 'College ID must end with @kccemsr.edu.in');
-//         } else {
-//             validateExistingAttributes('collegeid', collegeID, function (exists) {
-//                 if (exists) {
-//                     showError('collegeid', 'The college ID already exists. Please choose a different one.');
-//                 } else {
-//                     hideError('collegeid');
-//                 }
-//             });
-//         }
-//     });
-
 //     // Validate phone number
 //     $('#phoneno').on('input', function () {
 //         const phoneNo = $(this).val();
 //         const errorElement = $('#phoneno-error');
 
 //         if (!/^\d*$/.test(phoneNo)) {
-//             errorElement.text('Phone number can only contain digits.').addClass('active').show();
+//             errorElement.text('Phone number can only contain digits.').addClass('active');
 //             disableRegisterButton();
 //         } else if (!phoneRegex.test(phoneNo)) {
-//             errorElement.text('Phone number must be exactly 10 digits.').addClass('active').show();
+//             errorElement.text('Phone number must be exactly 10 digits.').addClass('active');
 //             disableRegisterButton();
 //         } else {
-//             errorElement.removeClass('active').hide();
+//             errorElement.removeClass('active');
+//             enableRegisterButtonIfValid();
+//         }
+//     });
+
+//     // Validate college ID
+//     $('#collegeid').on('input', function () {
+//         const collegeID = $(this).val();
+//         const errorElement = $('#collegeid-error');
+
+//         if (!emailRegex.test(collegeID)) {
+//             errorElement.text('College ID must end with @kccemsr.edu.in').addClass('active');
+//             disableRegisterButton();
+//         } else {
+//             errorElement.removeClass('active');
 //             enableRegisterButtonIfValid();
 //         }
 //     });
@@ -560,10 +435,10 @@
 //         const errorElement = $('#password-error');
 
 //         if (password !== confirmPassword) {
-//             errorElement.text('Passwords do not match.').addClass('active').show();
+//             errorElement.text('Passwords do not match.').addClass('active');
 //             disableRegisterButton();
 //         } else {
-//             errorElement.removeClass('active').hide();
+//             errorElement.removeClass('active');
 //             enableRegisterButtonIfValid();
 //         }
 //     });
@@ -573,11 +448,11 @@
 //         const isValidPhone = phoneRegex.test($('#phoneno').val());
 //         const isValidEmail = emailRegex.test($('#collegeid').val());
 //         const isPasswordMatch = $('#password').val() === $('#confirmpassword').val();
-//         const areRequiredFieldsFilled = $('#username').val() && $('#fullname').val() && $('#address').val() && $('#rollno').val() && $('#sem').val();
-//         const noError = !$('.error-message.active').length;
 
-//         if (isValidPhone && isValidEmail && isPasswordMatch && areRequiredFieldsFilled && noError) {
+//         if (isValidPhone && isValidEmail && isPasswordMatch) {
 //             $('#register-btn').removeAttr('disabled');
+//         } else {
+//             $('#register-btn').attr('disabled', true);
 //         }
 //     }
 
@@ -585,61 +460,46 @@
 //         $('#register-btn').attr('disabled', true);
 //     }
 
-//     // Initially disable the register button if fields are not filled
-//     disableRegisterButton();
-
 //     // Handle form submission
-//     $('#student-register-form').submit(function (event) {
-//         event.preventDefault();
+// $('#student-register-form').submit(function (event) {
+//     event.preventDefault();
 
-//         const formData = $(this).serializeArray();  // Serialize the form data
-//         const selectedSem = $('#sem').val();
-//         let selectedSubjects = [];
+//     const formData = $(this).serializeArray();  // Serialize the form data
+//     const selectedSem = $('#sem').val();
+//     let selectedSubjects = [];
 
-//         // Collect compulsory subjects
-//         subjects[selectedSem].compulsory.forEach(subject => {
-//             selectedSubjects.push({ id: subject.id, name: subject.name });
-//         });
+//     // Collect compulsory subjects
+//     subjects[selectedSem].compulsory.forEach(subject => {
+//         selectedSubjects.push(subject.id);  // Push compulsory subjects
+//     });
 
-//         // Collect optional subjects (if any)
-//         if (selectedSem === "V" || selectedSem === "VI") {
-//             const optionalSubject = $('#department-optional').val();
-//             const subject = subjects[selectedSem].optional.find(opt => opt.id === optionalSubject);
-//             if (subject) {
-//                 selectedSubjects.push({ id: subject.id, name: subject.name });
-//             }
-//         } else if (selectedSem === "VII" || "VIII") {
-//             const departmentOptional1 = $('#department-optional1').val();
-//             const departmentOptional2 = $('#department-optional2').val();
-//             const instituteOptional = $('#institute-optional').val();
+//     // Collect optional subjects (if any)
+//     if (selectedSem === "V" || selectedSem === "VI") {
+//         selectedSubjects.push($('#department-optional').val());
+//     } else if (selectedSem === "VII" || selectedSem === "VIII") {
+//         selectedSubjects.push($('#department-optional1').val());
+//         selectedSubjects.push($('#department-optional2').val());
+//         selectedSubjects.push($('#institute-optional').val());
+//     }
 
-//             const dept1 = subjects[selectedSem].optional.department.find(opt => opt.id === departmentOptional1);
-//             const dept2 = subjects[selectedSem].optional.department.find(opt => opt.id === departmentOptional2);
-//             const institute = subjects[selectedSem].optional.institute.find(opt => opt.id === instituteOptional);
+//     // Add selected subjects to form data
+//     formData.push({ name: 'subjects', value: selectedSubjects });
 
-//             if (dept1) selectedSubjects.push({ id: dept1.id, name: dept1.name });
-//             if (dept2) selectedSubjects.push({ id: dept2.id, name: dept2.name });
-//             if (institute) selectedSubjects.push({ id: institute.id, name: institute.name });
+//     // Send form data via AJAX
+//     $.ajax({
+//         type: 'POST',
+//         url: 'http://127.0.0.1:5000/register-student',
+//         data: $.param(formData),  // Serialize formData object
+//         success: function (response) {
+//             alert(response.message);
+//         },
+//         error: function () {
+//             alert("Error in registration");
 //         }
-
-//         // Add selected subjects to form data
-//         formData.push({ name: 'subjects', value: JSON.stringify(selectedSubjects) });
-
-//         // Send form data via AJAX
-//         $.ajax({
-//             type: 'POST',
-//             url: 'http://127.0.0.1:5000/register-student',
-//             data: $.param(formData),  // Serialize formData object
-//             success: function (response) {
-//                 alert(response.message);
-//             },
-//             error: function () {
-//                 alert("Error in registration");
-//             }
-//         });
 //     });
 // });
 
+// });
 
 
 
@@ -648,7 +508,6 @@ $(document).ready(function () {
     const phoneRegex = /^\d{10}$/;
     const emailRegex = /^[a-zA-Z0-9._$]+@kccemsr\.edu\.in$/;
 
-    // Subjects data remains unchanged
     const subjects = {
         "III": {
             compulsory: [
@@ -736,25 +595,6 @@ $(document).ready(function () {
         }
     };
 
-    // Function to validate if username, college ID, or roll number already exists in the selected semester
-    function validateExistingAttributes(attributeType, attributeValue, callback) {
-        const selectedSem = $('#sem').val();
-        if (!selectedSem) return;
-
-        // Perform an AJAX request to check if the attribute already exists in the database
-        $.ajax({
-            url: `http://127.0.0.1:5000/check-attribute/${selectedSem}/${attributeType}/${attributeValue}`,
-            type: 'GET',
-            success: function (response) {
-                callback(response.exists);
-            },
-            error: function () {
-                console.error(`Error checking ${attributeType} in database.`);
-                callback(false);
-            }
-        });
-    }
-
     // Handle semester change
     $('#sem').change(function () {
         const selectedSem = $(this).val();
@@ -779,12 +619,12 @@ $(document).ready(function () {
                 });
             }
 
-            // Handling for Semester VII (two department-level subjects)
-            if (selectedSem === "VII") {
+            // Special handling for Semester VII and VIII
+            if (selectedSem === "VII" || selectedSem === "VIII") {
                 optionalContainer.append('<h4>Select Department Level Subjects:</h4>');
                 optionalContainer.append('<select id="department-optional1" name="department-optional1" required><option value="" disabled selected>Select Department Level Subject 1</option></select>');
                 optionalContainer.append('<select id="department-optional2" name="department-optional2" required><option value="" disabled selected>Select Department Level Subject 2</option></select>');
-
+                
                 subjects[selectedSem].optional.department.forEach(subject => {
                     $('#department-optional1').append(`<option value="${subject.id}">${subject.name}</option>`);
                     $('#department-optional2').append(`<option value="${subject.id}">${subject.name}</option>`);
@@ -792,14 +632,14 @@ $(document).ready(function () {
 
                 $('#department-optional1').change(function () {
                     const selectedValue = $(this).val();
-                    $('#department-optional2 option').prop('disabled', false);
-                    $('#department-optional2 option[value="' + selectedValue + '"]').prop('disabled', true);
+                    $('#department-optional2 option').prop('disabled', false); // Re-enable all options initially
+                    $('#department-optional2 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
                 });
 
                 $('#department-optional2').change(function () {
                     const selectedValue = $(this).val();
-                    $('#department-optional1 option').prop('disabled', false);
-                    $('#department-optional1 option[value="' + selectedValue + '"]').prop('disabled', true);
+                    $('#department-optional1 option').prop('disabled', false); // Re-enable all options initially
+                    $('#department-optional1 option[value="' + selectedValue + '"]').prop('disabled', true); // Disable the selected one
                 });
 
                 optionalContainer.append('<h4>Select Institute Level Subject:</h4>');
@@ -808,83 +648,6 @@ $(document).ready(function () {
                     $('#institute-optional').append(`<option value="${subject.id}">${subject.name}</option>`);
                 });
             }
-
-            // Handling for Semester VIII (one department-level subject)
-            if (selectedSem === "VIII") {
-                optionalContainer.append('<h4>Select Department Level Subject:</h4>');
-                optionalContainer.append('<select id="department-optional" name="department-optional" required><option value="" disabled selected>Select Department Level Subject</option></select>');
-
-                subjects[selectedSem].optional.department.forEach(subject => {
-                    $('#department-optional').append(`<option value="${subject.id}">${subject.name}</option>`);
-                });
-
-                optionalContainer.append('<h4>Select Institute Level Subject:</h4>');
-                optionalContainer.append('<select id="institute-optional" name="institute-optional" required><option value="" disabled selected>Select Institute Level Subject</option></select>');
-                subjects[selectedSem].optional.institute.forEach(subject => {
-                    $('#institute-optional').append(`<option value="${subject.id}">${subject.name}</option>`);
-                });
-            }
-        }
-    });
-
-    // The rest of the existing code remains unchanged for validation and form submission.
-    // Function to show error message and disable register button
-    function showError(field, message) {
-        const errorElement = $(`#${field}-error`);
-        errorElement.text(message).addClass('active').show(); // Ensure error message is displayed
-        disableRegisterButton();
-    }
-
-    // Function to hide error message and re-enable register button if valid
-    function hideError(field) {
-        const errorElement = $(`#${field}-error`);
-        errorElement.removeClass('active').hide(); // Hide error message
-        enableRegisterButtonIfValid();
-    }
-
-    // Handle username change and check if it already exists
-    $('#username').on('input', function () {
-        const username = $(this).val();
-        if (!username) return;
-
-        validateExistingAttributes('username', username, function (exists) {
-            if (exists) {
-                showError('username', 'The username already exists. Please choose a different one.');
-            } else {
-                hideError('username');
-            }
-        });
-    });
-
-    // Handle roll number change and check if it already exists
-    $('#rollno').on('input', function () {
-        const rollNo = $(this).val();
-        if (!rollNo) return;
-
-        validateExistingAttributes('rollno', rollNo, function (exists) {
-            if (exists) {
-                showError('rollno', 'The roll number already exists. Please choose a different one.');
-            } else {
-                hideError('rollno');
-            }
-        });
-    });
-
-    // Handle college ID change and check if it already exists
-    $('#collegeid').on('input', function () {
-        const collegeID = $(this).val();
-        if (!collegeID) return;
-
-        if (!emailRegex.test(collegeID)) {
-            showError('collegeid', 'College ID must end with @kccemsr.edu.in');
-        } else {
-            validateExistingAttributes('collegeid', collegeID, function (exists) {
-                if (exists) {
-                    showError('collegeid', 'The college ID already exists. Please choose a different one.');
-                } else {
-                    hideError('collegeid');
-                }
-            });
         }
     });
 
@@ -894,13 +657,27 @@ $(document).ready(function () {
         const errorElement = $('#phoneno-error');
 
         if (!/^\d*$/.test(phoneNo)) {
-            errorElement.text('Phone number can only contain digits.').addClass('active').show();
+            errorElement.text('Phone number can only contain digits.').addClass('active');
             disableRegisterButton();
         } else if (!phoneRegex.test(phoneNo)) {
-            errorElement.text('Phone number must be exactly 10 digits.').addClass('active').show();
+            errorElement.text('Phone number must be exactly 10 digits.').addClass('active');
             disableRegisterButton();
         } else {
-            errorElement.removeClass('active').hide();
+            errorElement.removeClass('active');
+            enableRegisterButtonIfValid();
+        }
+    });
+
+    // Validate college ID
+    $('#collegeid').on('input', function () {
+        const collegeID = $(this).val();
+        const errorElement = $('#collegeid-error');
+
+        if (!emailRegex.test(collegeID)) {
+            errorElement.text('College ID must end with @kccemsr.edu.in').addClass('active');
+            disableRegisterButton();
+        } else {
+            errorElement.removeClass('active');
             enableRegisterButtonIfValid();
         }
     });
@@ -912,10 +689,10 @@ $(document).ready(function () {
         const errorElement = $('#password-error');
 
         if (password !== confirmPassword) {
-            errorElement.text('Passwords do not match.').addClass('active').show();
+            errorElement.text('Passwords do not match.').addClass('active');
             disableRegisterButton();
         } else {
-            errorElement.removeClass('active').hide();
+            errorElement.removeClass('active');
             enableRegisterButtonIfValid();
         }
     });
@@ -926,9 +703,8 @@ $(document).ready(function () {
         const isValidEmail = emailRegex.test($('#collegeid').val());
         const isPasswordMatch = $('#password').val() === $('#confirmpassword').val();
         const areRequiredFieldsFilled = $('#username').val() && $('#fullname').val() && $('#address').val() && $('#rollno').val() && $('#sem').val();
-        const noError = !$('.error-message.active').length;
 
-        if (isValidPhone && isValidEmail && isPasswordMatch && areRequiredFieldsFilled && noError) {
+        if (isValidPhone && isValidEmail && isPasswordMatch && areRequiredFieldsFilled) {
             $('#register-btn').removeAttr('disabled');
         }
     }
@@ -960,7 +736,7 @@ $(document).ready(function () {
             if (subject) {
                 selectedSubjects.push({ id: subject.id, name: subject.name });
             }
-        } else if (selectedSem === "VII") {
+        } else if (selectedSem === "VII" || selectedSem === "VIII") {
             const departmentOptional1 = $('#department-optional1').val();
             const departmentOptional2 = $('#department-optional2').val();
             const instituteOptional = $('#institute-optional').val();
@@ -971,15 +747,6 @@ $(document).ready(function () {
 
             if (dept1) selectedSubjects.push({ id: dept1.id, name: dept1.name });
             if (dept2) selectedSubjects.push({ id: dept2.id, name: dept2.name });
-            if (institute) selectedSubjects.push({ id: institute.id, name: institute.name });
-        } else if (selectedSem === "VIII") {
-            const departmentOptional = $('#department-optional').val();
-            const instituteOptional = $('#institute-optional').val();
-
-            const dept = subjects[selectedSem].optional.department.find(opt => opt.id === departmentOptional);
-            const institute = subjects[selectedSem].optional.institute.find(opt => opt.id === instituteOptional);
-
-            if (dept) selectedSubjects.push({ id: dept.id, name: dept.name });
             if (institute) selectedSubjects.push({ id: institute.id, name: institute.name });
         }
 
