@@ -1,93 +1,64 @@
-// // Assume you have an HTML form with ID 'login-form'
-// document.getElementById('studentLoginModal').addEventListener('submit', function(event) {
-//     event.preventDefault(); // Prevent form from submitting normally
+// Retrieve the student's identifier and semester from the URL
+const params = new URLSearchParams(window.location.search);
+const identifier = params.get('identifier'); // Username or College ID
+const semester = params.get('semester');
 
-//     // Fetch username and password from the form inputs
-//     const username = document.getElementById('username').value; // Input field for username
-//     const password = document.getElementById('password').value; // Input field for password
+// Display the student's name on the dashboard
+async function loadStudentSubjects() {
+    try {
+        // Fetch the student's data from the server based on the semester and identifier
+        const response = await fetch(`http://localhost:5000/get-student-subjects/${semester}/${identifier}`);
+        const data = await response.json();
 
-//     // Make a fetch request to login the student
-//     fetch('/login-student', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             username: username,
-//             password: password
-//         })
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.success) {
-//             // Successfully logged in, fetch student info
-//             fetch(`/api/student-info/${username}`)
-//                 .then(response => response.json())
-//                 .then(studentData => {
-//                     // Handle student data (e.g., display it on the UI)
-//                     console.log('Student Data:', studentData);
-//                 })
-//                 .catch(error => console.error('Error fetching student data:', error));
-//         } else {
-//             // Handle login failure (e.g., show an error message)
-//             console.error('Login failed:', data.message);
-//         }
-//     })
-//     .catch(error => console.error('Error during login:', error));
-// });
-
-
-
-// Assume you have an HTML form with ID 'login-form'
-document.getElementById('studentLoginModal').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent form from submitting normally
-
-    // Fetch username and password from the form inputs
-    const username = document.getElementById('username').value; // Input field for username
-    const password = document.getElementById('password').value; // Input field for password
-
-    // Make a fetch request to login the student
-    fetch('/login-student', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
         if (data.success) {
-            // Store username and password in local storage
-            localStorage.setItem('username', username); // Store username
-            localStorage.setItem('password', password); // Store password
+            // Display student full name
+            document.getElementById('student-name').innerText = `Hello, ${data.fullname}!`;
 
-            // Fetch student info
-            fetch(`/api/student-info/${username}`)
-                .then(response => response.json())
-                .then(studentData => {
-                    // Handle student data (e.g., display it on the UI)
-                    console.log('Student Data:', studentData);
-                })
-                .catch(error => console.error('Error fetching student data:', error));
+            // Get the subjects container element
+            const subjectsContainer = document.getElementById('subjects-container');
+
+            // Clear existing content in case of re-load
+            subjectsContainer.innerHTML = '';
+
+            // Loop through each subject and create a subject card
+            data.subjects.forEach(subject => {
+                const subjectCard = document.createElement('div');
+                subjectCard.className = 'subject-card';
+
+                subjectCard.innerHTML = `
+                    <h3>${subject.id} - ${subject.name}</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="viewMarks('${subject.id}')">View Marks</button>
+                        <button class="btn btn-secondary" onclick="viewAttendance('${subject.id}')">View Attendance</button>
+                    </div>
+                `;
+
+                subjectsContainer.appendChild(subjectCard);
+            });
         } else {
-            // Handle login failure (e.g., show an error message)
-            console.error('Login failed:', data.message);
+            document.getElementById('subjects-container').innerText = 'No subjects found for the given student.';
         }
-    })
-    .catch(error => console.error('Error during login:', error));
-});
-
-// Optional: On page load, check for stored credentials
-window.onload = function() {
-    const storedUsername = localStorage.getItem('username');
-    const storedPassword = localStorage.getItem('password');
-
-    if (storedUsername && storedPassword) {
-        // Automatically populate the login form if credentials are stored
-        document.getElementById('username').value = storedUsername;
-        document.getElementById('password').value = storedPassword;
+    } catch (error) {
+        console.error('Error fetching student subjects:', error);
     }
-};
+}
+
+// Function to view marks for a subject
+function viewMarks(subjectId) {
+    // Redirect to a marks viewing page
+    window.location.href = `view-marks.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
+}
+
+// Function to view attendance for a subject
+function viewAttendance(subjectId) {
+    // Redirect to an attendance viewing page
+    window.location.href = `view-attendance.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
+}
+
+// Function to logout the student
+function logout() {
+    window.location.href = 'index.html';
+}
+
+// Load student subjects on page load
+window.onload = loadStudentSubjects;

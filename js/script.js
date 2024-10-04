@@ -760,6 +760,8 @@ $(document).ready(function () {
             data: $.param(formData),  // Serialize formData object
             success: function (response) {
                 alert(response.message);
+//redirect ti index.html
+            window.location.href= 'index.html';
             },
             error: function () {
                 alert("Error in registration");
