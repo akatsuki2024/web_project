@@ -1,4 +1,5 @@
 
+
 // document.addEventListener('DOMContentLoaded', function () {
 //     // Retrieve subject and semester data from sessionStorage
 //     const subjectCode = sessionStorage.getItem('selectedSubjectCode');
@@ -8,7 +9,7 @@
 //     // Check if all required data is available
 //     if (!subjectCode || !semester || !subjectName) {
 //         alert('Subject name or code or semester is missing. Please go back and select the subject again.');
-//         window.location.href = '../html/teacher-dashboard.html';
+//         window.location.href = '../html/teacher-page.html'; // Changed redirect path here
 //         return;
 //     }
 
@@ -39,6 +40,7 @@
 //                     nameCell.textContent = student.fullname;
 //                     row.appendChild(nameCell);
 
+//                     // Create 'Present' radio button
 //                     const presentCell = document.createElement('td');
 //                     const presentInput = document.createElement('input');
 //                     presentInput.type = 'radio';
@@ -47,11 +49,13 @@
 //                     presentCell.appendChild(presentInput);
 //                     row.appendChild(presentCell);
 
+//                     // Create 'Absent' radio button and set it checked by default
 //                     const absentCell = document.createElement('td');
 //                     const absentInput = document.createElement('input');
 //                     absentInput.type = 'radio';
 //                     absentInput.name = `attendance-${student.rollno}`;
 //                     absentInput.value = 'Absent';
+//                     absentInput.checked = true; // Default to Absent
 //                     absentCell.appendChild(absentInput);
 //                     row.appendChild(absentCell);
 
@@ -109,6 +113,8 @@
 //         .then(data => {
 //             if (data.success) {
 //                 alert('Attendance saved successfully!');
+//                 // Redirect back to the teacher-page.html after successful submission
+//                 window.location.href = '../html/teacher-page.html'; // Changed redirect path here
 //             } else {
 //                 alert('Failed to save attendance. Please try again.');
 //             }
@@ -116,7 +122,6 @@
 //         .catch(error => console.error('Error saving attendance:', error));
 //     });
 // });
-
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -185,6 +190,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     commentCell.appendChild(commentInput);
                     row.appendChild(commentCell);
 
+                    // Store college ID in a hidden field
+                    const collegeIdInput = document.createElement('input');
+                    collegeIdInput.type = 'hidden';
+                    collegeIdInput.name = `collegeid-${student.rollno}`;
+                    collegeIdInput.value = student.collegeid;
+                    row.appendChild(collegeIdInput);
+
                     tableBody.appendChild(row);
                 });
             } else {
@@ -206,11 +218,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const name = row.cells[1].textContent;
             const present = row.querySelector(`input[name=attendance-${rollNo}]:checked`);
             const comment = row.querySelector(`input[name=comment-${rollNo}]`).value;
+            const collegeid = row.querySelector(`input[name=collegeid-${rollNo}]`).value; // Get college ID
 
             if (present) {
                 attendanceData.push({
                     rollno: rollNo,
                     name: name,
+                    collegeid: collegeid,  // Add college ID to the attendance object
                     present: present.value,
                     comment: comment
                 });

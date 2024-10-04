@@ -458,6 +458,53 @@ app.get('/get-student-marks/:semester/:subjectCode/:identifier', async (req, res
 });
 
 
+// Route to fetch attendance records for a specific student and subject
+// app.get('/view-student-attendance/:semester/:subjectCode/:identifier', async (req, res) => {
+//     const { semester, subjectCode, identifier } = req.params;
+
+//     try {
+//         // Create the collection name based on the provided semester and subject code
+//         const collectionName = `attendance_${semester}_${subjectCode}`;
+//         const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, collectionName);
+
+//         // Fetch attendance records for the specified student using their college ID
+//         const attendanceRecords = await AttendanceModel.find({ 'attendance.collegeid': identifier });
+
+//         if (attendanceRecords.length > 0) {
+//             res.status(200).json({ success: true, attendanceRecords });
+//         } else {
+//             res.status(404).json({ success: false, message: 'No attendance records found for this student.' });
+//         }
+//     } catch (error) {
+//         console.error('Failed to fetch attendance records:', error);
+//         res.status(500).json({ success: false, message: 'Failed to fetch attendance records', error: error.message });
+//     }
+// });
+
+
+// Sample Route to Fetch Student Attendance
+app.get('/view-student-attendance/:semester/:subjectCode/:identifier', async (req, res) => {
+    const { semester, subjectCode, identifier } = req.params;
+    try {
+        // Create the collection name using semester and subject code
+        const collectionName = `attendance_${semester}_${subjectCode}`;
+        
+        // Get the Attendance Model dynamically based on collection name
+        const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, collectionName);
+
+        // Fetch attendance records for the student using the identifier (college ID)
+        const attendanceRecords = await AttendanceModel.find({ 'attendance.collegeid': identifier });
+
+        if (attendanceRecords.length > 0) {
+            res.status(200).json({ success: true, attendanceRecords });
+        } else {
+            res.status(404).json({ success: false, message: 'No attendance records found for this student.' });
+        }
+    } catch (error) {
+        console.error('Error fetching attendance records:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch attendance records', error: error.message });
+    }
+});
 
 
 
