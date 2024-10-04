@@ -1,5 +1,6 @@
 
-<!DOCTYPE html>
+
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +9,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    
     .modal-dialog {
       max-width: 400px;
     }
@@ -44,7 +44,7 @@
               <button class="nav-link btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
             </li>
             <li class="nav-item">
-              <button class="nav-link btn btn-p" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+              <button class="nav-link btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
             </li>
           </ul>
         </div>
@@ -60,11 +60,8 @@
       </div>
     </header>
   </div>
-</body>
 
-
-
-  
+  <!-- Login Modal -->
   <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -72,15 +69,37 @@
           <h5 class="modal-title" id="loginModalLabel">Select Login Type</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <button class="btn btn-primary login-btn" id="studentLoginBtn">Student Login</button>
-          <button class="btn btn-secondary login-btn" id="teacherLoginBtn" data-bs-toggle="modal" data-bs-target="#teacherLoginModal">Teacher Login</button>
+        <div class="modal-body text-center">
+          <button class="btn btn-primary mb-3" id="studentLoginBtn" data-bs-toggle="modal" data-bs-target="#studentLoginModal">Student Login</button>
+          <button class="btn btn-secondary" id="teacherLoginBtn" data-bs-toggle="modal" data-bs-target="#teacherLoginModal">Teacher Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-     
-          <div id="studentLoginForm" class="form-container">
-            <h5>Student Login</h5>
-            <form id="studentLogin">
-              
+  <!-- Student Login Modal -->
+  <div class="modal fade" id="studentLoginModal" tabindex="-1" aria-labelledby="studentLoginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="studentLoginModalLabel">Student Login</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="login-container">
+            <form id="studentLoginForm">
+              <div class="mb-3">
+                <label for="semester" class="form-label">Semester</label>
+                <select class="form-select" id="semester" required>
+                  <option value="" selected disabled>Select Semester</option>
+                  <option value="III">III</option>
+                  <option value="IV">IV</option>
+                  <option value="V">V</option>
+                  <option value="VI">VI</option>
+                  <option value="VII">VII</option>
+                  <option value="VIII">VIII</option>
+                </select>
+              </div>
               <div class="mb-3">
                 <label for="studentIdentifier" class="form-label">Username or College ID</label>
                 <input type="text" class="form-control" id="studentIdentifier" placeholder="Enter your username or college ID" required>
@@ -91,14 +110,15 @@
               </div>
               <button type="submit" class="btn btn-primary">Login</button>
             </form>
+            
+            <div id="loginError" class="text-danger mt-3"></div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 
-  
+  <!-- Teacher Login Modal -->
   <div class="modal fade" id="teacherLoginModal" tabindex="-1" aria-labelledby="teacherLoginModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -113,7 +133,6 @@
                 <label for="teacherIdentifier" class="form-label">Username or Employee ID</label>
                 <input type="text" class="form-control" id="teacherIdentifier" placeholder="Enter your username or employee ID" required>
               </div>
-              
               
               <input type="password" style="display:none;">
               
@@ -132,7 +151,7 @@
     </div>
   </div>
 
- 
+  <!-- Register Modal -->
   <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -150,32 +169,24 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-
   <script>
+    // Redirect to Student Registration
     document.getElementById('studentRegisterBtn').addEventListener('click', function() {
-        window.location.href = 'student-register.html'; // Redirect to student registration
+      window.location.href = 'student-register.html';
     });
-  </script>
 
-
-  <script>
+    // Redirect to Teacher Registration
     document.getElementById('teacherRegisterBtn').addEventListener('click', function() {
-        window.location.href = 'teacher-register.html'; // Redirect to teacher registration
+      window.location.href = 'teacher-register.html';
     });
   </script>
 
-
+  <!-- Existing Teacher Login Script -->
   <script src="../js/teacher-login.js"></script>
+
+  <!-- Include Student Login Script -->
+  <script src="../js/student-login.js"></script>
+
 
 </body>
 </html>
-<<<<<<<<< Temporary merge branch 1
-=========
- 
-
-
-
-
-
-
->>>>>>>>> Temporary merge branch 2
