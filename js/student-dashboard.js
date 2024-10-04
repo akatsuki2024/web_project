@@ -46,13 +46,13 @@ async function loadStudentSubjects() {
 // Function to view marks for a subject
 function viewMarks(subjectId) {
     // Redirect to a marks viewing page
-    window.location.href = `view-marks.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
+    window.location.href = `view-student-marks.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
 }
 
 // Function to view attendance for a subject
 function viewAttendance(subjectId) {
     // Redirect to an attendance viewing page
-    window.location.href = `view-attendance.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
+    window.location.href = `view-studenet-attendance.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
 }
 
 // Function to logout the student

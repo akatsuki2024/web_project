@@ -327,7 +327,7 @@ app.get('/get-students/:semester/:subjectCode', async (req, res) => {
     }
 });
 
-// Route to submit marks to the Marks database
+
 // Route to get existing marks data for a subject and semester
 app.get('/get-marks/:semester/:subjectCode', async (req, res) => {
     const { semester, subjectCode } = req.params;
@@ -393,22 +393,7 @@ app.post('/submit-marks', async (req, res) => {
 });
 
 
-// Route to get existing marks data for a subject and semester
-app.get('/get-marks/:semester/:subjectCode', async (req, res) => {
-    const { semester, subjectCode } = req.params;
 
-    try {
-        const collectionName = `marks_${semester.toLowerCase()}_${subjectCode.toLowerCase()}`;
-        const MarksModel = marksConnection.model('Marks', marksSchema, collectionName);
-
-        const marks = await MarksModel.find({});
-        
-        res.status(200).json({ success: true, marks });
-    } catch (error) {
-        console.error('Failed to fetch marks:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch marks', error: error.message });
-    }
-});
 
 // Route to submit attendance to the attendance database
 app.post('/submit-attendance', async (req, res) => {
@@ -449,26 +434,31 @@ app.get('/view-attendance/:semester/:subjectCode', async (req, res) => {
     }
 });
 
-
-
-// Route to get existing marks data for a subject and semester
-app.get('/get-marks/:semester/:subjectCode', async (req, res) => {
-    const { semester, subjectCode } = req.params;
+// New route to get marks for a specific student based on their identifier, semester, and subject code
+app.get('/get-student-marks/:semester/:subjectCode/:identifier', async (req, res) => {
+    const { semester, subjectCode, identifier } = req.params;
 
     try {
-        // Use uppercase for the collection name
+        // Construct the collection name based on the semester and subject code
         const collectionName = `marks_${semester.toUpperCase()}_${subjectCode.toUpperCase()}`;
         const MarksModel = marksConnection.model('Marks', marksSchema, collectionName);
 
-        // Fetch all marks for the given semester and subject code
-        const marks = await MarksModel.find({});
+        // Find the marks for the specific student using the identifier (username or college ID)
+        const studentMarks = await MarksModel.findOne({ collegeID: identifier });
 
-        res.status(200).json({ success: true, marks });
+        if (studentMarks) {
+            res.status(200).json({ success: true, marks: [studentMarks] });
+        } else {
+            res.status(404).json({ success: false, message: 'Marks not found for the specified student.' });
+        }
     } catch (error) {
-        console.error('Failed to fetch marks:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch marks', error: error.message });
+        console.error('Failed to fetch marks for student:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch marks for student', error: error.message });
     }
 });
+
+
+
 
 
 
