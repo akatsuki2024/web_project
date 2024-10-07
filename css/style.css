@@ -80,12 +80,13 @@ h1.navbar-brand {
 }
 
 .btn-outline-primary:hover {
-  background-color: red; 
-  color: rgb(255, 0, 0); 
-  border: 2px solid red; /
+  background-color: #ff1e00; 
+  color: white; 
+  border: 2px solid #ff0000; 
   transform: scale(1.05); 
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
+
 
 
 .btn-outline-primary1 {
@@ -98,11 +99,11 @@ h1.navbar-brand {
 }
 
 .btn-outline-primary1:hover {
-  background-color: red; 
-  color: rgb(255, 0, 0); 
-  border: 2px solid red; /
+  background-color: #218838; 
+  color: white; 
+  border: 2px solid #218838; 
   transform: scale(1.05); 
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
 
