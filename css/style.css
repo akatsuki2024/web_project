@@ -1,3 +1,7 @@
+/* Space between login and register button */
+
+
+
 General Styles
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -70,13 +74,17 @@ h1.navbar-brand {
 }
 
 
+.nav-item:first-child {
+  margin-right: 10px; /* space between login and register button */
+}
+
 .btn-outline-primary {
   background-color: #008fe2; 
   color: white;
   border: 2px solid #008fe2; 
   font-weight: bold; 
   transition: all 0.3s ease; 
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-outline-primary:hover {
@@ -86,6 +94,7 @@ h1.navbar-brand {
   transform: scale(1.05); 
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
+
 
 
 
@@ -153,6 +162,7 @@ h1.navbar-brand {
   font-weight: bold; 
   transition: all 0.3s ease; 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  border-radius: 20px;
 }
 
 .btn-primary:hover {
@@ -170,6 +180,9 @@ h1.navbar-brand {
   font-weight: bold; 
   transition: all 0.3s ease; 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  border-radius: 20px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .btn-secondary:hover {
