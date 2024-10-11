@@ -112,7 +112,66 @@ function getCollectionForSemester(semester) {
     return semesterCollections[semester];
 }
 
-// Student registration endpoint
+// // Student registration endpoint
+// app.post('/register-student', async (req, res) => {
+//     try {
+//         const { username, fullname, collegeid, phoneno, address, rollno, sem, password } = req.body;
+//         let selectedSubjects = req.body.subjects || {};  // Default to an empty object if no subjects
+
+//         console.log('Received Student Data:', req.body);
+
+//         // Validate required fields
+//         if (!username || !fullname || !collegeid || !phoneno || !address || !rollno || !sem || !password) {
+//             console.log('Missing required fields:', req.body);
+//             return res.status(400).json({ message: 'All fields are required.' });
+//         }
+
+//         // Ensure subjects is in object format
+//         if (typeof selectedSubjects === 'string') {
+//             selectedSubjects = JSON.parse(selectedSubjects);
+//         }
+
+//         // Prepare student data with subjects as an object
+//         const studentData = {
+//             username,
+//             fullname,
+//             collegeid,
+//             phoneno,
+//             address,
+//             rollno,
+//             semester: sem,
+//             subjects: selectedSubjects,  // Now storing as object
+//             password
+//         };
+
+//         // Get the correct collection name based on the selected semester
+//         const collectionName = getCollectionForSemester(sem);
+
+//         // If the semester is invalid, return an error
+//         if (!collectionName) {
+//             console.error('Invalid semester selected:', sem);
+//             return res.status(400).json({ message: 'Invalid semester selected!' });
+//         }
+
+//         // Use the pre-existing collection based on the semester
+//         const StudentModel = mongoose.model(collectionName, studentSchema, collectionName);
+
+//         // Save the student data in the appropriate collection
+//         const newStudent = new StudentModel(studentData);
+//         await newStudent.save();
+
+//         console.log(`Student registered successfully in ${collectionName}`);
+//         res.status(200).json({ message: `Student registered successfully in ${collectionName}` });
+//     } catch (error) {
+//         console.error('Error registering student:', error); // Log any errors
+//         res.status(500).json({ message: 'Error registering student', error: error.message });
+//     }
+// });
+
+
+
+
+// Student registration endpoint with uniqueness checks for username, rollno, and collegeid
 app.post('/register-student', async (req, res) => {
     try {
         const { username, fullname, collegeid, phoneno, address, rollno, sem, password } = req.body;
@@ -156,6 +215,26 @@ app.post('/register-student', async (req, res) => {
         // Use the pre-existing collection based on the semester
         const StudentModel = mongoose.model(collectionName, studentSchema, collectionName);
 
+        // Check for existing student with the same username, roll number, or college ID in the same semester
+        const existingStudent = await StudentModel.findOne({
+            $or: [
+                { username: username },
+                { rollno: rollno },
+                { collegeid: collegeid }
+            ]
+        });
+
+        if (existingStudent) {
+            let errorMessage = 'The following attributes are already in use: ';
+            if (existingStudent.username === username) errorMessage += 'Username, ';
+            if (existingStudent.rollno === rollno) errorMessage += 'Roll No, ';
+            if (existingStudent.collegeid === collegeid) errorMessage += 'College ID, ';
+
+            // Remove the last comma and space
+            errorMessage = errorMessage.slice(0, -2);
+            return res.status(400).json({ message: `${errorMessage}. Please modify these fields to proceed.` });
+        }
+
         // Save the student data in the appropriate collection
         const newStudent = new StudentModel(studentData);
         await newStudent.save();
@@ -167,6 +246,9 @@ app.post('/register-student', async (req, res) => {
         res.status(500).json({ message: 'Error registering student', error: error.message });
     }
 });
+
+
+
 
 // Teacher registration endpoint
 app.post('/register-teacher', async (req, res) => {
@@ -206,6 +288,27 @@ app.post('/register-teacher', async (req, res) => {
         res.status(500).json({ message: 'Error registering teacher', error: error.message });
     }
 });
+
+
+//--------------------------------------------------------------
+// Endpoint to get all existing teachers
+app.get('/get-teachers', async (req, res) => {
+    try {
+        const TeacherModel = teacherConnection.model('Teachers', teacherSchema, 'teachers');
+        const teachers = await TeacherModel.find({}); // Fetch all teachers
+
+        res.status(200).json({ success: true, teachers });
+    } catch (error) {
+        console.error('Error fetching teacher data:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch teacher data', error: error.message });
+    }
+});
+
+
+
+//-----------------------------
+
+
 
 // Student login endpoint
 app.post('/login-student', async (req, res) => {
@@ -327,7 +430,38 @@ app.get('/get-students/:semester/:subjectCode', async (req, res) => {
     }
 });
 
-// Route to submit marks to the Marks database
+
+
+// New Route to get students based on the selected semester only
+app.get('/get-students/:semester', async (req, res) => {
+    const { semester } = req.params;
+
+    try {
+        // Get the collection name based on the selected semester
+        const collectionName = getCollectionForSemester(semester);
+        
+        // Ensure the collection name is valid
+        if (!collectionName) {
+            return res.status(400).json({ success: false, message: 'Invalid semester provided' });
+        }
+
+        // Define the model for the specified semester
+        const StudentModel = mongoose.model(collectionName, studentSchema, collectionName);
+
+        // Fetch all students in the specified semester
+        const students = await StudentModel.find({});
+
+        // Return the list of students
+        res.status(200).json({ success: true, students });
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch students', error: error.message });
+    }
+});
+
+
+
+
 // Route to get existing marks data for a subject and semester
 app.get('/get-marks/:semester/:subjectCode', async (req, res) => {
     const { semester, subjectCode } = req.params;
@@ -393,22 +527,7 @@ app.post('/submit-marks', async (req, res) => {
 });
 
 
-// Route to get existing marks data for a subject and semester
-app.get('/get-marks/:semester/:subjectCode', async (req, res) => {
-    const { semester, subjectCode } = req.params;
 
-    try {
-        const collectionName = `marks_${semester.toLowerCase()}_${subjectCode.toLowerCase()}`;
-        const MarksModel = marksConnection.model('Marks', marksSchema, collectionName);
-
-        const marks = await MarksModel.find({});
-        
-        res.status(200).json({ success: true, marks });
-    } catch (error) {
-        console.error('Failed to fetch marks:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch marks', error: error.message });
-    }
-});
 
 // Route to submit attendance to the attendance database
 app.post('/submit-attendance', async (req, res) => {
@@ -449,26 +568,78 @@ app.get('/view-attendance/:semester/:subjectCode', async (req, res) => {
     }
 });
 
-
-
-// Route to get existing marks data for a subject and semester
-app.get('/get-marks/:semester/:subjectCode', async (req, res) => {
-    const { semester, subjectCode } = req.params;
+// New route to get marks for a specific student based on their identifier, semester, and subject code
+app.get('/get-student-marks/:semester/:subjectCode/:identifier', async (req, res) => {
+    const { semester, subjectCode, identifier } = req.params;
 
     try {
-        // Use uppercase for the collection name
+        // Construct the collection name based on the semester and subject code
         const collectionName = `marks_${semester.toUpperCase()}_${subjectCode.toUpperCase()}`;
         const MarksModel = marksConnection.model('Marks', marksSchema, collectionName);
 
-        // Fetch all marks for the given semester and subject code
-        const marks = await MarksModel.find({});
+        // Find the marks for the specific student using the identifier (username or college ID)
+        const studentMarks = await MarksModel.findOne({ collegeID: identifier });
 
-        res.status(200).json({ success: true, marks });
+        if (studentMarks) {
+            res.status(200).json({ success: true, marks: [studentMarks] });
+        } else {
+            res.status(404).json({ success: false, message: 'Marks not found for the specified student.' });
+        }
     } catch (error) {
-        console.error('Failed to fetch marks:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch marks', error: error.message });
+        console.error('Failed to fetch marks for student:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch marks for student', error: error.message });
     }
 });
+
+
+// Route to fetch attendance records for a specific student and subject
+// app.get('/view-student-attendance/:semester/:subjectCode/:identifier', async (req, res) => {
+//     const { semester, subjectCode, identifier } = req.params;
+
+//     try {
+//         // Create the collection name based on the provided semester and subject code
+//         const collectionName = `attendance_${semester}_${subjectCode}`;
+//         const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, collectionName);
+
+//         // Fetch attendance records for the specified student using their college ID
+//         const attendanceRecords = await AttendanceModel.find({ 'attendance.collegeid': identifier });
+
+//         if (attendanceRecords.length > 0) {
+//             res.status(200).json({ success: true, attendanceRecords });
+//         } else {
+//             res.status(404).json({ success: false, message: 'No attendance records found for this student.' });
+//         }
+//     } catch (error) {
+//         console.error('Failed to fetch attendance records:', error);
+//         res.status(500).json({ success: false, message: 'Failed to fetch attendance records', error: error.message });
+//     }
+// });
+
+
+// Sample Route to Fetch Student Attendance
+app.get('/view-student-attendance/:semester/:subjectCode/:identifier', async (req, res) => {
+    const { semester, subjectCode, identifier } = req.params;
+    try {
+        // Create the collection name using semester and subject code
+        const collectionName = `attendance_${semester}_${subjectCode}`;
+        
+        // Get the Attendance Model dynamically based on collection name
+        const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, collectionName);
+
+        // Fetch attendance records for the student using the identifier (college ID)
+        const attendanceRecords = await AttendanceModel.find({ 'attendance.collegeid': identifier });
+
+        if (attendanceRecords.length > 0) {
+            res.status(200).json({ success: true, attendanceRecords });
+        } else {
+            res.status(404).json({ success: false, message: 'No attendance records found for this student.' });
+        }
+    } catch (error) {
+        console.error('Error fetching attendance records:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch attendance records', error: error.message });
+    }
+});
+
 
 
 
