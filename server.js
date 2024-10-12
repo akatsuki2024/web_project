@@ -54,6 +54,24 @@ marksConnection.on('error', (error) => {
     console.error('Error connecting to Marks database:', error);
 });
 
+
+
+// Connect to MongoDB (History database for storing student history)
+const historyConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/history');
+
+historyConnection.on('connected', () => {
+    console.log('Connected to MongoDB History');
+});
+
+historyConnection.on('error', (error) => {
+    console.error('Error connecting to MongoDB History:', error);
+});
+
+
+
+
+
+
 // Schema for teacher registration (use the same schema for both registration and fetching subjects)
 const teacherSchema = new mongoose.Schema({
     username: String,
@@ -640,6 +658,106 @@ app.get('/view-student-attendance/:semester/:subjectCode/:identifier', async (re
     }
 });
 
+
+// Schema for student history
+const studentHistorySchema = new mongoose.Schema({
+    username: String,
+    fullname: String,
+    collegeid: String,
+    phoneno: String,
+    address: String,
+    rollno: String,
+    history: Array  // Store the semesters and their respective details (subjects, marks, attendance)
+});
+
+// Updated Route to upgrade student semester and move data to student-history
+app.post('/upgrade-student-semester', async (req, res) => {
+    const { identifier, semester, year } = req.body; // Get year from request
+
+    try {
+        // Fetch the student's current data based on the semester and identifier (username or college ID)
+        const currentSemesterCollection = getCollectionForSemester(semester);
+        const StudentModel = mongoose.model(currentSemesterCollection, studentSchema, currentSemesterCollection);
+
+        const student = await StudentModel.findOne({
+            $or: [{ username: identifier }, { collegeid: identifier }]
+        });
+
+        if (!student) {
+            return res.status(404).json({ success: false, message: 'Student not found.' });
+        }
+
+        // Fetch all the subjects that the student is enrolled in for the semester
+        const subjects = student.subjects.map(subject => subject.id); // Subject codes
+
+        let allAttendanceRecords = [];
+        let allMarksRecords = [];
+
+        // Iterate through each subject to fetch attendance and marks for that subject
+        for (let subjectCode of subjects) {
+            const attendanceCollectionName = `attendance_${semester}_${subjectCode}`;
+            const marksCollectionName = `marks_${semester}_${subjectCode}`;
+            const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, attendanceCollectionName);
+            const MarksModel = marksConnection.model('Marks', marksSchema, marksCollectionName);
+
+            // Fetch attendance records for the student for the current subject
+            const attendanceRecords = await AttendanceModel.find({ 'attendance.collegeid': student.collegeid });
+            const marksRecords = await MarksModel.findOne({ collegeID: student.collegeid });
+
+            if (attendanceRecords.length > 0) {
+                allAttendanceRecords.push(...attendanceRecords);
+            }
+
+            if (marksRecords) {
+                allMarksRecords.push(marksRecords);
+            }
+
+            // Remove student data from both collections
+            await AttendanceModel.deleteMany({ 'attendance.collegeid': student.collegeid });
+            await MarksModel.deleteOne({ collegeID: student.collegeid });
+        }
+
+        // Now, store the data in the correct history collection
+        const historyCollectionName = `std-history-${semester}-${year}`; // Collection for the chosen academic year and semester
+        const StudentHistoryModel = historyConnection.model(historyCollectionName, studentHistorySchema, historyCollectionName);
+
+        // Check if this student already exists in the history for this year
+        let existingHistory = await StudentHistoryModel.findOne({ collegeid: student.collegeid });
+
+        if (!existingHistory) {
+            // Create a new history record for the student if they don't already have one for this year
+            existingHistory = new StudentHistoryModel({
+                username: student.username,
+                fullname: student.fullname,
+                collegeid: student.collegeid,
+                phoneno: student.phoneno,
+                address: student.address,
+                rollno: student.rollno,
+                history: [] // Initialize an empty history array
+            });
+        }
+
+        // Add the current semester data to the history
+        existingHistory.history.push({
+            semester: student.semester,
+            subjects: student.subjects,
+            attendance: allAttendanceRecords,  // Attendance from all subjects
+            marks: allMarksRecords  // Marks from all subjects
+        });
+
+        // Save the updated history
+        await existingHistory.save();
+
+        // Remove the student's data from the current semester collection
+        await StudentModel.deleteOne({ _id: student._id });
+
+        // Return success message
+        res.status(200).json({ success: true, message: `Semester upgraded successfully to ${semester}, and data moved to history for the year ${year}.` });
+    } catch (error) {
+        console.error('Error upgrading semester:', error);
+        res.status(500).json({ success: false, message: 'Error upgrading semester.', error: error.message });
+    }
+});
 
 
 
