@@ -71,8 +71,8 @@ input, select {
 }
 
 input:hover, select:hover { 
-    border: 5px solid #08a300; /* Transitioned smoothly */
-    transform: scale(1.005);
+    border: 3px solid #08a300; /* Transitioned smoothly */
+    transform: scale(1.0005);
 }
 
 input:focus, select:focus {
