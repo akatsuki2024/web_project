@@ -67,7 +67,6 @@
 // // Load student subjects on page load
 // window.onload = loadStudentSubjects;
 
-
 // Retrieve the student's identifier and semester from the URL
 const params = new URLSearchParams(window.location.search);
 const identifier = params.get('identifier'); // College ID
@@ -132,47 +131,10 @@ function logout() {
     window.location.href = '../html/index.html'; // Ensure this points to your main index file
 }
 
+// Remove "Upgrade Semester" functionality
+// The following code has been removed:
 // Function to open the modal for upgrading semester
-function openUpgradeModal() {
-    const upgradeModal = new bootstrap.Modal(document.getElementById('upgradeModal'));
-    upgradeModal.show();
-}
-
 // Function to upgrade semester
-async function upgradeSemester() {
-    const yearInput = document.getElementById('yearInput').value;
-
-    if (!yearInput || !/^\d{4}-\d{2}$/.test(yearInput)) {
-        alert('Please enter a valid academic year (e.g., 2024-25).');
-        return;
-    }
-
-    try {
-        const response = await fetch('http://localhost:5000/upgrade-student-semester', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                identifier: identifier,
-                semester: semester,
-                year: yearInput
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            alert('Semester upgraded successfully! You will be logged out now.');
-            logout(); // Log the student out after the upgrade
-        } else {
-            alert(`Failed to upgrade semester: ${data.message}`);
-        }
-    } catch (error) {
-        console.error('Error upgrading semester:', error);
-        alert('An error occurred during the upgrade process.');
-    }
-}
 
 // Load student subjects on page load
 window.onload = loadStudentSubjects;
