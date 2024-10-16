@@ -239,6 +239,19 @@ app.post('/register-teacher', async (req, res) => {
     }
 });
 
+// Endpoint to get all existing teachers
+app.get('/get-teachers', async (req, res) => {
+    try {
+        const TeacherModel = teacherConnection.model('Teachers', teacherSchema, 'teachers');
+        const teachers = await TeacherModel.find({}); // Fetch all teachers
+
+        res.status(200).json({ success: true, teachers });
+    } catch (error) {
+        console.error('Error fetching teacher data:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch teacher data', error: error.message });
+    }
+});
+
 // Student login endpoint
 app.post('/login-student', async (req, res) => {
     const { semester, identifier, password } = req.body;
