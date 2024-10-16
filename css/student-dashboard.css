@@ -4,12 +4,61 @@
 .container {
     max-width: 800px;
     margin: 50px auto;
-    padding: 20px;
+    padding: 80px;
     background-color: #fff780;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    display: flex;
+    flex-direction: column; /* Ensures elements are stacked vertically */
+    align-items: center; /* Center the elements horizontally */
+    position: relative;
+    padding-top: 10px;
 }
+/* 
+blue buttons */
+
+.btn-primary {
+    background-color: #008fe2; 
+    color: white;
+    padding: 10px 10px 10px;
+    width: 40%;
+    border: 2px solid #008fe2; 
+    font-weight: bold; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    border-radius: 20px;
+  }
+  
+  .btn-primary:hover {
+    background-color: #218838; 
+    color: white; 
+    border: 2px solid #218838; 
+    transform: scale(1.05); 
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-secondary {
+    background-color: #008fe2; 
+    color: white;
+    padding: 10px 10px 10px;
+    width:40%;
+    border: 2px solid #008fe2; 
+    font-weight: bold; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    border-radius: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #218838; 
+    color: white; 
+    border: 2px solid #218838; 
+    transform: scale(1.05); 
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); 
+  }
 
 /* Center-align the header */
 .header {
@@ -29,8 +78,12 @@
     width: 100%;
 }
 
+
 /* Styling for the custom logout button */
 .custom-logout-btn {
+    position: absolute;
+    top: 30px; /* Align the button to the top of the container */
+    right: 20px; /* Align the button to the right with some padding */
     background-color: #ff0019; /* Red background color */
     color: white; /* White text color */
     border: 3px solid #000000; /* Black border */
@@ -40,7 +93,6 @@
     border-radius: 5px; /* Rounded corners */
     transition: all 0.3s ease; /* Smooth transition for hover effects */
     width: auto; /* Auto width */
-    flex-shrink: 0; /* Prevents shrinking */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
     font-weight: bold; /* Bold text */
 }
@@ -53,6 +105,7 @@
     transform: scale(1.05); /* Slight scaling effect */
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
 }
+
 
 /* Responsive design adjustments */
 @media (max-width: 768px) {
