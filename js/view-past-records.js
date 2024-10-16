@@ -12,20 +12,47 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`http://localhost:5000/view-past-attendance/${semesterYear}/${subjectCode}`)
             .then(response => response.json())
             .then(data => {
-                const attendanceTable = document.getElementById('attendance-table').querySelector('tbody');
+                const attendanceTableHead = document.getElementById('attendance-header');
+                const attendanceTableBody = document.getElementById('attendance-table').querySelector('tbody');
 
                 if (data.success && data.attendanceRecords.length > 0) {
+                    const uniqueDates = new Set();
+                    
+                    // Collect unique attendance dates
+                    data.attendanceRecords.forEach(record => {
+                        record.attendanceDates.forEach(date => {
+                            const [attDate] = date.split(' '); // Extract the date part
+                            uniqueDates.add(attDate);
+                        });
+                    });
+
+                    // Create dynamic headers based on unique dates
+                    const sortedDates = Array.from(uniqueDates).sort((a, b) => new Date(a) - new Date(b));
+                    sortedDates.forEach(date => {
+                        const th = document.createElement('th');
+                        th.textContent = date;
+                        attendanceTableHead.appendChild(th);
+                    });
+
+                    // Populate attendance records
                     data.attendanceRecords.forEach(record => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${record.rollno}</td>
                             <td>${record.studentName} (${record.collegeID})</td>
-                            <td>${record.attendanceDates.length > 0 ? record.attendanceDates.join(', ') : 'No attendance recorded'}</td>
                         `;
-                        attendanceTable.appendChild(row);
+
+                        sortedDates.forEach(date => {
+                            const attendanceStatus = record.attendanceDates.includes(date + ' (Present)') ? 'Present' : 'Absent';
+                            const td = document.createElement('td');
+                            td.textContent = attendanceStatus;
+                            row.appendChild(td);
+                        });
+
+                        attendanceTableBody.appendChild(row);
                     });
                 } else {
-                    attendanceTable.innerHTML = '<tr><td colspan="3">No attendance records found.</td></tr>';
+                    attendanceTableBody.innerHTML = '<tr><td colspan="3">No attendance records found.</td></tr>';
                 }
             })
             .catch(error => {

@@ -544,7 +544,23 @@ app.get('/view-student-attendance/:semester/:subjectCode/:identifier', async (re
     }
 });
 
-// Schema for student history
+// // Schema for student history
+// const studentHistorySchema = new mongoose.Schema({
+//     username: String,
+//     fullname: String,
+//     collegeid: String,
+//     phoneno: String,
+//     address: String,
+//     rollno: String,
+//     history: [
+//         {
+//             semester: String,
+//             subjects: Array,
+//             attendance: Array,  // All attendance records for the student
+//             marks: Array         // All marks records for the student
+//         }
+//     ]
+// });
 const studentHistorySchema = new mongoose.Schema({
     username: String,
     fullname: String,
@@ -552,12 +568,25 @@ const studentHistorySchema = new mongoose.Schema({
     phoneno: String,
     address: String,
     rollno: String,
+    semester: String, // Store current semester outside
     history: [
         {
-            semester: String,
-            subjects: Array,
-            attendance: Array,  // All attendance records for the student
-            marks: Array         // All marks records for the student
+            subjects: [
+                {
+                    code: String,
+                    name: String,
+                    attendance: [
+                        {
+                            date: String,
+                            status: String
+                        }
+                    ],
+                    marks: {
+                        ia1: Number,
+                        ia2: Number
+                    }
+                }
+            ]
         }
     ]
 });
@@ -575,60 +604,64 @@ async function moveAllStudentsToHistory(semester, year) {
 
         // Loop through each student
         for (let student of students) {
-            const subjects = student.subjects.map(subject => subject.id); // Subject codes
-            let allAttendanceRecords = [];
-            let allMarksRecords = [];
+            let historySubjects = [];
 
             // Iterate through each subject to fetch attendance and marks for that subject
-            for (let subjectCode of subjects) {
-                const attendanceCollectionName = `attendance_${semester}_${subjectCode}`;
-                const marksCollectionName = `marks_${semester}_${subjectCode}`;
-                const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, attendanceCollectionName);
-                const MarksModel = marksConnection.model('Marks', marksSchema, marksCollectionName);
+            for (let subject of student.subjects) {
+                const subjectCode = subject.id;
+                const subjectName = subject.name;
 
+                // Attendance
+                const attendanceCollectionName = `attendance_${semester}_${subjectCode}`;
+                const AttendanceModel = attendanceConnection.model('Attendance', attendanceSchema, attendanceCollectionName);
+                
                 // Fetch attendance records for the specific student and subject
                 const attendanceRecords = await AttendanceModel.find({
-                    'attendance.collegeid': student.collegeid // Fetch attendance only for this student
+                    'attendance.collegeid': student.collegeid
                 });
 
-                // Process and add attendance records for this student only
-                if (attendanceRecords.length > 0) {
-                    attendanceRecords.forEach(record => {
-                        const studentAttendance = record.attendance.find(a => a.collegeid === student.collegeid);
-                        if (studentAttendance) {
-                            allAttendanceRecords.push({
-                                date: record.date,
-                                subjectCode: record.subjectCode,
-                                semester: record.semester,
-                                attendance: [studentAttendance] // Keep only this student's attendance
-                            });
-                        }
-                    });
-                }
-
-                // Fetch marks records for the specific student and subject
-                const marksRecords = await MarksModel.findOne({
-                    collegeID: student.collegeid // Fetch marks only for this student
+                // Filter and structure the attendance data for the subject
+                let attendance = [];
+                attendanceRecords.forEach(record => {
+                    const studentAttendance = record.attendance.find(a => a.collegeid === student.collegeid);
+                    if (studentAttendance) {
+                        attendance.push({
+                            date: record.date,
+                            status: studentAttendance.present ? "Present" : "Absent"
+                        });
+                    }
                 });
 
-                // Process and add marks records for this student only
-                if (marksRecords) {
-                    allMarksRecords.push({
-                        subjectCode: marksRecords.subjectCode,
-                        ia1: marksRecords.ia1,
-                        ia2: marksRecords.ia2,
-                        semester: marksRecords.semester
-                    });
+                // Marks
+                const marksCollectionName = `marks_${semester}_${subjectCode}`;
+                const MarksModel = marksConnection.model('Marks', marksSchema, marksCollectionName);
+
+                // Fetch marks for the specific student and subject
+                const marksRecord = await MarksModel.findOne({ collegeID: student.collegeid });
+
+                // Structure marks data for the subject
+                let marks = {};
+                if (marksRecord) {
+                    marks = {
+                        ia1: marksRecord.ia1,
+                        ia2: marksRecord.ia2
+                    };
                 }
 
-                // Remove the student's attendance data from the current collections
+                // Compile subject information
+                historySubjects.push({
+                    code: subjectCode,
+                    name: subjectName,
+                    attendance: attendance,
+                    marks: marks
+                });
+
+                // Clean up attendance and marks data for the student in the current collections
                 await AttendanceModel.updateMany(
                     { 'attendance.collegeid': student.collegeid },
                     { $pull: { attendance: { collegeid: student.collegeid } } }
                 );
-
-                // After removing, also delete empty attendance records to clean up the collection
-                await AttendanceModel.deleteMany({ attendance: { $size: 0 } });
+                await AttendanceModel.deleteMany({ attendance: { $size: 0 } }); // Remove empty records
                 await MarksModel.deleteOne({ collegeID: student.collegeid });
             }
 
@@ -636,32 +669,24 @@ async function moveAllStudentsToHistory(semester, year) {
             const historyCollectionName = `std-history-${semester}-${year}`;
             const StudentHistoryModel = historyConnection.model(historyCollectionName, studentHistorySchema, historyCollectionName);
 
-            // Check if this student already exists in the history for the year
-            let existingHistory = await StudentHistoryModel.findOne({ collegeid: student.collegeid });
-
-            if (!existingHistory) {
-                // Create a new history record for the student if they don't already have one for this year
-                existingHistory = new StudentHistoryModel({
-                    username: student.username,
-                    fullname: student.fullname,
-                    collegeid: student.collegeid,
-                    phoneno: student.phoneno,
-                    address: student.address,
-                    rollno: student.rollno,
-                    history: []
-                });
-            }
-
-            // Add the current semester data to the history
-            existingHistory.history.push({
-                semester: student.semester,
-                subjects: student.subjects,
-                attendance: allAttendanceRecords,
-                marks: allMarksRecords
+            // Create a new document for each student in the history collection
+            const studentHistory = new StudentHistoryModel({
+                username: student.username,
+                fullname: student.fullname,
+                collegeid: student.collegeid,
+                phoneno: student.phoneno,
+                address: student.address,
+                rollno: student.rollno,
+                semester: semester, // Store current semester outside the history array
+                history: [
+                    {
+                        subjects: historySubjects // Store all subject data
+                    }
+                ]
             });
 
-            // Save the updated history
-            await existingHistory.save();
+            // Save the updated history document
+            await studentHistory.save();
 
             // Remove the student's data from the current semester collection
             await StudentModel.deleteOne({ _id: student._id });
@@ -711,6 +736,7 @@ app.post('/upgrade-teacher-semester', async (req, res) => {
 
 
 
+
 // Route to fetch past attendance records for a specific semester and subject
 app.get('/view-past-attendance/:semesterYear/:subjectCode', async (req, res) => {
     const { semesterYear, subjectCode } = req.params;
@@ -722,18 +748,15 @@ app.get('/view-past-attendance/:semesterYear/:subjectCode', async (req, res) => 
 
         // Find all students with attendance records for the specific subjectCode
         const attendanceRecords = await StudentHistoryModel.find(
-            { 'history.attendance.subjectCode': subjectCode },
-            { 'history.$': 1, fullname: 1, rollno: 1, collegeid: 1 } // Return only relevant fields
+            { 'history.subjects.code': subjectCode },
+            { 'history.$': 1, fullname: 1, rollno: 1, collegeid: 1 }
         );
 
         // Process the data to extract attendance information
         const attendanceData = attendanceRecords.map(record => {
             const historyEntry = record.history[0];
-            const attendanceEntry = historyEntry?.attendance?.find(att => att.subjectCode === subjectCode);
-
-            const attendanceDates = attendanceEntry && attendanceEntry.attendance ? 
-                attendanceEntry.attendance.map(a => a.present ? 'Present' : 'Absent') : 
-                [];
+            const subjectEntry = historyEntry.subjects.find(sub => sub.code === subjectCode);
+            const attendanceDates = subjectEntry?.attendance.map(a => `${a.date} (${a.status})`) || [];
 
             return {
                 rollno: record.rollno,
@@ -750,11 +773,6 @@ app.get('/view-past-attendance/:semesterYear/:subjectCode', async (req, res) => 
     }
 });
 
-
-
-
-
-
 // Route to fetch past marks records for a specific semester and subject
 app.get('/view-past-marks/:semesterYear/:subjectCode', async (req, res) => {
     const { semesterYear, subjectCode } = req.params;
@@ -766,19 +784,19 @@ app.get('/view-past-marks/:semesterYear/:subjectCode', async (req, res) => {
 
         // Find students with marks records for the subjectCode
         const marksRecords = await StudentHistoryModel.find(
-            { 'history.subjects.id': subjectCode },
-            { 'history.$': 1, fullname: 1, rollno: 1, collegeid: 1 } // Limit fields returned
+            { 'history.subjects.code': subjectCode },
+            { 'history.$': 1, fullname: 1, rollno: 1, collegeid: 1 }
         );
 
         // Process the data to extract marks information
         const marksData = marksRecords.map(record => {
-            const marksInfo = record.history[0].marks.filter(mark => mark.subjectCode === subjectCode);
+            const subject = record.history[0].subjects.find(sub => sub.code === subjectCode);
             return {
                 rollno: record.rollno,
                 studentName: record.fullname,
                 collegeID: record.collegeid,
-                ia1: marksInfo[0]?.ia1 ?? 'N/A',
-                ia2: marksInfo[0]?.ia2 ?? 'N/A'
+                ia1: subject?.marks?.ia1 ?? 'N/A',
+                ia2: subject?.marks?.ia2 ?? 'N/A'
             };
         });
 
@@ -788,7 +806,6 @@ app.get('/view-past-marks/:semesterYear/:subjectCode', async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to fetch marks records.' });
     }
 });
-
 
 
 
