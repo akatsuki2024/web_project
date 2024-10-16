@@ -1,12 +1,13 @@
+
 // // Retrieve the student's identifier and semester from the URL
 // const params = new URLSearchParams(window.location.search);
-// const identifier = params.get('identifier'); // Username or College ID
+// const identifier = params.get('identifier'); // College ID
 // const semester = params.get('semester');
 
-// // Display the student's name on the dashboard
+// // Display the student's name on the dashboard and load subjects
 // async function loadStudentSubjects() {
 //     try {
-//         // Fetch the student's data from the server based on the semester and identifier
+//         // Fetch the student's data from the server based on the semester and identifier (college ID)
 //         const response = await fetch(`http://localhost:5000/get-student-subjects/${semester}/${identifier}`);
 //         const data = await response.json();
 
@@ -23,13 +24,15 @@
 //             // Loop through each subject and create a subject card
 //             data.subjects.forEach(subject => {
 //                 const subjectCard = document.createElement('div');
-//                 subjectCard.className = 'subject-card';
+//                 subjectCard.className = 'subject-card card mb-3'; // Added Bootstrap classes for styling
 
 //                 subjectCard.innerHTML = `
-//                     <h3>${subject.id} - ${subject.name}</h3>
-//                     <div class="action-buttons">
-//                         <button class="btn btn-primary" onclick="viewMarks('${subject.id}')">View Marks</button>
-//                         <button class="btn btn-secondary" onclick="viewAttendance('${subject.id}')">View Attendance</button>
+//                     <div class="card-body">
+//                         <h3 class="card-title">${subject.id} - ${subject.name}</h3>
+//                         <div class="action-buttons mt-3">
+//                             <button class="btn btn-primary" onclick="viewMarks('${subject.id}')">View Marks</button>
+//                             <button class="btn btn-secondary" onclick="viewAttendance('${subject.id}')">View Attendance</button>
+//                         </div>
 //                     </div>
 //                 `;
 
@@ -45,24 +48,24 @@
 
 // // Function to view marks for a subject
 // function viewMarks(subjectId) {
-//     // Redirect to a marks viewing page
-//     window.location.href = `view-student-marks.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
+//     // Redirect to a marks viewing page with correct parameters
+//     window.location.href = `../html/view-student-marks.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
 // }
 
 // // Function to view attendance for a subject
 // function viewAttendance(subjectId) {
 //     // Redirect to an attendance viewing page
-//     window.location.href = `view-student-attendance.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
+//     window.location.href = `../html/view-student-attendance.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
 // }
+
 
 // // Function to logout the student
 // function logout() {
-//     window.location.href = 'index.html';
+//     window.location.href = '../html/index.html'; // Ensure this points to your main index file
 // }
 
 // // Load student subjects on page load
 // window.onload = loadStudentSubjects;
-
 
 // Retrieve the student's identifier and semester from the URL
 const params = new URLSearchParams(window.location.search);
@@ -123,11 +126,15 @@ function viewAttendance(subjectId) {
     window.location.href = `../html/view-student-attendance.html?subjectId=${subjectId}&semester=${semester}&identifier=${identifier}`;
 }
 
-
 // Function to logout the student
 function logout() {
     window.location.href = '../html/index.html'; // Ensure this points to your main index file
 }
+
+// Remove "Upgrade Semester" functionality
+// The following code has been removed:
+// Function to open the modal for upgrading semester
+// Function to upgrade semester
 
 // Load student subjects on page load
 window.onload = loadStudentSubjects;

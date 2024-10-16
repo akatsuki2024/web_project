@@ -1,98 +1,31 @@
-//--------------------------------------------------------------------------------
-
-
-
-
-// document.addEventListener('DOMContentLoaded', function () {
-//     // Get the logged-in teacher's username from sessionStorage (set after login)
-//     const username = sessionStorage.getItem('username'); // Ensure username is stored in session after login
-
-//     // Check if the username is available in sessionStorage
-//     if (username) {
-//         // Fetch teacher subjects from the server using the username
-//         fetch(`http://localhost:5000/get-teacher-subjects/${username}`)
-//             .then(response => response.json())
-//             .then(data => {
-//                 const subjectContainer = document.getElementById('subject-container');
-
-//                 // Check if the data retrieval was successful and subjects are available
-//                 if (data.success && data.subjects && Object.keys(data.subjects).length > 0) {
-//                     // Clear any previous content in the container
-//                     subjectContainer.innerHTML = '';
-
-//                     // Loop over the subjects and dynamically create buttons
-//                     Object.keys(data.subjects).forEach(sem => {
-//                         const subject = data.subjects[sem];
-
-//                         // Create the subject button with subject code and name
-//                         const subjectButton = document.createElement('button');
-//                         subjectButton.innerHTML = `${subject.code} - ${subject.name}`;
-//                         subjectButton.className = 'subject-button';
-
-//                         // Store semester and subject info in button attributes
-//                         subjectButton.dataset.semester = sem;
-//                         subjectButton.dataset.code = subject.code;
-//                         subjectButton.dataset.name = subject.name;
-
-//                         // Append the subject button to the container
-//                         subjectContainer.appendChild(subjectButton);
-
-//                         // Add click event listener to navigate to the attendance marking page
-//                         subjectButton.addEventListener('click', function () {
-//                             // Store selected subject data in session storage
-//                             sessionStorage.setItem('selectedSemester', this.dataset.semester);
-//                             sessionStorage.setItem('selectedSubjectCode', this.dataset.code);
-//                             sessionStorage.setItem('selectedSubjectName', this.dataset.name);
-
-//                             // Navigate to the attendance marking page with a relative URL path
-//                             window.location.href = '../html/attendance-mark.html';
-//                         });
-//                     });
-//                 } else {
-//                     // Display a message if no subjects are found
-//                     subjectContainer.innerHTML = "<p>No subjects found for this teacher.</p>";
-//                 }
-//             })
-//             .catch(error => {
-//                 console.error('Error fetching subjects:', error);
-//                 document.getElementById('subject-container').innerHTML = "<p>Unable to fetch subjects at the moment. Please try again later.</p>";
-//             });
-//     } else {
-//         // Error message if no username is found in session storage
-//         console.error('No username found in session storage');
-//         document.getElementById('subject-container').innerHTML = "<p>Error: No user session found. Please log in again.</p>";
-//     }
-// });
-
-
-
-//------------------------------------------------------------------------
-
 document.addEventListener('DOMContentLoaded', function () {
-    // Get the logged-in teacher's username from sessionStorage (set after login)
     const username = sessionStorage.getItem('username');
 
     if (username) {
-        // Fetch teacher subjects from the server using the username
         fetch(`http://localhost:5000/get-teacher-subjects/${username}`)
             .then(response => response.json())
             .then(data => {
                 const subjectContainer = document.getElementById('subject-container');
 
                 if (data.success && data.subjects && Object.keys(data.subjects).length > 0) {
-                    subjectContainer.innerHTML = '';
+                    subjectContainer.innerHTML = ''; // Clear the container for new data
 
+                    let hasCompulsorySubject = false;
+                    const compulsorySemesters = [];
+
+                    // Loop through each semester and subject
                     Object.keys(data.subjects).forEach(sem => {
                         const subject = data.subjects[sem];
 
                         const subjectCard = document.createElement('div');
                         subjectCard.className = 'subject-card';
 
+                        // Create the subject title with category (Compulsory, Department-Level, or Institute-Level)
                         const subjectTitle = document.createElement('h3');
-                        subjectTitle.innerHTML = `${subject.code} - ${subject.name}`;
+                        subjectTitle.innerHTML = `${subject.code} - ${subject.name} (${subject.category})`; // Displaying subject category
                         subjectCard.appendChild(subjectTitle);
 
-                        // Create Mark Attendance button
+                        // Mark Attendance Button
                         const attendanceButton = document.createElement('button');
                         attendanceButton.innerHTML = 'Mark Attendance';
                         attendanceButton.className = 'action-button';
@@ -107,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                         subjectCard.appendChild(attendanceButton);
 
-                        // Create Enter Marks button
+                        // Enter Marks Button
                         const marksButton = document.createElement('button');
                         marksButton.innerHTML = 'Enter Marks';
                         marksButton.className = 'action-button';
@@ -122,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                         subjectCard.appendChild(marksButton);
 
-                        // Create View Marks button
+                        // View Marks Button
                         const viewMarksButton = document.createElement('button');
                         viewMarksButton.innerHTML = 'View Marks';
                         viewMarksButton.className = 'action-button';
@@ -137,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                         subjectCard.appendChild(viewMarksButton);
 
-                        // Create View Attendance Details button
+                        // View Attendance Details Button
                         const viewAttendanceButton = document.createElement('button');
                         viewAttendanceButton.innerHTML = 'View Attendance Details';
                         viewAttendanceButton.className = 'action-button';
@@ -152,9 +85,33 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                         subjectCard.appendChild(viewAttendanceButton);
 
+                        // Add View Past Records Button
+                        const viewPastRecordsButton = document.createElement('button');
+                        viewPastRecordsButton.innerHTML = 'View Past Records';
+                        viewPastRecordsButton.className = 'action-button';
+                        viewPastRecordsButton.dataset.semester = sem;
+                        viewPastRecordsButton.dataset.code = subject.code;
+                        viewPastRecordsButton.dataset.name = subject.name;
+                        viewPastRecordsButton.addEventListener('click', function () {
+                            openHistoryModal(this.dataset.semester, this.dataset.code);
+                        });
+                        subjectCard.appendChild(viewPastRecordsButton);
+
                         // Append the subject card to the container
                         subjectContainer.appendChild(subjectCard);
+
+                        // Check if the subject is Compulsory and add the semester to the list
+                        if (subject.category === 'Compulsory') {
+                            hasCompulsorySubject = true;
+                            compulsorySemesters.push(sem);
+                        }
                     });
+
+                    // Enable Upgrade Semester Button if there is at least one compulsory subject
+                    if (hasCompulsorySubject) {
+                        document.getElementById('upgrade-btn').style.display = 'block';
+                        populateSemesterSelect(compulsorySemesters); // Populate the semester options in the modal
+                    }
                 } else {
                     subjectContainer.innerHTML = "<p>No subjects found for this teacher.</p>";
                 }
@@ -168,3 +125,105 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('subject-container').innerHTML = "<p>Error: No user session found. Please log in again.</p>";
     }
 });
+
+// Function to open modal for history input
+function openHistoryModal(semester, subjectCode) {
+    const modalContent = document.getElementById('modal-content');
+    modalContent.innerHTML = `
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">View Past Records</h5>
+                    <button type="button" class="btn-close" onclick="closeModal()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="semesterYear" class="form-label">Enter Semester-Year (e.g., III-2024-25):</label>
+                        <input type="text" id="semesterYear" class="form-control" placeholder="III-2024-25" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="subjectCodeInput" class="form-label">Enter Subject Code (e.g., ITC501):</label>
+                        <input type="text" id="subjectCodeInput" class="form-control" value="${subjectCode}" readonly />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="fetchPastRecords()">OK</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('options-modal').style.display = 'block'; // Show the modal
+}
+
+// Close modal function
+function closeModal() {
+    document.getElementById('options-modal').style.display = 'none';
+}
+
+// Fetch past records after OK is clicked
+function fetchPastRecords() {
+    const semesterYear = document.getElementById('semesterYear').value;
+    const subjectCode = document.getElementById('subjectCodeInput').value;
+
+    if (semesterYear && subjectCode) {
+        sessionStorage.setItem('historySemesterYear', semesterYear);
+        sessionStorage.setItem('historySubjectCode', subjectCode);
+
+        // Redirect to view past records page
+        window.location.href = '../html/view-past-records.html';
+    }
+}
+
+// Function to open the modal for upgrading semester
+function openUpgradeModal() {
+    const upgradeModal = new bootstrap.Modal(document.getElementById('upgradeModal'));
+    upgradeModal.show();
+}
+
+// Populate the semester dropdown based on compulsory subjects
+function populateSemesterSelect(semesters) {
+    const semesterSelect = document.getElementById('semesterSelect');
+    semesterSelect.innerHTML = ''; // Clear previous options
+
+    semesters.forEach(sem => {
+        const option = document.createElement('option');
+        option.value = sem;
+        option.innerText = `Semester ${sem}`;
+        semesterSelect.appendChild(option);
+    });
+}
+
+// Function to upgrade the semester and move student data to history
+async function upgradeSemester() {
+    const selectedSemester = document.getElementById('semesterSelect').value;
+    const yearInput = document.getElementById('yearInput').value;
+
+    if (!yearInput || !/^\d{4}-\d{2}$/.test(yearInput)) {
+        alert('Please enter a valid academic year (e.g., 2024-25).');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:5000/upgrade-teacher-semester', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                semester: selectedSemester,
+                year: yearInput
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert(`Semester upgraded successfully for ${selectedSemester}!`);
+        } else {
+            alert(`Failed to upgrade semester: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error upgrading semester:', error);
+        alert('An error occurred during the upgrade process.');
+    }
+}
