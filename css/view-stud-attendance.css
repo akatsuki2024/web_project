@@ -1,14 +1,24 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #90e0ef !important; 
+}
+
+.container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 200px !important; /* Adjusted border radius */
+    box-shadow: 0 4px 8px rgba(0, 0.5, 0.50, 1);
+}
+
 .main-container {
     max-width: 1200px; 
     margin: 50px auto; 
     padding: 20px; 
-    background-color: #90e0ef; 
+    background-color: #00a0fd; 
     border-radius: 50px; 
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 1);
-}
-
-body{
-    background-color: #caf0f8 !important;
 }
 
 h1 {
@@ -31,7 +41,7 @@ h1 {
 .fixed-column {
     position: sticky;
     left: 0;
-    background: white;
+    background: #00a0fd; /* Match the main container background */
     z-index: 10;
     border-right: 1px solid #dee2e6; /* Add a border for distinction */
 }
@@ -39,7 +49,7 @@ h1 {
 .fixed-percentage {
     position: sticky;
     right: 0;
-    background: white;
+    background: #00a0fd; /* Match the main container background */
     z-index: 10;
     border-left: 1px solid #dee2e6; /* Add a border for distinction */
 }
@@ -69,4 +79,35 @@ tbody td {
 .scrollable-dates td {
     min-width: 100px;
     text-align: center;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+    border-color: #ddd;
+}
+
+.table td {
+    background-color: #f8f9fa;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.table .failed {
+    color: #ff0000;
+}
+
+.input-group-text {
+    background-color: #007bff;
+    color: white;
+}
+
+input[type="text"], input[type="number"] {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    font-weight: 600;
 }

@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Marks Records</title>
-    <link rel="stylesheet" href="../css/view-marks.css">
+    <link rel="stylesheet" href="../css/view-teach-marks.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+    <div class="main-container">
     <div class="container mt-5 p-4 shadow-lg rounded bg-white">
-        <h2 class="text-center mb-4">Marks Records</h2>
+        <h1 class="text-center mb-4">Marks Records</h1>
 
         <div class="d-flex justify-content-between mb-3">
             <!-- Search by Roll No -->
@@ -29,7 +30,8 @@
                 </div>
                 <input type="number" id="searchMarks" class="form-control" placeholder="Enter Marks (IA-I or IA-II)">
             </div>
-            <button id="refreshButton" class="btn btn-info ml-3">Refresh</button>
+            <button id="refreshButton" class="btn btn-info ml-3" style="background-color: #0c7504; color: white; border: 2px solid #008fe2; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onmouseover="this.style.backgroundColor='#218838'; this.style.border='2px solid #218838'; this.style.transform='scale(1.05)'; this.style.boxShadow='0 8px 12px rgba(0, 0, 0, 0.2)';" onmouseout="this.style.backgroundColor='#008fe2'; this.style.border='2px solid #008fe2'; this.style.transform='scale(1)'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1)';">Refresh</button>
+
         </div>
 
         <div class="table-responsive">
@@ -55,7 +57,7 @@
             <button id="exportFailedButton" class="btn btn-warning">Export Failed List</button>
         </div>
     </div>
-
+</div>
     <script src="../js/view-marks.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.8/xlsx.full.min.js"></script>
 </body>
