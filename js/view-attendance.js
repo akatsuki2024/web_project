@@ -1,17 +1,19 @@
-
-
 document.addEventListener('DOMContentLoaded', function () {
     let originalData = [];
     let defaulterData = [];
 
     const subjectCode = sessionStorage.getItem('selectedSubjectCode');
     const semester = sessionStorage.getItem('selectedSemester');
+    const subjectName = sessionStorage.getItem('selectedSubjectName'); // Fetch the subject name from session
 
-    if (!subjectCode || !semester) {
+    if (!subjectCode || !semester || !subjectName) {
         alert('Subject or semester information is missing. Please go back and select the subject again.');
         window.location.href = '../html/teacher-page.html';
         return;
     }
+
+    // Display the subject name on the page
+    document.getElementById('subject-name').textContent = subjectName;
 
     // Fetch attendance data from the server based on the selected subject and semester
     fetch(`http://localhost:5000/view-attendance/${semester}/${subjectCode}`)
