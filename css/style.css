@@ -104,7 +104,7 @@ h1.navbar-brand {
   border: 2px solid #008fe2; 
   font-weight: bold; 
   transition: all 0.3s ease; 
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-outline-primary1:hover {
@@ -125,32 +125,19 @@ h1.navbar-brand {
 
 .main-content::after {
   content: ''; 
-  background-image: url('../images/img.jpg'); 
+  background-image: url('../images/libimg.webp'); 
   background-size: cover; 
   background-position: center; 
   position: absolute; 
   top: 0; 
   left: 0; 
   right: 0;
-  height: 50%;
+  height: 100%;
   opacity: 0.7; 
   z-index: -1;
 }
 
-.main-content::before {
-  content: ''; 
-  background-image: url('../images/im2.jpg'); 
-  background-size: cover; 
-  background-position: center; 
-  position: absolute; 
-  top: calc(50% + 2px); 
-  left: 0; 
-  right: 0;
-  height: 50%; 
-  opacity: 0.7; 
-  z-index: -1;
-  border-top: 10px solid black; 
-}
+
 
 
 /*index.html ka first page preview yahi khatam hota hai*/

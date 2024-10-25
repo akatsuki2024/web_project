@@ -7,6 +7,14 @@ body {
     background-repeat: no-repeat; /* Prevents the image from repeating */
 }
 
+body {
+    background-color: #008fe2;
+    background-image: url('../images/tech-dash-img.webp'); /* Replace with the path to your image */
+    background-size: cover; /* Ensures the image covers the entire background */
+    background-position: center; /* Centers the background image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+}
+
 .header {
     position: fixed;
     top: 0;
