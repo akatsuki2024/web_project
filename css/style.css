@@ -26,7 +26,7 @@ body {
 }
 
 /* Center the "Branch-Hub" title */
-h1.navbar-brand {
+h2.navbar-brand {
   position: absolute;
   left: 50%;
   transform: translateX(-50%); 
