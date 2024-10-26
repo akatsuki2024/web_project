@@ -1,131 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Registration</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css"> <!-- Your custom styles if any -->
-  <style>
-    .password-container {
-      position: relative;
-    }
-    .password-container .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-    }
-    .bi-eye {
-      font-size: 1.2em;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Form</title>
+    <link rel="stylesheet" href="../css/studentregi.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Collegiate Administrator</a>
-    </div>
-  </nav>
+    <div class="container">
+        <form id="student-register-form">
+            <h1 class="form-title">Student Registration Form</h1>
 
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Student Registration</h5>
-          </div>
-          <div class="card-body">
-            <form id="studentForm">
-              <div class="mb-3">
-                <label for="studentRegUsername" class="form-label">Username</label>
-                <input type="text" class="form-control" id="studentRegUsername" placeholder="Enter your username" required>
-              </div>
-              <div class="mb-3 password-container">
-                <label for="studentRegPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="studentRegPassword" placeholder="Enter your password" required>
-                <span class="toggle-password" onclick="togglePassword('studentRegPassword')">
-                  <i class="bi bi-eye"></i>
-                </span>
-              </div>
-              <div class="mb-3 password-container">
-                <label for="studentRegConfirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="studentRegConfirmPassword" placeholder="Confirm your password" required>
-                <span class="toggle-password" onclick="togglePassword('studentRegConfirmPassword')">
-                  <i class="bi bi-eye"></i>
-                </span>
-              </div>
-              <div class="mb-3">
-                <label for="studentName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="studentName" placeholder="Enter your full name" required>
-              </div>
-              <div class="mb-3">
-                <label for="collegeID" class="form-label">College ID</label>
-                <input type="text" class="form-control" id="collegeID" placeholder="Enter your college ID" required>
-              </div>
-              <div class="mb-3">
-                <label for="branch" class="form-label">Branch</label>
-                <select class="form-select" id="branch" required>
-                  <option value="" disabled selected>Select your branch</option>
-                  <option value="IT">Information Technology</option>
-                  <option value="Comps">Computer Science</option>
-                  <option value="Extc">Electronics and Telecommunication</option>
+            <!-- Moved Semester Field to the Top -->
+            <div class="form-group">
+                <label for="sem">Semester:</label>
+                <select id="sem" name="sem" required>
+                    <option value="" disabled selected>Select Semester</option>
+                    <option value="III">Semester III</option>
+                    <option value="IV">Semester IV</option>
+                    <option value="V">Semester V</option>
+                    <option value="VI">Semester VI</option>
+                    <option value="VII">Semester VII</option>
+                    <option value="VIII">Semester VIII</option>
                 </select>
-              </div>
-              <div class="mb-3">
-                <label for="year" class="form-label">Year</label>
-                <select class="form-select" id="year" required>
-                  <option value="" disabled selected>Select your year</option>
-                  <option value="First">First Year</option>
-                  <option value="Second">Second Year</option>
-                  <option value="Third">Third Year</option>
-                  <option value="Fourth">Fourth Year</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="contactNumber" class="form-label">Contact Number</label>
-                <input type="tel" class="form-control" id="contactNumber" placeholder="Enter your contact number" required>
-              </div>
-              <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <textarea class="form-control" id="address" rows="3" placeholder="Enter your address" required></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Register</button>
-            </form>
-          </div>
-        </div>
-      </div>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <small class="error-message" id="username-error">Username already exists.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" required>
+            </div>
+
+            <div class="form-group">
+                <label for="collegeid">College ID:</label>
+                <input type="email" id="collegeid" name="collegeid" required>
+                <small class="error-message" id="collegeid-error">College ID already exists.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="phoneno">Phone Number:</label>
+                <input type="text" id="phoneno" name="phoneno" required>
+                <small class="error-message" id="phoneno-error">Phone number must be exactly 10 digits and contain only numbers.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+            </div>
+
+            <div class="form-group">
+                <label for="rollno">Roll Number:</label>
+                <input type="text" id="rollno" name="rollno" required>
+                <small class="error-message" id="rollno-error">Roll number already exists.</small>
+            </div>
+
+            <div id="compulsory-subjects-container">
+                <h3>Compulsory Subjects:</h3>
+            </div>
+
+            <div id="optional-subjects-container">
+                <h3>Optional Subjects:</h3>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmpassword">Confirm Password:</label>
+                <input type="password" id="confirmpassword" name="confirmpassword" required>
+                <small class="error-message" id="password-error">Passwords must match.</small>
+            </div>
+
+            <button type="submit" id="register-btn" disabled>Register</button>
+        </form>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const form = document.getElementById('studentForm');
-    const submitBtn = document.getElementById('submitBtn');
-
-    function togglePassword(id) {
-      const passwordField = document.getElementById(id);
-      const type = passwordField.type === 'password' ? 'text' : 'password';
-      passwordField.type = type;
-    }
-
-    form.addEventListener('input', function() {
-      const password = document.getElementById('studentRegPassword').value;
-      const confirmPassword = document.getElementById('studentRegConfirmPassword').value;
-
-      if (password === confirmPassword && form.checkValidity()) {
-        submitBtn.removeAttribute('disabled');
-      } else {
-        submitBtn.setAttribute('disabled', 'true');
-      }
-    });
-
-    form.addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevent form submission to allow redirection
-      // Simulate successful registration and redirect to the front page
-      window.location.href = 'front-page.html'; // Replace with the path to your front page
-    });
-  </script>
+    <script src="../js/script.js"></script>
 </body>
 </html>

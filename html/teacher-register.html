@@ -1,121 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Registration</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css"> <!-- Your custom styles if any -->
-  <style>
-    .password-container {
-      position: relative;
-    }
-    .password-container .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-    }
-    .bi-eye {
-      font-size: 1.2em;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration Form</title>
+    <link rel="stylesheet" href="../css/teacher-regi.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Collegiate Administrator</a>
-    </div>
-  </nav>
+    <div class="container">
+        <form id="teacher-register-form">
+            <h1 class="form-title">Teacher Registration</h1>
 
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Teacher Registration</h5>
-          </div>
-          <div class="card-body">
-            <form id="teacherForm">
-              <div class="mb-3">
-                <label for="teacherRegUsername" class="form-label">Username</label>
-                <input type="text" class="form-control" id="teacherRegUsername" placeholder="Enter your username" required>
-              </div>
-              <div class="mb-3 password-container">
-                <label for="teacherRegPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="teacherRegPassword" placeholder="Enter your password" required>
-                <span class="toggle-password" onclick="togglePassword('teacherRegPassword')">
-                  <i class="bi bi-eye"></i>
-                </span>
-              </div>
-              <div class="mb-3 password-container">
-                <label for="teacherRegConfirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="teacherRegConfirmPassword" placeholder="Confirm your password" required>
-                <span class="toggle-password" onclick="togglePassword('teacherRegConfirmPassword')">
-                  <i class="bi bi-eye"></i>
-                </span>
-              </div>
-              <div class="mb-3">
-                <label for="teacherName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="teacherName" placeholder="Enter your full name" required>
-              </div>
-              <div class="mb-3">
-                <label for="employeeID" class="form-label">Employee ID</label>
-                <input type="text" class="form-control" id="employeeID" placeholder="Enter your employee ID" required>
-              </div>
-              <div class="mb-3">
-                <label for="department" class="form-label">Department</label>
-                <select class="form-select" id="department" required>
-                  <option value="" disabled selected>Select your department</option>
-                  <option value="IT">Information Technology</option>
-                  <option value="Comps">Computer Science</option>
-                  <option value="Extc">Electronics and Telecommunication</option>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" required>
+            </div>
+
+            <div class="form-group">
+                <label for="employeeid">Employee ID:</label>
+                <input type="text" id="employeeid" name="employeeid" required>
+                <small class="error-message" id="employeeid-error">Employee ID must end with @kccemsr.edu.in</small>
+            </div>
+
+            <div class="form-group">
+                <label for="phoneno">Phone Number:</label>
+                <input type="text" id="phoneno" name="phoneno" required>
+                <small class="error-message" id="phoneno-error">Phone number must be exactly 10 digits and contain only numbers.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+            </div>
+
+            <!-- Semester III selection -->
+            <div id="sem-III-subjects" class="semester-group">
+                <h4>Semester III</h4>
+                <select id="sem-III-compulsory" name="sem-III-compulsory">
+                    <option value="" disabled selected>Select Compulsory Subject for Semester III</option>
                 </select>
-              </div>
-              <div class="mb-3">
-                <label for="contactNumber" class="form-label">Contact Number</label>
-                <input type="tel" class="form-control" id="contactNumber" placeholder="Enter your contact number" required>
-              </div>
-              <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <textarea class="form-control" id="address" rows="3" placeholder="Enter your address" required></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Register</button>
-            </form>
-          </div>
-        </div>
-      </div>
+            </div>
+
+            <!-- Semester IV selection -->
+            <div id="sem-IV-subjects" class="semester-group">
+                <h4>Semester IV</h4>
+                <select id="sem-IV-compulsory" name="sem-IV-compulsory">
+                    <option value="" disabled selected>Select Compulsory Subject for Semester IV</option>
+                </select>
+            </div>
+
+            <!-- Semester V selection -->
+            <div id="sem-V-subjects" class="semester-group">
+                <h4>Semester V</h4>
+                <select id="sem-V-compulsory" name="sem-V-compulsory">
+                    <option value="" disabled selected>Select Compulsory Subject for Semester V</option>
+                </select>
+                <br />
+                <br />
+                <select id="sem-V-department" name="sem-V-department">
+                    <option value="" disabled selected>Select Department Subject for Semester V</option>
+                </select>
+            </div>
+
+            <!-- Semester VI selection -->
+            <div id="sem-VI-subjects" class="semester-group">
+                <h4>Semester VI</h4>
+                <select id="sem-VI-compulsory" name="sem-VI-compulsory">
+                    <option value="" disabled selected>Select Compulsory Subject for Semester VI</option>
+                </select>
+                <br />
+                <br />
+                <select id="sem-VI-department" name="sem-VI-department">
+                    <option value="" disabled selected>Select Department Subject for Semester VI</option>
+                </select>
+            </div>
+
+            <!-- Semester VII selection -->
+            <div id="sem-VII-subjects" class="semester-group">
+                <h4>Semester VII</h4>
+                <select id="sem-VII-compulsory" name="sem-VII-compulsory">
+                    <option value="" disabled selected>Select Compulsory Subject for Semester VII</option>
+                </select>
+                <br />
+                <br />
+                <select id="sem-VII-department" name="sem-VII-department">
+                    <option value="" disabled selected>Select Department Subject for Semester VII</option>
+                </select>
+                <br />
+                <br />
+                <select id="sem-VII-institute" name="sem-VII-institute">
+                    <option value="" disabled selected>Select Institute Subject for Semester VII</option>
+                </select>
+            </div>
+
+            <!-- Semester VIII selection -->
+            <div id="sem-VIII-subjects" class="semester-group">
+                <h4>Semester VIII</h4>
+                <select id="sem-VIII-compulsory" name="sem-VIII-compulsory">
+                    <option value="" disabled selected>Select Compulsory Subject for Semester VIII</option>
+                </select>
+                <br />
+                <br />
+                <select id="sem-VIII-department" name="sem-VIII-department">
+                    <option value="" disabled selected>Select Department Subject for Semester VIII</option>
+                </select>
+                <br />
+                <br />
+                <select id="sem-VIII-institute" name="sem-VIII-institute">
+                    <option value="" disabled selected>Select Institute Subject for Semester VIII</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmpassword">Confirm Password:</label>
+                <input type="password" id="confirmpassword" name="confirmpassword" required>
+                <small class="error-message" id="password-error">Passwords must match.</small>
+            </div>
+
+            <button type="submit" id="register-btn" disabled>Register</button>
+        </form>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const form = document.getElementById('teacherForm');
-    const submitBtn = document.getElementById('submitBtn');
-
-    function togglePassword(id) {
-      const passwordField = document.getElementById(id);
-      const type = passwordField.type === 'password' ? 'text' : 'password';
-      passwordField.type = type;
-    }
-
-    form.addEventListener('input', function() {
-      const password = document.getElementById('teacherRegPassword').value;
-      const confirmPassword = document.getElementById('teacherRegConfirmPassword').value;
-
-      if (password === confirmPassword && form.checkValidity()) {
-        submitBtn.removeAttribute('disabled');
-      } else {
-        submitBtn.setAttribute('disabled', 'true');
-      }
-    });
-
-    form.addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevent form submission to allow redirection
-      // Simulate successful registration and redirect to the front page
-      window.location.href = 'front-page.html'; // Replace with the path to your front page
-    });
-  </script>
+    <script src="../js/teacher-script.js"></script>
 </body>
 </html>
