@@ -557,23 +557,7 @@ app.get('/view-student-attendance/:semester/:subjectCode/:identifier', async (re
     }
 });
 
-// // Schema for student history
-// const studentHistorySchema = new mongoose.Schema({
-//     username: String,
-//     fullname: String,
-//     collegeid: String,
-//     phoneno: String,
-//     address: String,
-//     rollno: String,
-//     history: [
-//         {
-//             semester: String,
-//             subjects: Array,
-//             attendance: Array,  // All attendance records for the student
-//             marks: Array         // All marks records for the student
-//         }
-//     ]
-// });
+// Schema for student history
 const studentHistorySchema = new mongoose.Schema({
     username: String,
     fullname: String,
